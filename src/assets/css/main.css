@@ -25,11 +25,17 @@ a {
 .p-none{
     padding: 0;
 }
+.m-b-none{
+	margin-bottom: 0 !important;
+}
 .p-10{
     padding: 10px;
 }
 .p-tb-10{
     padding: 10px 0;
+}
+.m-b-20{
+	margin-bottom: 20px;
 }
 .p-lr-10{
     padding: 0 10px;
@@ -38,9 +44,13 @@ a {
 	margin-right: 10px;
 }
 
+
 /*背景顔色*/
 .bg-white{
     background-color: #fff;
+}
+.collapse-btn:hover{
+	background: #3a8ee6;
 }
 
 /* 字体颜色 */
@@ -87,26 +97,24 @@ a {
     color: #ff0000;
 }
 
-.el-submenu__title:focus, .el-submenu__title:hover{
-    background: #20a0ff !important;
-    color: #fff !important;
+/*下拉*/
+.courses{
+	width: 100%;
 }
-.el-submenu__title:focus i, .el-submenu__title:hover i{
-    color: #fff !important;
+.coursesList button{
+	padding: 4px 8px !important;
 }
-.el-menu-item:focus, .el-menu-item:hover{
-    background: #20a0ff !important;
-    color: #fff !important;
+.courses .el-dropdown-menu{
+	/*min-width: 220px;*/
 }
-.el-menu-item:focus i, .el-menu-item:hover i{
-    color: #fff !important;
+/*.coursesDropdown{
+	margin-left: 60px;
+}*/
+.coursesDropdown_item{
+	padding: 6px 15px !important;
 }
-.collapse-btn:hover{
-    background-color: #3a8ee6 !important;
-}
-.el-menu-item.is-active{
-    background: #20a0ff !important;
-    color: #fff !important;
+.el-popper[x-placement^=bottom] .popper__arrow{
+	left: 40% !important;
 }
 
 .content-box {
@@ -139,6 +147,11 @@ a {
     background: #fff;
     /*border: 1px solid #ddd;*/
     border-radius: 5px;
+}
+
+/* 时间选择器 */
+.data_range.el-date-editor.el-input__inner{
+	width: 220px;
 }
 
 /*数据检索栏*/
@@ -319,4 +332,41 @@ a {
 
 .v-note-wrapper .v-note-panel {
     min-height: 500px;
+}
+
+/*dropdown;*/
+.dropdown.el-menu-vertical-demo.el-menu > .el-submenu > .el-submenu__title{
+	background: #none !important;
+    color: #20a0ff;
+	height: 36px;
+	line-height: 36px;
+	z-index: 99;
+}
+.dropdown .el-submenu .el-menu-item,.dropdown .el-submenu__title{
+	height: 36px;
+	line-height: 36px;
+}
+.dropdown.el-menu{
+	border-right: none;
+}
+.dropdown.el-menu-vertical-demo.el-menu .el-submenu > .el-submenu__title:hover{
+	background: #none !important;
+	color: #fff;
+}
+.dropdown.el-menu-vertical-demo.el-menu > .el-submenu > .el-submenu__title i{
+	color: #20a0ff;
+}
+.dropdown.el-menu-vertical-demo.el-menu > .el-submenu{
+	position: relative;
+	z-index: 99;
+}
+.dropdown.el-menu-vertical-demo.el-menu > .el-submenu > .el-menu{
+	position: absolute;
+	top: 36px;
+	width: 100%;
+	border: 1px solid #E1E4E8;
+	border-radius: 4px;
+}
+.dropdown .el-submenu .el-menu-item{
+	min-width: auto;
 }

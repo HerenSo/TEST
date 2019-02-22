@@ -1,6 +1,6 @@
 <template>
 	<div class="container">
-		<div class="handle-box">
+		<div class="handle-box m-b-none">
 			<div class="demo-input-suffix">
 				学科：
 				<el-input v-model="select_word" placeholder="" clearable class="handle-input-sm m-r-10"></el-input>
@@ -13,14 +13,16 @@
 				知识元名称：
 				<el-input v-model="select_word" placeholder="" clearable class="handle-input-md m-r-10"></el-input>
 			</div>
+		</div>
+		<div class="handle-box">
 			<div class="demo-input-suffix">
-				创建时间：
 				<el-date-picker
-			      v-model="form.date"
-			      value-format="yyyy-MM-dd"
-			      type="date"
-			      placeholder="选择日期"
-			      class="m-r-10">
+				  class="data_range m-r-10"
+			      v-model="date"
+			      type="daterange"
+			      range-separator="至"
+			      start-placeholder="开始日期"
+			      end-placeholder="结束日期">
 			    </el-date-picker>
 			</div>
 			<el-select v-model="select_cate" placeholder="状态" class="handle-select m-r-10">
@@ -32,23 +34,19 @@
         </div>
         <el-table :data="data" border class="table" stripe ref="multipleTable" @selection-change="handleSelectionChange">
             <!--<el-table-column type="selection" width="55" align="center"></el-table-column>-->
-            <el-table-column prop="" label="序号" width="50"><!--sortable--> 
+            <el-table-column prop="id" label="序号" width="50"><!--sortable--> 
             </el-table-column>
-            <el-table-column prop="name" label="学科" >
+            <el-table-column prop="courseName" label="学科" >
             </el-table-column>
-            <el-table-column prop="name" label="科类" >
+            <el-table-column prop="category" label="科类" >
             </el-table-column>
-            <el-table-column prop="" label="名称" width="120">
+            <el-table-column prop="name" label="名称" width="180">
             </el-table-column>
-            <el-table-column prop="" label="创建人" >
+            <el-table-column prop="creator" label="创建人" >
             </el-table-column>
-            <el-table-column prop="date" label="创建时间" width="120">
+            <el-table-column prop="createTime" label="创建时间" width="180">
             </el-table-column>
-            <el-table-column prop="" label="审核人" >
-            </el-table-column>
-            <el-table-column prop="" label="审核状态" >
-            </el-table-column>
-            <el-table-column prop="" label="备注" >
+            <el-table-column prop="auditStatusName" label="审核状态" >
             </el-table-column>
             <el-table-column fixed="right" label="操作" width="120" align="center">
                 <template slot-scope="scope">
@@ -131,7 +129,6 @@
 		name: "systemTable",
 		data() {
             return {
-                url: './vuetable.json',
                 tableData: [],
                 cur_page: 1,
                 multipleSelection: [],
@@ -141,6 +138,7 @@
                 is_search: false,
                 editVisible: false,
                 delVisible: false,
+                date: '',
                 form: {
                     name: '',
                     address: ''
@@ -148,7 +146,7 @@
                 idx: -1
             }
         },
-        created() {
+        mounted() {
             this.getData();
         },
         computed: {
@@ -162,9 +160,9 @@
                         }
                     }
                     if (!is_del) {
-                        if (d.address.indexOf(this.select_cate) > -1 &&
+                        if (d.category.indexOf(this.select_cate) > -1 &&
                             (d.name.indexOf(this.select_word) > -1 ||
-                                d.address.indexOf(this.select_word) > -1)
+                                d.category.indexOf(this.select_word) > -1)
                         ) {
                             return d;
                         }
@@ -180,15 +178,33 @@
             },
             // 获取 easy-mock 的模拟数据
             getData() {
-                // 开发环境使用 easy-mock 数据，正式环境使用 json 文件
-                if (process.env.NODE_ENV === 'development') {
-                    this.url = '/ms/table/list';
-                };
-                this.$axios.post(this.url, {
-                    page: this.cur_page
+            	console.log(localStorage.getItem("userToken"));
+                this.$axios.get("/api/app/knowledgeTree/list",{
+                    params:{
+		    			"courseId": 1, // 学科ID
+		    			"parentId": 0, // 父节点ID，顶级父节点传0
+		    			"beginTime": "", // 开始日期，没有则传空字符串或不传
+		    			"endTime": "", // 结束日期，没有则传空字符串或不传
+		    			"name": "", // 知识元名称，没有则传空字符串或不传
+		    			"category": "", // 学科类型，没有则传空字符串或不传
+		    			"auditStatus": "", // 审核状态，没有则传空字符串或不传
+		    			"shelfStatus": "", // 上架状态，没有则传空字符串或不传
+		    			"rows": 25, // 每页记录数，默认为25
+						"page": 1 // 当前页码
+		    		},
+		    		headers:{
+		    			'tokenId':localStorage.getItem("userToken")
+		    		}
                 }).then((res) => {
-                    this.tableData = res.data.list;
-                })
+//              	this.$message(res.msg);
+                    this.tableData = JSON.parse(JSON.stringify(res.data.data.rows));
+                    console.log(JSON.parse(JSON.stringify(res.data.data.rows)));
+                }).catch(error => {
+		          	this.$message({
+			          message: error,
+			          type: 'warning'
+			        });
+		        });
             },
             search() {
                 this.is_search = true;
