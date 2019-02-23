@@ -29,8 +29,8 @@
                 <el-option key="1" label="已审核" value="已审核"></el-option>
                 <el-option key="2" label="未审核" value="未审核"></el-option>
             </el-select>
-	        <el-button type="primary" icon="search" @click="search">搜索</el-button>
-	        <el-button type="primary" icon="search" @click="">新增</el-button>
+	        <el-button type="primary" icon="search" @click="search" class="m-r-10">搜索</el-button>
+	        <router-link to="elementAdd"><el-button type="primary" icon="search" >新增</el-button></router-link>
         </div>
         <el-table :data="data" border class="table" stripe ref="multipleTable" @selection-change="handleSelectionChange">
             <!--<el-table-column type="selection" width="55" align="center"></el-table-column>-->
@@ -56,7 +56,7 @@
             </el-table-column>
         </el-table>
         <div class="pagination">
-            <el-pagination background @current-change="handleCurrentChange" layout="prev, pager, next" :total="1000">
+            <el-pagination background @current-change="handleCurrentChange" layout="prev, pager, next" :total="30">
             </el-pagination>
         </div>
         
@@ -178,7 +178,6 @@
             },
             // 获取 easy-mock 的模拟数据
             getData() {
-            	console.log(localStorage.getItem("userToken"));
                 this.$axios.get("/api/app/knowledgeTree/list",{
                     params:{
 		    			"courseId": 1, // 学科ID
@@ -191,20 +190,16 @@
 		    			"shelfStatus": "", // 上架状态，没有则传空字符串或不传
 		    			"rows": 25, // 每页记录数，默认为25
 						"page": 1 // 当前页码
-		    		},
-		    		headers:{
-		    			'tokenId':localStorage.getItem("userToken")
 		    		}
                 }).then((res) => {
-//              	this.$message(res.msg);
-                    this.tableData = JSON.parse(JSON.stringify(res.data.data.rows));
-                    console.log(JSON.parse(JSON.stringify(res.data.data.rows)));
-                }).catch(error => {
-		          	this.$message({
-			          message: error,
-			          type: 'warning'
-			        });
-		        });
+                    this.tableData = res.data.data.rows;
+                })
+//              .catch(error => {
+//		          	this.$message({
+//			          message: error,
+//			          type: 'warning'
+//			        });
+//		        });
             },
             search() {
                 this.is_search = true;

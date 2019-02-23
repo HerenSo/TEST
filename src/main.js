@@ -11,6 +11,7 @@ import './assets/css/main.css';
 import './components/common/directives';
 import "babel-polyfill";
 import globalVue from './components/common/GlobalVue'; // 定义全局变量
+import http from './untils/http';
 Vue.prototype.global = globalVue;
 
 Vue.config.productionTip = false;
@@ -19,6 +20,7 @@ Vue.use(ElementUI, {
     size: 'small'
 });
 Vue.prototype.$axios = axios;
+//depot();
 
 //使用钩子函数对路由进行权限跳转
 router.beforeEach((to, from, next) => {

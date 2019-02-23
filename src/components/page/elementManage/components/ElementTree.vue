@@ -52,9 +52,6 @@
 		        studyPeriod:'', // 初始默认 学级
 		        courseName:'', // 初始默认 学课
 		        courseId: 1, // 初始默认 学课ID
-		        have: {
-		        	haveCourse: 1
-		        },
 		        defaultProps: {
 		          label: 'label',
 		          children: 'children',
@@ -77,21 +74,12 @@
 	        this.$axios.get('/api/app/knowledgeTree/tree',{
 	    		params:{
 	    			"courseId": this.courseId
-	    		},
-	    		headers:{
-	    			'tokenId':localStorage.getItem("userToken")
 	    		}
 			}).then(res => {
-	          	console.log(JSON.parse(JSON.stringify(res.data.data)));
-	          	if(res.status == 200){
-		          	this.data = JSON.parse(JSON.stringify(res.data.data));
+	          	if(res.status == 200 && res.data.code == '0000'){
+		          	this.data = res.data.data;
 	          	}
-	        }).catch(error => {
-	          	this.$message({
-		          message: error,
-		          type: 'warning'
-		        });
-	        });
+	       });
 	      }
 	    },
 	    computed: {
@@ -106,24 +94,14 @@
 	    		params:{
 	    			"haveCourse": "1",
 	    			"haveGrade": "0"
-	    		},
-	    		headers:{
-	    			'tokenId':localStorage.getItem("userToken")
 	    		}
 			}).then(res => {
-//				this.$message('请求成功');
-	          	console.log(JSON.parse(JSON.stringify(res.data.data)));
-	          	if(res.status == 200){
-		          	this.courses = JSON.parse(JSON.stringify(res.data.data));
+	          	if(res.status == 200 && res.data.code == '0000'){
+//		          	this.courses = JSON.parse(JSON.stringify(res.data.data));
+		          	this.courses = res.data.data;
 		          	this.studyPeriod = this.courses[0].studyPeriod;
 		          	this.courseName = this.courses[0].courses[0].courseName;
-	        		console.log(this.courses)
 	          	}
-	        }).catch(error => {
-	          	this.$message({
-		          message: error.msg,
-		          type: 'warning'
-		        });
 	        });
 	        
 	    }

@@ -6,13 +6,16 @@ Vue.use(Router);
 export default new Router({
     routes: [
         {
-            path: '/',
-            redirect: '/login'
+            path: '/login',
+            component: resolve => require(['../components/page/Login.vue'], resolve)
         },
         {
             path: '/home',
             component: resolve => require(['../components/common/Home.vue'], resolve),
-            meta: { title: '自述文件' },
+            meta: { 
+            	requireAuth: true, // 判断是否需要登录
+            	title: '自述文件' 
+            },
             children:[
                 {
                     path: '/dashboard',
@@ -28,6 +31,11 @@ export default new Router({
                     path: '/elementCheck',
                     component: resolve => require(['../components/page/elementManage/ElementCheck.vue'], resolve),
                     meta: { title: '知识元审核' }
+                },
+                {
+                    path: '/elementAdd',
+                    component: resolve => require(['../components/page/elementManage/ElementAdd.vue'], resolve),
+                    meta: { title: '知识元新增' }
                 },
                 {
                     path: '/systemManage',
@@ -112,10 +120,6 @@ export default new Router({
                     meta: { title: '403' }
                 }
             ]
-        },
-        {
-            path: '/login',
-            component: resolve => require(['../components/page/Login.vue'], resolve)
         },
         {
             path: '*',
