@@ -10,15 +10,15 @@ import './assets/css/icon.css';
 import './assets/css/main.css';
 import './components/common/directives';
 import "babel-polyfill";
-import globalVue from './components/common/GlobalVue'; // 定义全局变量
+import MyPligin  from './untils/index'; // 全局
 import http from './untils/http';
-Vue.prototype.global = globalVue;
 
 Vue.config.productionTip = false;
 Vue.use(VueResource);
 Vue.use(ElementUI, {
     size: 'small'
 });
+Vue.use(MyPligin);
 Vue.prototype.$axios = axios;
 //depot();
 

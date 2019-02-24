@@ -12,12 +12,6 @@
 		        		<el-button size="mini" v-for="course in item.courses" :data-courseid="course.id" @click="selectCourse(course.id,course.courseName,item.studyPeriod)">{{course.courseName}}</el-button>
 		        	</div>
 				</el-dropdown-item>
-		        <!--<li class="courses" v-for="item in courses" :data-studyid="item.id">
-		        	<label>{{item.studyPeriod}}</label>
-		        	<ul>
-		        		<li v-for="course in item.courses" :data-courseid="course.id">{{course.courseName}}</li>
-		        	</ul>
-		        </li>-->
 	        </el-dropdown-menu>
 	   </el-dropdown>
 	</div>
@@ -35,6 +29,7 @@
 </template>
 
 <script>
+    import bus from '../../../common/bus';
 	export default{
 		name: 'elementTree',
 		data() {
@@ -60,7 +55,11 @@
 	    },
 	    methods: {
 	      handleNodeClick(data) {
-	        console.log(data);
+	        let elParam = {
+	        	id: data.id,
+	        	parentId: data.parentId
+	        }
+	        bus.$emit('elParam', elParam);
 	      },
 	      selectCourse(id,courseName,studyPeriod) {
 	      	console.log(id)
@@ -76,9 +75,9 @@
 	    			"courseId": this.courseId
 	    		}
 			}).then(res => {
-	          	if(res.status == 200 && res.data.code == '0000'){
+//	          	if(res.status == 200 && res.data.code == '0000'){
 		          	this.data = res.data.data;
-	          	}
+//	          	}
 	       });
 	      }
 	    },

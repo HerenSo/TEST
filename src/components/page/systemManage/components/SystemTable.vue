@@ -23,21 +23,21 @@
         </div>
         <el-table :data="data" border class="table" stripe ref="multipleTable" @selection-change="handleSelectionChange">
             <!--<el-table-column type="selection" width="55" align="center"></el-table-column>-->
-            <el-table-column prop="" label="序号" width="50"><!--sortable--> 
+            <el-table-column prop="courseId" label="序号" width="50"><!--sortable--> 
             </el-table-column>
-            <el-table-column prop="name" label="目录名称" >
+            <el-table-column prop="typeName" label="体系类型" >
             </el-table-column>
-            <el-table-column prop="name" label="知识元名称" width="120">
+            <el-table-column prop="knowledgeName" label="知识元名称" width="120">
             </el-table-column>
-            <el-table-column prop="" label="创建人" width="80">
+            <el-table-column prop="creator" label="创建人" width="80">
             </el-table-column>
-            <el-table-column prop="date" label="创建时间" width="120">
+            <el-table-column prop="createTime" label="创建时间" width="120">
             </el-table-column>
-            <el-table-column prop="" label="审核人" width="80">
+            <el-table-column prop="auditor" label="审核人" width="80">
             </el-table-column>
-            <el-table-column prop="" label="审核状态" width="80">
+            <el-table-column prop="auditStatusName" label="审核状态" width="80">
             </el-table-column>
-            <el-table-column prop="" label="备注" >
+            <el-table-column prop="remarks" label="备注" >
             </el-table-column>
             <el-table-column fixed="right" label="操作" width="160" align="center">
                 <template slot-scope="scope">
@@ -48,7 +48,7 @@
             </el-table-column>
         </el-table>
         <div class="pagination">
-            <el-pagination background @current-change="handleCurrentChange" layout="prev, pager, next" :total="1000">
+            <el-pagination background @current-change="handleCurrentChange" :page-count="total" layout="prev, pager, next" :total="1000">
             </el-pagination>
         </div>
         
@@ -117,6 +117,7 @@
 </template>
 
 <script>
+    import bus from '../../../common/bus';
 	export default{
 		name: "systemTable",
 		data() {
@@ -131,14 +132,25 @@
                 is_search: false,
                 editVisible: false,
                 delVisible: false,
+                contentName: '',
+                auditStatusList: [],
+                auditStatus: '',
                 form: {
                     name: '',
                     address: ''
                 },
-                idx: -1
+                idx: -1,
+                elId:1,
+                elParentId:0,
+                total: 1
             }
         },
-        created() {
+        mounted() {
+        	bus.$on('elParam', (data) => {
+	        	console.log(data)
+	        	this.elId = data.id;
+	        	this.elParentId = data.parentId;
+	      	})
             this.getData();
         },
         computed: {
@@ -146,15 +158,15 @@
                 return this.tableData.filter((d) => {
                     let is_del = false;
                     for (let i = 0; i < this.del_list.length; i++) {
-                        if (d.name === this.del_list[i].name) {
+                        if (d.contentName === this.del_list[i].contentName) {
                             is_del = true;
                             break;
                         }
                     }
                     if (!is_del) {
-                        if (d.address.indexOf(this.select_cate) > -1 &&
-                            (d.name.indexOf(this.select_word) > -1 ||
-                                d.address.indexOf(this.select_word) > -1)
+                        if (d.category.indexOf(this.select_cate) > -1 &&
+                            (d.contentName.indexOf(this.select_word) > -1 ||
+                                d.category.indexOf(this.select_word) > -1)
                         ) {
                             return d;
                         }
@@ -170,14 +182,22 @@
             },
             // 获取 easy-mock 的模拟数据
             getData() {
-                // 开发环境使用 easy-mock 数据，正式环境使用 json 文件
-                if (process.env.NODE_ENV === 'development') {
-                    this.url = '/ms/table/list';
-                };
-                this.$axios.post(this.url, {
-                    page: this.cur_page
+                this.$axios.get("/api/app/architectureTree/list",{
+                    params:{
+		    			"courseId": this.elId, // 学科ID
+		    			"parentId": this.elParentId, // 父节点ID，顶级父节点传0
+		    			"beginTime": this.beginTime, // 开始日期，没有则传空字符串或不传
+		    			"endTime": this.endTime, // 结束日期，没有则传空字符串或不传
+		    			"contentName": this.contentName, // 知识元名称，没有则传空字符串或不传
+		    			"category": "", // 学科类型，没有则传空字符串或不传
+		    			"auditStatus": this.auditStatus, // 审核状态，没有则传空字符串或不传
+		    			"rows": 1, // 每页记录数，默认为25
+						"page": this.cur_page // 当前页码
+		    		}
                 }).then((res) => {
-                    this.tableData = res.data.list;
+                	this.total = res.data.data.records;
+                	console.log(this.tableData)
+                    this.tableData = res.data.data.rows;
                 })
             },
             search() {

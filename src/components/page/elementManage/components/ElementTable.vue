@@ -1,20 +1,18 @@
 <template>
 	<div class="container">
-		<div class="handle-box m-b-none">
-			<div class="demo-input-suffix">
+		<div class="handle-box">
+			<!--<div class="demo-input-suffix">
 				学科：
 				<el-input v-model="select_word" placeholder="" clearable class="handle-input-sm m-r-10"></el-input>
 			</div>
 			<div class="demo-input-suffix">
 				科类：
 				<el-input v-model="select_word" placeholder="" clearable class="handle-input-sm m-r-10"></el-input>
-			</div>
+			</div>-->
 			<div class="demo-input-suffix">
 				知识元名称：
-				<el-input v-model="select_word" placeholder="" clearable class="handle-input-md m-r-10"></el-input>
+				<el-input v-model="name" placeholder="" clearable class="handle-input-md m-r-10"></el-input>
 			</div>
-		</div>
-		<div class="handle-box">
 			<div class="demo-input-suffix">
 				<el-date-picker
 				  class="data_range m-r-10"
@@ -22,12 +20,17 @@
 			      type="daterange"
 			      range-separator="至"
 			      start-placeholder="开始日期"
-			      end-placeholder="结束日期">
+			      end-placeholder="结束日期"
+			      value-format="yyyy-MM-dd">
 			    </el-date-picker>
 			</div>
-			<el-select v-model="select_cate" placeholder="状态" class="handle-select m-r-10">
-                <el-option key="1" label="已审核" value="已审核"></el-option>
-                <el-option key="2" label="未审核" value="未审核"></el-option>
+			<el-select v-model="auditStatus" placeholder="审核状态" class="handle-select m-r-10">
+                <el-option key="0" label="全部" value="" ></el-option>
+                <el-option :key="item.id" :label="item.label" :value="item.value" v-for="item in auditStatusList"></el-option>
+            </el-select>
+			<el-select v-model="shelfStatus" placeholder="上架状态" class="handle-select m-r-10">
+                <el-option key="0" label="全部" value="" ></el-option>
+                <el-option :key="item.id" :label="item.label" :value="item.value" v-for="item in shelfStatusList"></el-option>
             </el-select>
 	        <el-button type="primary" icon="search" @click="search" class="m-r-10">搜索</el-button>
 	        <router-link to="elementAdd"><el-button type="primary" icon="search" >新增</el-button></router-link>
@@ -51,12 +54,12 @@
             <el-table-column fixed="right" label="操作" width="120" align="center">
                 <template slot-scope="scope">
                     <el-button type="text" icon="el-icon-lx-attention" @click="handleCheck(scope.$index, scope.row)">查看</el-button>
-                    <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                    <el-button type="text" icon="el-icon-edit" @click="handleEdit(data[scope.$index].id,data[scope.$index].courseId,data[scope.$index].parentId)">编辑</el-button>
                 </template>
             </el-table-column>
         </el-table>
         <div class="pagination">
-            <el-pagination background @current-change="handleCurrentChange" layout="prev, pager, next" :total="30">
+            <el-pagination background @current-change="handleCurrentChange" :page-count="total" layout="prev, pager, next">
             </el-pagination>
         </div>
         
@@ -125,6 +128,7 @@
 </template>
 
 <script>
+    import bus from '../../../common/bus';
 	export default{
 		name: "systemTable",
 		data() {
@@ -138,15 +142,43 @@
                 is_search: false,
                 editVisible: false,
                 delVisible: false,
+                name: '',
                 date: '',
+                auditStatusList: [],
+                shelfStatusList: [],
+                auditStatus: '',
+                shelfStatus: '',
                 form: {
                     name: '',
                     address: ''
                 },
-                idx: -1
+                elId:1,
+                elParentId:0,
+                idx: -1,
+                total: 1
             }
         },
         mounted() {
+         	bus.$on('elParam', (data) => {
+	        	console.log(data)
+	        	this.elId = data.id;
+	        	this.elParentId = data.parentId;
+	      	})
+         	// 获取审核状态数据
+         	this.$axios.get("/api/app/combobox/auditStatus/list").then((res) => {
+				if(res.status=="200" && res.data.code == '0000'){
+					this.auditStatusList = res.data.data;
+					localStorage.setItem("auditStatus",JSON.stringify(this.auditStatusList));
+					console.log(this.auditStatusList)
+				}
+			})
+         	// 获取上架状态数据
+         	this.$axios.get("/api/app/combobox/shelfStatus/list").then((res) => {
+				if(res.status=="200" && res.data.code == '0000'){
+					this.shelfStatusList = res.data.data;
+					localStorage.setItem("shelfStatus",JSON.stringify(this.shelfStatusList));
+				}
+			})
             this.getData();
         },
         computed: {
@@ -168,7 +200,14 @@
                         }
                     }
                 })
-            }
+            },
+            beginTime: function () {
+            	return this.date[0];
+		    },
+            endTime: function () {
+            	return this.date[1];
+		    }
+            
         },
         methods: {
             // 分页导航
@@ -176,22 +215,25 @@
                 this.cur_page = val;
                 this.getData();
             },
-            // 获取 easy-mock 的模拟数据
+            // 获取 list数据
             getData() {
+            	console.log(this.date)
                 this.$axios.get("/api/app/knowledgeTree/list",{
                     params:{
-		    			"courseId": 1, // 学科ID
-		    			"parentId": 0, // 父节点ID，顶级父节点传0
-		    			"beginTime": "", // 开始日期，没有则传空字符串或不传
-		    			"endTime": "", // 结束日期，没有则传空字符串或不传
-		    			"name": "", // 知识元名称，没有则传空字符串或不传
+		    			"courseId": this.elId, // 学科ID
+		    			"parentId": this.elParentId, // 父节点ID，顶级父节点传0
+		    			"beginTime": this.beginTime, // 开始日期，没有则传空字符串或不传
+		    			"endTime": this.endTime, // 结束日期，没有则传空字符串或不传
+		    			"name": this.name, // 知识元名称，没有则传空字符串或不传
 		    			"category": "", // 学科类型，没有则传空字符串或不传
-		    			"auditStatus": "", // 审核状态，没有则传空字符串或不传
-		    			"shelfStatus": "", // 上架状态，没有则传空字符串或不传
-		    			"rows": 25, // 每页记录数，默认为25
-						"page": 1 // 当前页码
+		    			"auditStatus": this.auditStatus, // 审核状态，没有则传空字符串或不传
+		    			"shelfStatus": this.shelfStatus, // 上架状态，没有则传空字符串或不传
+		    			"rows": 1, // 每页记录数，默认为25
+						"page": this.cur_page // 当前页码
 		    		}
                 }).then((res) => {
+                	this.total = res.data.data.records;
+                	console.log(this.total)
                     this.tableData = res.data.data.rows;
                 })
 //              .catch(error => {
@@ -202,7 +244,8 @@
 //		        });
             },
             search() {
-                this.is_search = true;
+            	this.cur_page = 1;
+                this.getData();
             },
             formatter(row, column) {
                 return row.address;
@@ -210,15 +253,9 @@
             filterTag(value, row) {
                 return row.tag === value;
             },
-            handleEdit(index, row) {
-                this.idx = index;
-                const item = this.tableData[index];
-                this.form = {
-                    name: item.name,
-                    date: item.date,
-                    address: item.address
-                }
-                this.editVisible = true;
+            handleEdit(id,courseId,parentId) {
+            	console.log(id,courseId,parentId);
+            	this.$router.push('/elementUpdate?id='+id);
             },
             handleCheck(index, row) {
                 this.idx = index;
@@ -239,7 +276,13 @@
                 this.$message.success('删除成功');
                 this.delVisible = false;
             }
-        }
+       	},
+       	watch:{
+	        elId(val, oldVal){//普通的watch监听
+	            console.log("a: "+val, oldVal);
+	            this.getData();
+	        }
+	    }
 	}
 </script>
 

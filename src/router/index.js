@@ -38,6 +38,11 @@ export default new Router({
                     meta: { title: '知识元新增' }
                 },
                 {
+                    path: '/elementUpdate',
+                    component: resolve => require(['../components/page/elementManage/ElementUpdate.vue'], resolve),
+                    meta: { title: '知识元修改' }
+                },
+                {
                     path: '/systemManage',
                     component: resolve => require(['../components/page/systemManage/SystemManage.vue'], resolve),
                     meta: { title: '体系结构管理' }

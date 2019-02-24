@@ -28,7 +28,7 @@ axios.interceptors.response.use(
   	if (response.status === 200) {
   		if (response.data.code == '0000'){
 	        return response;
-  		}else if (response.data.code == 1002 || response.data.code == 9001) {
+  		}else if (response.data.code == '1002' || response.data.code == '9001') {
   			console.log(response.data.code);
 	        Message({
 	          message: response.data.msg,
@@ -42,7 +42,7 @@ axios.interceptors.response.use(
 	        return
 	    }else{
 			Message({
-	          message: response.data.msg,
+	          message: response.data.msg || "请求错误!",
 	          type: 'warning'
 	        });
 	        return

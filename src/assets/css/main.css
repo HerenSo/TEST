@@ -34,6 +34,9 @@ a {
 .p-tb-10{
     padding: 10px 0;
 }
+.p-tb-20{
+    padding: 30px 0;
+}
 .p-tb-30{
     padding: 30px 0;
 }
@@ -115,7 +118,7 @@ a {
 
 /*下拉*/
 .courses{
-	width: 100%;
+	/*width: 100%;*/
 }
 .coursesList button{
 	padding: 4px 8px !important;
@@ -130,7 +133,16 @@ a {
 	padding: 6px 15px !important;
 }
 .el-popper[x-placement^=bottom] .popper__arrow{
-	left: 40% !important;
+	/*left: 40% !important;*/
+}
+.material{
+    padding: 10px 20px;
+}
+.material button.el-button--primary{
+    padding: 4px 8px !important;
+    color: #fff;
+    background-color: #409EFF;
+    border-color: #409EFF;
 }
 
 .content-box {
