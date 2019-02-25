@@ -244,7 +244,7 @@
 		    		}
                 }).then((res) => {
                 	if(res.status == 200 && res.data.code == '0000'){
-	                	this.total = res.data.data.records;
+	                	this.total = res.data.data.total;
 //	                	console.log(this.total)
 	                    this.tableData = res.data.data.rows;
 	                }

@@ -21,6 +21,7 @@
 		  :data="data"
 		  :props="defaultProps"
 		  node-key="id"
+		  highlight-current
 		  accordion
 		  @node-click="handleNodeClick">
 		</el-tree>

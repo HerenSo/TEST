@@ -47,9 +47,10 @@
             <el-table-column fixed="right" label="操作" width="190" align="center">
                 <template slot-scope="scope">
                     <el-button type="text" icon="el-icon-lx-attention" @click="handleCheck(data[scope.$index].id,1)">查看</el-button>
-                    <el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" v-if="data[scope.$index].shelfStatus == 5" @click="handleCheck(data[scope.$index].id,2)">审核</el-button>
-                    <el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" v-if="data[scope.$index].shelfStatus == 10" @click="handleCheck(data[scope.$index].id,2)">反审核</el-button>
-                    <el-button type="text" class="text-color-success" icon="el-icon-lx-tag" @click="handleCheck(data[scope.$index].id,3)">上架</el-button>
+                    <el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" v-if="data[scope.$index].auditStatus == 5 || data[scope.$index].auditStatus == 15" @click="handleCheck(data[scope.$index].id,2)">审核</el-button>
+                    <el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" v-if="data[scope.$index].auditStatus == 10" @click="handleCheck(data[scope.$index].id,2)">反审核</el-button>
+                    <el-button type="text" class="text-color-success" icon="el-icon-lx-tag" v-if="data[scope.$index].shelfStatus == 5" @click="handleCheck(data[scope.$index].id,3)">上架</el-button>
+                    <el-button type="text" class="text-color-success" icon="el-icon-lx-tag" v-if="data[scope.$index].shelfStatus == 10" @click="handleCheck(data[scope.$index].id,3)">下架</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -175,7 +176,7 @@
 		    		}
                 }).then((res) => {
                     if(res.status == 200 && res.data.code == '0000'){
-	                	this.total = res.data.data.records;
+	                	this.total = res.data.data.total;
 //	                	console.log(this.total)
 	                    this.tableData = res.data.data.rows;
 	                }
