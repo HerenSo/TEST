@@ -25,15 +25,15 @@
 			    </el-date-picker>
 			</div>
 			<el-select v-model="auditStatus" placeholder="审核状态" class="handle-select m-r-10">
-                <el-option key="0" label="全部" value="" ></el-option>
+                <el-option key="0" label="全部" value="全部" ></el-option>
                 <el-option :key="item.id" :label="item.label" :value="item.value" v-for="item in auditStatusList"></el-option>
             </el-select>
 			<el-select v-model="shelfStatus" placeholder="上架状态" class="handle-select m-r-10">
-                <el-option key="0" label="全部" value="" ></el-option>
+                <el-option key="0" label="全部" value="全部" ></el-option>
                 <el-option :key="item.id" :label="item.label" :value="item.value" v-for="item in shelfStatusList"></el-option>
             </el-select>
 	        <el-button type="primary" icon="search" @click="search" class="m-r-10">搜索</el-button>
-	        <router-link to="elementAdd"><el-button type="primary" icon="search" >新增</el-button></router-link>
+	        <el-button type="primary" icon="search" @click="add">新增</el-button>
         </div>
         <el-table :data="data" border class="table" stripe ref="multipleTable" @selection-change="handleSelectionChange">
             <!--<el-table-column type="selection" width="55" align="center"></el-table-column>-->
@@ -53,7 +53,7 @@
             </el-table-column>
             <el-table-column fixed="right" label="操作" width="120" align="center">
                 <template slot-scope="scope">
-                    <el-button type="text" icon="el-icon-lx-attention" @click="handleCheck(scope.$index, scope.row)">查看</el-button>
+                    <el-button type="text" icon="el-icon-lx-attention" @click="handleCheck(data[scope.$index].id)">查看</el-button>
                     <el-button type="text" icon="el-icon-edit" @click="handleEdit(data[scope.$index].id,data[scope.$index].courseId,data[scope.$index].parentId)">编辑</el-button>
                 </template>
             </el-table-column>
@@ -64,7 +64,7 @@
         </div>
         
         <!-- 编辑弹出框 -->
-        <el-dialog title="编辑" :visible.sync="editVisible" width="40%">
+        <!--<el-dialog title="编辑" :visible.sync="editVisible" width="40%">
             <el-form ref="form" :model="form" label-width="120px">
             	<el-row :gutter="20">
             		<el-col :span="12">
@@ -124,6 +124,7 @@
                 <el-button type="primary" @click="saveEdit">确 定</el-button>
             </span>
         </el-dialog>
+	-->
 	</div>
 </template>
 
@@ -152,8 +153,9 @@
                     name: '',
                     address: ''
                 },
-                elId:1,
-                elParentId:0,
+                elId:null,
+                elParentId:null,
+                studyCourses:null,
                 idx: -1,
                 total: 1
             }
@@ -163,22 +165,32 @@
 	        	console.log(data)
 	        	this.elId = data.id;
 	        	this.elParentId = data.parentId;
+	        	this.studyCourses = data.studyCourses;
 	      	})
          	// 获取审核状态数据
-         	this.$axios.get("/api/app/combobox/auditStatus/list").then((res) => {
-				if(res.status=="200" && res.data.code == '0000'){
-					this.auditStatusList = res.data.data;
-					localStorage.setItem("auditStatus",JSON.stringify(this.auditStatusList));
-					console.log(this.auditStatusList)
-				}
-			})
+         	if(localStorage.getItem("auditStatus")){
+         		this.auditStatusList = JSON.parse(localStorage.getItem("auditStatus"));
+         	}else{
+         		this.$axios.get("/api/app/combobox/auditStatus/list").then((res) => {
+					if(res.status=="200" && res.data.code == '0000'){
+						this.auditStatusList = res.data.data;
+						localStorage.setItem("auditStatus",JSON.stringify(this.auditStatusList));
+						// console.log(this.auditStatusList)
+					}
+				})
+         	}
+         	
          	// 获取上架状态数据
-         	this.$axios.get("/api/app/combobox/shelfStatus/list").then((res) => {
-				if(res.status=="200" && res.data.code == '0000'){
-					this.shelfStatusList = res.data.data;
-					localStorage.setItem("shelfStatus",JSON.stringify(this.shelfStatusList));
-				}
-			})
+         	if(localStorage.getItem("shelfStatus")){
+         		this.shelfStatusList = JSON.parse(localStorage.getItem("shelfStatus"));
+         	}else{
+         		this.$axios.get("/api/app/combobox/shelfStatus/list").then((res) => {
+					if(res.status=="200" && res.data.code == '0000'){
+						this.shelfStatusList = res.data.data;
+						localStorage.setItem("shelfStatus",JSON.stringify(this.shelfStatusList));
+					}
+				})
+         	}
             this.getData();
         },
         computed: {
@@ -207,7 +219,6 @@
             endTime: function () {
             	return this.date[1];
 		    }
-            
         },
         methods: {
             // 分页导航
@@ -217,7 +228,7 @@
             },
             // 获取 list数据
             getData() {
-            	console.log(this.date)
+            	console.log(this.elParentId)
                 this.$axios.get("/api/app/knowledgeTree/list",{
                     params:{
 		    			"courseId": this.elId, // 学科ID
@@ -232,9 +243,11 @@
 						"page": this.cur_page // 当前页码
 		    		}
                 }).then((res) => {
-                	this.total = res.data.data.records;
-                	console.log(this.total)
-                    this.tableData = res.data.data.rows;
+                	if(res.status == 200 && res.data.code == '0000'){
+	                	this.total = res.data.data.records;
+//	                	console.log(this.total)
+	                    this.tableData = res.data.data.rows;
+	                }
                 })
 //              .catch(error => {
 //		          	this.$message({
@@ -247,39 +260,32 @@
             	this.cur_page = 1;
                 this.getData();
             },
-            formatter(row, column) {
-                return row.address;
-            },
-            filterTag(value, row) {
-                return row.tag === value;
+            add() {
+            	this.$router.push({
+	                path:'/elementAdd',
+	                name: 'elementAdd',
+	                query: { 
+                    	"parentId": this.elParentId, // 父节点ID，顶级父节点传0
+	    				"courseId": this.elId,
+	    				"courseName": this.studyCourses
+	                }
+	            })
             },
             handleEdit(id,courseId,parentId) {
-            	console.log(id,courseId,parentId);
             	this.$router.push('/elementUpdate?id='+id);
             },
-            handleCheck(index, row) {
-                this.idx = index;
-                this.delVisible = true;
+            handleCheck(id,courseId,parentId) {
+            	console.log(id);
+                this.$router.push('/elementDetails?id='+id);
             },
             handleSelectionChange(val) {
                 this.multipleSelection = val;
-            },
-            // 保存编辑
-            saveEdit() {
-                this.$set(this.tableData, this.idx, this.form);
-                this.editVisible = false;
-                this.$message.success(`修改第 ${this.idx+1} 行成功`);
-            },
-            // 确定删除
-            deleteRow(){
-                this.tableData.splice(this.idx, 1);
-                this.$message.success('删除成功');
-                this.delVisible = false;
             }
        	},
        	watch:{
 	        elId(val, oldVal){//普通的watch监听
-	            console.log("a: "+val, oldVal);
+//	            console.log("a: "+val, oldVal);
+	            this.cur_page = 1;
 	            this.getData();
 	        }
 	    }

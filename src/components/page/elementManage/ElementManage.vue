@@ -21,26 +21,6 @@
 		name: 'elementManage',
 		components: {
 			elementTree,elementTable
-		},
-		data() {
-	      	return {
-		        data: [{
-		          label: '一级 1',
-		          children: [{
-		            label: '二级 1-1',
-		            children: [{
-		              label: '三级 1-1-1'
-		            }]
-		          }]
-		        }],
-		        haveCourse: 1,
-		        defaultProps: {
-		          label: 'label',
-		          children: 'children',
-		        }
-		    };
-	    },
-		mounted: function() {
 		}
 	}
 </script>

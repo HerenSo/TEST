@@ -88,7 +88,7 @@
 	        	id: data.id,
 	        	parentId: data.parentId
 	        }
-	        bus.$emit('elParam', elParam)
+	        bus.$emit('elParam', elParam);
 	      },
 	      selectCourse(id,courseName,studyPeriod) {
 	      	console.log(id)
@@ -122,15 +122,17 @@
 	    			"haveGrade": "1"
 	    		}
 			}).then(res => {
-	          	this.material = res.data.data;
-	          	res.data.data[0].select = true; // 默认选中第一个
-	          	this.gradeList = res.data.data[0].grades;
-	          	res.data.data[0].grades[0].select = true; // 默认选中第一个
-	          	this.materialName = this.material[0].materialName;
-	          	this.gradeName = this.gradeList[0].gradeName;
-	          	this.gradeId = this.gradeList[0].id;
-		        this.materialId = this.material[0].id;
-	    		this.queryCoursesData(); // 请求树
+				if(res.status == 200 && res.data.code == '0000'){
+		          	this.material = res.data.data;
+		          	res.data.data[0].select = true; // 默认选中第一个
+		          	this.gradeList = res.data.data[0].grades;
+		          	res.data.data[0].grades[0].select = true; // 默认选中第一个
+		          	this.materialName = this.material[0].materialName;
+		          	this.gradeName = this.gradeList[0].gradeName;
+		          	this.gradeId = this.gradeList[0].id;
+			        this.materialId = this.material[0].id;
+		    		this.queryCoursesData(); // 请求树
+		    	}
 	        });
 	     },
 	     queryCoursesData() {
@@ -142,9 +144,15 @@
 	    			"courseId": this.courseId
 	    		}
 			}).then(res => {
-//	          	if(res.status == 200 && res.data.code == '0000'){
+	          	if(res.status == 200 && res.data.code == '0000'){
 		          	this.data = res.data.data;
-//	          	}
+		          	console.log(this.data);
+		          	let data = {
+		          		id:this.data[0].id,
+		          		parentId:this.data[0].parentId
+		          	}
+		          	this.handleNodeClick(data);
+	          	}
 	       	});
 	     }
 	    },

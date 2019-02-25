@@ -70,7 +70,7 @@
 				          localStorage.setItem("userToken",this.userToken);
 //				          // 将用户token保存到vuex中
 //				          _this.changeLogin({ Authorization: _this.userToken });
-				          _this.$router.push('/dashboard');
+				          _this.$router.push('/elementManage');
 				        }).catch(error => {
 //				          alert('账号或密码错误');
 				          console.log(error);

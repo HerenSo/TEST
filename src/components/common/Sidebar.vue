@@ -39,8 +39,53 @@
                 collapse: false,
                 items: [
                     {
-                        icon: 'el-icon-lx-home',
+                        icon: 'el-icon-lx-calendar',
                         index: '1',
+                        title: '知识元管理',
+                        subs: [
+                            {
+                                index: 'elementManage',
+                                title: '知识元管理'
+                            },
+                            {
+                                index: 'elementCheck',
+                                title: '知识元审核'
+                            }
+                        ]
+                    },
+                    {
+                        icon: 'el-icon-lx-news',
+                        index: '2',
+                        title: '体系结构管理',
+                        subs: [
+                            {
+                                index: 'systemType',
+                                title: '体系结构类型管理'
+                            },
+                            {
+                                index: 'systemManage',
+                                title: '体系结构管理'
+                            }
+                        ]
+                    },
+                    {
+                        icon: 'el-icon-lx-text',
+                        index: '3',
+                        title: '试题管理',
+                        subs: [
+                            {
+                                index: 'testManage',
+                                title: '试题管理'
+                            },
+                            {
+                                index: 'form',
+                                title: '试题审核'
+                            }
+                        ]
+                    },
+                    {
+                        icon: 'el-icon-lx-home',
+                        index: '4',
                         title: '系统管理',
                         subs: [
                             {
@@ -58,51 +103,6 @@
                             {
                                 index: 'markdown',
                                 title: '日志管理'
-                            }
-                        ]
-                    },
-                    {
-                        icon: 'el-icon-lx-calendar',
-                        index: '2',
-                        title: '知识元管理',
-                        subs: [
-                            {
-                                index: 'elementManage',
-                                title: '知识元管理'
-                            },
-                            {
-                                index: 'elementCheck',
-                                title: '知识元审核'
-                            }
-                        ]
-                    },
-                    {
-                        icon: 'el-icon-lx-news',
-                        index: '3',
-                        title: '体系结构管理',
-                        subs: [
-                            {
-                                index: 'systemType',
-                                title: '体系结构类型管理'
-                            },
-                            {
-                                index: 'systemManage',
-                                title: '体系结构管理'
-                            }
-                        ]
-                    },
-                    {
-                        icon: 'el-icon-lx-text',
-                        index: '4',
-                        title: '试题管理',
-                        subs: [
-                            {
-                                index: 'testManage',
-                                title: '试题管理'
-                            },
-                            {
-                                index: 'form',
-                                title: '试题审核'
                             }
                         ]
                     },

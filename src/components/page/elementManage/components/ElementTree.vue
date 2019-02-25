@@ -46,7 +46,7 @@
 		        courses: [],
 		        studyPeriod:'', // 初始默认 学级
 		        courseName:'', // 初始默认 学课
-		        courseId: 1, // 初始默认 学课ID
+		        courseId: null, // 初始默认 学课ID
 		        defaultProps: {
 		          label: 'label',
 		          children: 'children',
@@ -57,7 +57,8 @@
 	      handleNodeClick(data) {
 	        let elParam = {
 	        	id: data.id,
-	        	parentId: data.parentId
+	        	parentId: data.parentId,
+	        	studyCourses: this.studyCourses
 	        }
 	        bus.$emit('elParam', elParam);
 	      },
@@ -75,9 +76,10 @@
 	    			"courseId": this.courseId
 	    		}
 			}).then(res => {
-//	          	if(res.status == 200 && res.data.code == '0000'){
+	          	if(res.status == 200 && res.data.code == '0000'){
 		          	this.data = res.data.data;
-//	          	}
+		          	this.handleNodeClick(this.data[0]);
+	          	}
 	       });
 	      }
 	    },
@@ -87,7 +89,6 @@
 		    }
 		},
 	    mounted: function () {
-	    	this.queryCoursesData();
 	    	// 学科
 			this.$axios.get('/api/app/study/period/tree',{
 	    		params:{
@@ -98,8 +99,10 @@
 	          	if(res.status == 200 && res.data.code == '0000'){
 //		          	this.courses = JSON.parse(JSON.stringify(res.data.data));
 		          	this.courses = res.data.data;
+		          	this.courseId = this.courses[0].courses[0].id;
 		          	this.studyPeriod = this.courses[0].studyPeriod;
 		          	this.courseName = this.courses[0].courses[0].courseName;
+		          	this.queryCoursesData();
 	          	}
 	        });
 	        

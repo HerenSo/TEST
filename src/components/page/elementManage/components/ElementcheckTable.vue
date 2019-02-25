@@ -2,30 +2,27 @@
 	<div class="container">
 		<div class="handle-box">
 			<div class="demo-input-suffix">
-				学科：
-				<el-input v-model="select_word" placeholder="" clearable class="handle-input-sm m-r-10"></el-input>
-			</div>
-			<div class="demo-input-suffix">
-				科类：
-				<el-input v-model="select_word" placeholder="" clearable class="handle-input-sm m-r-10"></el-input>
-			</div>
-			<div class="demo-input-suffix">
 				知识元名称：
-				<el-input v-model="select_word" placeholder="" clearable class="handle-input-md m-r-10"></el-input>
+				<el-input v-model="name" placeholder="" clearable class="handle-input-md m-r-10"></el-input>
 			</div>
 			<div class="demo-input-suffix">
-				创建时间：
 				<el-date-picker
-			      v-model="form.date"
-			      value-format="yyyy-MM-dd"
-			      type="date"
-			      placeholder="选择日期"
-			      class="m-r-10">
+				  class="data_range m-r-10"
+			      v-model="date"
+			      type="daterange"
+			      range-separator="至"
+			      start-placeholder="开始日期"
+			      end-placeholder="结束日期"
+			      value-format="yyyy-MM-dd">
 			    </el-date-picker>
 			</div>
-			<el-select v-model="select_cate" placeholder="状态" class="handle-select m-r-10">
-                <el-option key="1" label="已审核" value="已审核"></el-option>
-                <el-option key="2" label="未审核" value="未审核"></el-option>
+			<el-select v-model="auditStatus" placeholder="审核状态" class="handle-select m-r-10">
+                <el-option key="0" label="全部" value="全部" ></el-option>
+                <el-option :key="item.id" :label="item.label" :value="item.value" v-for="item in auditStatusList"></el-option>
+            </el-select>
+			<el-select v-model="shelfStatus" placeholder="上架状态" class="handle-select m-r-10">
+                <el-option key="0" label="全部" value="全部" ></el-option>
+                <el-option :key="item.id" :label="item.label" :value="item.value" v-for="item in shelfStatusList"></el-option>
             </el-select>
 	        <el-button type="primary" icon="search" @click="search">搜索</el-button>
         </div>
@@ -45,86 +42,28 @@
             </el-table-column>
             <el-table-column prop="auditStatusName" label="审核状态" >
             </el-table-column>
+            <el-table-column prop="shelfStatusName" label="上架状态" >
+            </el-table-column>
             <el-table-column fixed="right" label="操作" width="190" align="center">
                 <template slot-scope="scope">
-                    <el-button type="text" icon="el-icon-lx-attention" @click="handleCheck(scope.$index, scope.row)">查看</el-button>
-                    <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">审核</el-button>
-                    <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">上架</el-button>
+                    <el-button type="text" icon="el-icon-lx-attention" @click="handleCheck(data[scope.$index].id,1)">查看</el-button>
+                    <el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" v-if="data[scope.$index].shelfStatus == 5" @click="handleCheck(data[scope.$index].id,2)">审核</el-button>
+                    <el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" v-if="data[scope.$index].shelfStatus == 10" @click="handleCheck(data[scope.$index].id,2)">反审核</el-button>
+                    <el-button type="text" class="text-color-success" icon="el-icon-lx-tag" @click="handleCheck(data[scope.$index].id,3)">上架</el-button>
                 </template>
             </el-table-column>
         </el-table>
         <div class="pagination">
-            <el-pagination background @current-change="handleCurrentChange" layout="prev, pager, next" :total="1000">
+            <el-pagination background @current-change="handleCurrentChange" :page-count="total" layout="prev, pager, next">
             </el-pagination>
         </div>
-        
-        <!-- 编辑弹出框 -->
-        <el-dialog title="编辑" :visible.sync="editVisible" width="40%">
-            <el-form ref="form" :model="form" label-width="120px">
-            	<el-row :gutter="20">
-            		<el-col :span="12">
-		                <el-form-item label="知识元名称">
-		                    <el-input v-model="form.name"></el-input>
-		                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="体系类型">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="学科">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="科类">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="审核状态">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="上架状态">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="创建人">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="创建日期">
-	                    <el-date-picker type="date" placeholder="选择日期" v-model="form.date" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="审核人">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="审核日期">
-	                    <el-date-picker type="date" placeholder="选择日期" v-model="form.date" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
-	                </el-form-item>
-	                </el-col>
-                </el-row>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="editVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveEdit">确 定</el-button>
-            </span>
-        </el-dialog>
 	</div>
 </template>
 
 <script>
+    import bus from '../../../common/bus';
 	export default{
-		name: "systemcheckTable",
+		name: "elementcheckTable",
 		data() {
             return {
                 tableData: [],
@@ -136,14 +75,54 @@
                 is_search: false,
                 editVisible: false,
                 delVisible: false,
+                name: '',
+                date: '',
+                auditStatusList: [],
+                shelfStatusList: [],
+                auditStatus: '',
+                shelfStatus: '',
                 form: {
                     name: '',
                     address: ''
                 },
-                idx: -1
+                elId:null,
+                elParentId:null,
+                studyCourses:null,
+                idx: -1,
+                total: 1
             }
-        },
-        created() {
+       },
+        mounted() {
+         	bus.$on('elParam', (data) => {
+//	        	console.log(data)
+	        	this.elId = data.id;
+	        	this.elParentId = data.parentId;
+	        	this.studyCourses = data.studyCourses;
+	      	})
+         	// 获取审核状态数据
+         	if(localStorage.getItem("auditStatus")){
+         		this.auditStatusList = JSON.parse(localStorage.getItem("auditStatus"));
+         	}else{
+         		this.$axios.get("/api/app/combobox/auditStatus/list").then((res) => {
+					if(res.status=="200" && res.data.code == '0000'){
+						this.auditStatusList = res.data.data;
+						localStorage.setItem("auditStatus",JSON.stringify(this.auditStatusList));
+						// console.log(this.auditStatusList)
+					}
+				})
+         	}
+         	
+         	// 获取上架状态数据
+         	if(localStorage.getItem("shelfStatus")){
+         		this.shelfStatusList = JSON.parse(localStorage.getItem("shelfStatus"));
+         	}else{
+         		this.$axios.get("/api/app/combobox/shelfStatus/list").then((res) => {
+					if(res.status=="200" && res.data.code == '0000'){
+						this.shelfStatusList = res.data.data;
+						localStorage.setItem("shelfStatus",JSON.stringify(this.shelfStatusList));
+					}
+				})
+         	}
             this.getData();
         },
         computed: {
@@ -165,7 +144,13 @@
                         }
                     }
                 })
-            }
+            },
+            beginTime: function () {
+            	return this.date[0];
+		    },
+            endTime: function () {
+            	return this.date[1];
+		    }
         },
         methods: {
             // 分页导航
@@ -177,60 +162,44 @@
             getData() {
                 this.$axios.get("/api/app/knowledgeTree/list",{
                     params:{
-		    			"courseId": 1, // 学科ID
-		    			"parentId": 0, // 父节点ID，顶级父节点传0
-		    			"beginTime": "", // 开始日期，没有则传空字符串或不传
-		    			"endTime": "", // 结束日期，没有则传空字符串或不传
-		    			"name": "", // 知识元名称，没有则传空字符串或不传
+		    			"courseId": this.elId, // 学科ID
+		    			"parentId": this.elParentId, // 父节点ID，顶级父节点传0
+		    			"beginTime": this.beginTime, // 开始日期，没有则传空字符串或不传
+		    			"endTime": this.endTime, // 结束日期，没有则传空字符串或不传
+		    			"name": this.name, // 知识元名称，没有则传空字符串或不传
 		    			"category": "", // 学科类型，没有则传空字符串或不传
-		    			"auditStatus": "", // 审核状态，没有则传空字符串或不传
-		    			"shelfStatus": "", // 上架状态，没有则传空字符串或不传
-		    			"rows": 25, // 每页记录数，默认为25
-						"page": 1 // 当前页码
+		    			"auditStatus": this.auditStatus, // 审核状态，没有则传空字符串或不传
+		    			"shelfStatus": this.shelfStatus, // 上架状态，没有则传空字符串或不传
+		    			"rows": 10, // 每页记录数，默认为25
+						"page": this.cur_page // 当前页码
 		    		}
                 }).then((res) => {
-                    this.tableData = res.data.data.rows;
+                    if(res.status == 200 && res.data.code == '0000'){
+	                	this.total = res.data.data.records;
+//	                	console.log(this.total)
+	                    this.tableData = res.data.data.rows;
+	                }
                 })
             },
             search() {
-                this.is_search = true;
+            	this.cur_page = 1;
+                this.getData();
             },
-            formatter(row, column) {
-                return row.address;
-            },
-            filterTag(value, row) {
-                return row.tag === value;
-            },
-            handleEdit(index, row) {
-                this.idx = index;
-                const item = this.tableData[index];
-                this.form = {
-                    name: item.name,
-                    date: item.date,
-                    address: item.address
-                }
-                this.editVisible = true;
-            },
-            handleCheck(index, row) {
-                this.idx = index;
-                this.delVisible = true;
+            handleCheck(id,type) {
+//          	console.log(id + "--")
+                this.$router.push('/elementDetails?id='+id+'&type='+type);
             },
             handleSelectionChange(val) {
                 this.multipleSelection = val;
-            },
-            // 保存编辑
-            saveEdit() {
-                this.$set(this.tableData, this.idx, this.form);
-                this.editVisible = false;
-                this.$message.success(`修改第 ${this.idx+1} 行成功`);
-            },
-            // 确定删除
-            deleteRow(){
-                this.tableData.splice(this.idx, 1);
-                this.$message.success('删除成功');
-                this.delVisible = false;
             }
-        }
+        },
+       	watch:{
+	        elId(val, oldVal){//普通的watch监听
+//	            console.log("a: "+val, oldVal);
+	            this.cur_page = 1;
+	            this.getData();
+	        }
+	    }
 	}
 </script>
 

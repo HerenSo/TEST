@@ -3,21 +3,22 @@
 		<div class="handle-box">
 			<div class="demo-input-suffix">
 				节点名称：
-				<el-input v-model="select_word" placeholder="" clearable class="handle-input-sm m-r-10"></el-input>
+				<el-input v-model="contentName" placeholder="" clearable class="handle-input-sm m-r-10"></el-input>
 			</div>
 			<div class="demo-input-suffix">
-				创建时间：
 				<el-date-picker
-			      v-model="form.date"
-			      value-format="yyyy-MM-dd"
-			      type="date"
-			      placeholder="选择日期"
-			      class="m-r-10">
+				  class="data_range m-r-10"
+			      v-model="date"
+			      type="daterange"
+			      range-separator="至"
+			      start-placeholder="开始日期"
+			      end-placeholder="结束日期"
+			      value-format="yyyy-MM-dd">
 			    </el-date-picker>
 			</div>
-			<el-select v-model="select_cate" placeholder="状态" class="handle-select m-r-10">
-                <el-option key="1" label="已审核" value="已审核"></el-option>
-                <el-option key="2" label="未审核" value="未审核"></el-option>
+			<el-select v-model="auditStatus" placeholder="审核状态" class="handle-select m-r-10">
+                <el-option key="0" label="全部" value="全部" ></el-option>
+                <el-option :key="item.id" :label="item.label" :value="item.value" v-for="item in auditStatusList"></el-option>
             </el-select>
 	        <el-button type="primary" icon="search" @click="search">搜索</el-button>
         </div>
@@ -48,7 +49,7 @@
             </el-table-column>
         </el-table>
         <div class="pagination">
-            <el-pagination background @current-change="handleCurrentChange" :page-count="total" layout="prev, pager, next" :total="1000">
+            <el-pagination background @current-change="handleCurrentChange" :page-count="total" layout="prev, pager, next" >
             </el-pagination>
         </div>
         
@@ -133,6 +134,7 @@
                 editVisible: false,
                 delVisible: false,
                 contentName: '',
+                date: '',
                 auditStatusList: [],
                 auditStatus: '',
                 form: {
@@ -140,18 +142,31 @@
                     address: ''
                 },
                 idx: -1,
-                elId:1,
-                elParentId:0,
+                elId:null,
+                elParentId:null,
                 total: 1
             }
         },
         mounted() {
         	bus.$on('elParam', (data) => {
-	        	console.log(data)
+	        	// console.log(data)
 	        	this.elId = data.id;
 	        	this.elParentId = data.parentId;
+           		this.getData();
 	      	})
-            this.getData();
+        	// 获取审核状态数据
+         	if(localStorage.getItem("auditStatus")){
+         		this.auditStatusList = JSON.parse(localStorage.getItem("auditStatus"));
+         	}else{
+         		this.$axios.get("/api/app/combobox/auditStatus/list").then((res) => {
+					if(res.status=="200" && res.data.code == '0000'){
+						this.auditStatusList = res.data.data;
+						localStorage.setItem("auditStatus",JSON.stringify(this.auditStatusList));
+						// console.log(this.auditStatusList)
+					}
+				})
+         	}
+	      	this.getData();
         },
         computed: {
             data() {
@@ -172,7 +187,13 @@
                         }
                     }
                 })
-            }
+            },
+            beginTime: function () {
+            	return this.date[0];
+		    },
+            endTime: function () {
+            	return this.date[1];
+		    }
         },
         methods: {
             // 分页导航
@@ -188,20 +209,23 @@
 		    			"parentId": this.elParentId, // 父节点ID，顶级父节点传0
 		    			"beginTime": this.beginTime, // 开始日期，没有则传空字符串或不传
 		    			"endTime": this.endTime, // 结束日期，没有则传空字符串或不传
-		    			"contentName": this.contentName, // 知识元名称，没有则传空字符串或不传
+		    			"contentName": this.contentName, // 体系名称，没有则传空字符串或不传
 		    			"category": "", // 学科类型，没有则传空字符串或不传
 		    			"auditStatus": this.auditStatus, // 审核状态，没有则传空字符串或不传
 		    			"rows": 1, // 每页记录数，默认为25
 						"page": this.cur_page // 当前页码
 		    		}
                 }).then((res) => {
-                	this.total = res.data.data.records;
-                	console.log(this.tableData)
-                    this.tableData = res.data.data.rows;
+                	if(res.status == 200 && res.data.code == '0000'){
+	                	this.total = res.data.data.records;
+	                	// console.log(this.total)
+	                    this.tableData = res.data.data.rows;
+	                }
                 })
             },
             search() {
-                this.is_search = true;
+            	this.cur_page = 1;
+                this.getData();
             },
             formatter(row, column) {
                 return row.address;
@@ -242,7 +266,13 @@
                 this.$message.success('删除成功');
                 this.delVisible = false;
             }
-        }
+        },
+       	watch:{
+	        elId(val, oldVal){//普通的watch监听
+	            // console.log("a: "+val, oldVal);
+	            this.getData();
+	        }
+	    }
 	}
 </script>
 

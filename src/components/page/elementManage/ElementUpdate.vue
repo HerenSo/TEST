@@ -68,7 +68,7 @@
         <div class="text-center">
 	        <span slot="footer" class="dialog-footer">
 	            <router-link to='elementManage'class="m-r-10"><el-button >取 消</el-button></router-link>
-	            <el-button type="primary" @click="saveEdit">确 定</el-button>
+	            <el-button type="primary" @click="saveEdit" >确 定</el-button>
 	        </span>
         </div>
         </div>
@@ -77,6 +77,7 @@
 
 <script>
     import bus from '../../common/bus';
+	import router from '@/router';
 	export default{
 		name: "systemTable",
 		data() {
@@ -96,7 +97,8 @@
 		          name: [
 		            { required: true, message: '请输入知识元名称', trigger: 'blur' }
 		          ]
-	            }
+	            },
+	            isDisable: true
             }
         },
         created(){
@@ -104,36 +106,48 @@
          	console.log(this.form.id)
         },
         mounted() {
-        	
          	this.$axios.get("/api/app/knowledgeTree/get",{
                 params:{
 	    			"id": this.form.id
 	    		}
             }).then((res) => {
-            	let data = res.data.data;
-                this.form.id = data.id;
-                this.form.name = data.name;
-                this.form.category = data.category;
-                this.form.courseName = data.courseName;
-                this.form.courseId = data.courseId;
-                this.form.parentId = data.parentId;
-                this.form.seq = data.seq;
-                this.form.shelfStatus = data.shelfStatus;
-                this.form.remarks = data.remarks;
-            	console.log(this.form)
+            	if(res.status == 200 && res.data.code == '0000'){
+	            	let data = res.data.data;
+	                this.form.id = data.id;
+	                this.form.name = data.name;
+	                this.form.category = data.category;
+	                this.form.courseName = data.courseName;
+	                this.form.courseId = data.courseId;
+	                this.form.parentId = data.parentId;
+	                this.form.seq = data.seq;
+	                this.form.shelfStatus = data.shelfStatus;
+	                this.form.remarks = data.remarks;
+	            	// console.log(this.form)
+            	}
             })
         },
         methods: {
         	// 保存编辑
             saveEdit() {
-            	this.$axios.post("/api/app/knowledgeTree/update",
-	                this.form
-	            ).then((res) => {
-	            	this.$message({
-			          message: "提交成功",
-			          type: 'success'
-			        });
-	            })
+            	if(this.isDisable){
+            		this.isDisable = false;
+            		this.$axios.post("/api/app/knowledgeTree/update",
+	                	this.form
+		            ).then((res) => {
+		            	if(res.status == 200 && res.data.code == '0000'){
+			            	this.$message({
+					          message: "提交成功",
+					          type: 'success',
+					          onClose:function(){
+					          	router.push('/elementManage');
+					          }
+					        });
+				        }else{
+				        	this.isDisable = true;
+				        }
+		            })
+            	}
+            	
             }
        }
    }

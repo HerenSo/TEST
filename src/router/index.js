@@ -6,6 +6,10 @@ Vue.use(Router);
 export default new Router({
     routes: [
         {
+            path: '/',
+            component: resolve => require(['../components/page/Login.vue'], resolve)
+        },
+        {
             path: '/login',
             component: resolve => require(['../components/page/Login.vue'], resolve)
         },
@@ -34,6 +38,7 @@ export default new Router({
                 },
                 {
                     path: '/elementAdd',
+                    name: 'elementAdd',
                     component: resolve => require(['../components/page/elementManage/ElementAdd.vue'], resolve),
                     meta: { title: '知识元新增' }
                 },
@@ -41,6 +46,11 @@ export default new Router({
                     path: '/elementUpdate',
                     component: resolve => require(['../components/page/elementManage/ElementUpdate.vue'], resolve),
                     meta: { title: '知识元修改' }
+                },
+                {
+                    path: '/elementDetails',
+                    component: resolve => require(['../components/page/elementManage/ElementDetails.vue'], resolve),
+                    meta: { title: '知识元查看' }
                 },
                 {
                     path: '/systemManage',

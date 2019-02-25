@@ -7,18 +7,20 @@
        	</div>
         <div>
 			<el-row :gutter="20">
-				<el-col :span="24"><elementcheck-table></elementcheck-table></el-col>
+				<el-col :span="5"><element-tree></element-tree></el-col>
+				<el-col :span="19"><elementcheck-table></elementcheck-table></el-col>
 			</el-row>
 		</div>
 	</div>
 </template>
 
 <script>
+	import elementTree from './components/ElementTree.vue';
 	import elementcheckTable from './components/ElementcheckTable.vue';
 	export default{
 		name: 'elementCheck',
 		components: {
-			elementcheckTable
+			elementTree,elementcheckTable
 		}
 	}
 </script>
