@@ -4,67 +4,68 @@
 		<el-form ref="form" :model="form" label-width="120px" class="demo-ruleForm">
         	<el-row :gutter="20">
         		<el-col :span="12">
-	                <el-form-item label="知识元名称" required>
-	                    <el-input v-model="form.name"></el-input>
+	                <el-form-item label="体系名称" required>
+	                    <el-input v-model="form.contentName"></el-input>
 	                </el-form-item>
                	</el-col>
-        		<!--<el-col :span="12">
-                <el-form-item label="体系类型">
-                    <el-input v-model="form.address"></el-input>
+        		<el-col :span="12">
+                <el-form-item label="体系类型" required>
+                    <el-select v-model="form.type" placeholder="请选择体系类型">
+				      <el-option :label="item.label" :value="item.value" v-for="item in architectureType"></el-option>
+				    </el-select>
                 </el-form-item>
-               	</el-col>-->
+               	</el-col>
+            </el-row>
+        	<el-row :gutter="20">
+        		<el-col :span="12">
+                <el-form-item label="相关知识元" required>
+                    <el-button type="button"  @click="handleSelect">选择知识元</el-button>
+                </el-form-item>
+              	</el-col>
+        		<el-col>
+                <el-form-item label="已选知识元">
+              		<div class="demo-block">
+              			<el-tag
+						  :key="tag.knowledgeId"
+						  v-for="tag in form.knowledges"
+						  closable
+						  :disable-transitions="false"
+						  @close="handleClose(tag)">
+						  {{tag.knowledgeName}}
+						</el-tag>
+              		</div>
+              	</el-form-item>
+              	</el-col>
+            </el-row>
+        	<el-row :gutter="20">
         		<el-col :span="12">
                 <el-form-item label="学科">
-                    <el-input v-model="courseName" :disabled="true"></el-input>
+                    <el-input v-model="courseName" readonly></el-input>
                     <el-input v-model="form.courseId" class="hidden"></el-input>
                     <el-input v-model="form.parentId" class="hidden"></el-input>
                 </el-form-item>
                	</el-col>
         		<el-col :span="12">
-                <el-form-item label="科类" prop="category" required>
+                <el-form-item label="科类" prop="category">
                 	<el-select v-model="form.category" placeholder="请选择科类">
 				      <el-option label="普文" value="普文"></el-option>
 				      <el-option label="普理" value="普理"></el-option>
 				    </el-select>
                 </el-form-item>
-               	</el-col>
-        		<!--<el-col :span="12">
-                <el-form-item label="审核状态">
-                    <el-input v-model="form.address"></el-input>
-                </el-form-item>
-               	</el-col>-->
+               </el-col>
         		<el-col :span="12">
-                <el-form-item label="上架状态">
-					<el-select v-model="form.shelfStatus" placeholder="请选择上架状态">
-		                <el-option :key="item.id" :label="item.label" :value="item.value" v-for="item in shelfStatusList"></el-option>
-		           </el-select>
+                <el-form-item label="年级" required>
+                    <el-select v-model="form.gradeId" placeholder="请选择年级">
+				      <el-option :label="item.label" :value="item.value" v-for="item in architectureType"></el-option>
+				    </el-select>
                 </el-form-item>
                	</el-col>
-        		<!--<el-col :span="12">
-                <el-form-item label="创建人">
-                    <el-input v-model="form.address"></el-input>
-                </el-form-item>
-               	</el-col>-->
-        		<!--<el-col :span="12">
-                <el-form-item label="创建日期">
-                    <el-date-picker type="date" placeholder="选择日期" v-model="form.date" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
-                </el-form-item>
-               	</el-col>-->
         		<el-col :span="12">
-                <el-form-item label="排序">
-                    <el-input v-model="form.seq"></el-input>
+                <el-form-item label="归属人" required>
+                	<el-input v-model="form.owner"></el-input>
                 </el-form-item>
-               	</el-col>
-               	<el-col :span="24">
-               	<el-form-item label="备注">
-				    <el-input type="textarea" v-model="form.remarks"></el-input>
-				</el-form-item>
-				</el-col>
-        		<!--<el-col :span="12">
-                <el-form-item label="审核日期">
-                    <el-date-picker type="date" placeholder="选择日期" v-model="form.date" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
-                </el-form-item>
-                </el-col>-->
+               </el-col>
+            </el-row>
             </el-row>
         </el-form>
         <div class="text-center">
@@ -74,6 +75,41 @@
 	        </span>
         </div>
         </div>
+        <!-- 编辑弹出框 -->
+        <el-dialog title="选择知识元" :visible.sync="selectVisible" width="60%">
+            <el-form ref="form" :model="form" label-width="120px">
+            	<el-row :gutter="10">
+            		<el-col :span="24">
+            			<div class="p-10">
+						   <el-cascader
+						    expand-trigger="hover"
+						    :options="courses"
+						    v-model="selectedOptions"
+						    :props="props"
+						    @change="handleChange">
+						  </el-cascader>
+						</div>
+						<div class="">
+							<el-tree
+							  :data="data"
+							  show-checkbox
+							  default-expand-all
+							  node-key="id"
+							  ref="tree"
+							  highlight-current
+							  :props="defaultProps"
+							  accordion
+							  @node-click="">
+							</el-tree>
+						</div>
+            		</el-col>
+                </el-row>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="selectVisible = false">取 消</el-button>
+                <el-button type="primary" @click="saveSelect">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -83,14 +119,19 @@
 		name: "systemTable",
 		data() {
             return {
+            	data: [],
                 form: {
-                    "name": '', // 知识元名称
-					"category": '', // 学科类别
-					"courseId": null, //学科ID
-					"parentId": null, // 父节点ID,顶级传0
-					"seq": '', // 排序
-					"shelfStatus": '', //上架状态
-					"remarks": '' //备注
+                    "owner":"",		//		--归属人
+				    "gradeId":"",		//		--年级ID
+				    "materialId":"",	//		--教材ID
+				    "type":"",			//		--体系类型
+				    "category":"",	//		--学科类别
+				    "courseId":"",		//		--学科ID
+				    "parentId":"",	//			--父节点ID
+				    "seq":"",	//				--排序
+				    "remarks":"",//				--备注
+				    "knowledges":[],//			--知识元数组
+				    "contentName":""	//	--体系名称
                 },
                 rules: {
 		          name: [
@@ -100,24 +141,135 @@
 		            { required: true, message: '请选择学科类别', trigger: 'change' }
 		          ],
 	            },
+	            courses: [], // 学科列表
+		        material: [], // 教材列表
+		        courseId: null, // 初始默认 学课ID
 	            courseName: "", // 学科名称
-	            shelfStatusList: [],
-	            isDisable: true
+	            typeName:"",
+	            architectureType: [], // 体系类型
+	            auditStatus: "",
+	            defaultProps: {
+		          children: 'children',
+		          label: 'label'
+		        },
+		        props:{
+		        	label:'studyPeriod',
+		        	value: 'id',
+            		children: 'courses'
+		        },
+		        selectedOptions:[],
+	            isDisable: true, // 防止重复提交
+	            auditStatusName: "",
+//	            knowledges: [],
+	            selectVisible: false
             }
         },
         mounted() {
-        	// console.log(this.$route.query)
+        	this.queryArchitectureType();
+//        	 console.log(this.$route.query)
         	this.courseName = this.$route.query.courseName;
         	this.form.courseId = this.$route.query.courseId;
         	this.form.parentId = this.$route.query.parentId;
-        	this.shelfStatusList = JSON.parse(localStorage.getItem("shelfStatus"));
+        	this.form.materialId = this.$route.query.materialId;
+        	this.form.gradeId = this.$route.query.gradeId;
+        	this.auditStatus = JSON.parse(localStorage.getItem("auditStatus"));
+        	this.selectedOptions = [this.form.gradeId,this.form.courseId];
         },
         methods: {
+        	handleClose(tag) { // 删除知识元
+		        this.form.knowledges.splice(this.form.knowledges.indexOf(tag), 1);
+		        console.log(this.form.knowledges);
+		    },
+		    handleSelect() { // 点击选择知识元
+		    	this.queryCourse(); // 请求学科
+		    	this.selectVisible = true; // 控制弹窗显示隐藏
+		    },
+			handleChange(value) { // 选择学科
+		        console.log(value);
+		        this.courseId = value[value.length-1];
+//		      	this.queryMaterial();
+		      	this.queryCoursesData();
+		   },
+		    queryCourse() {
+		      	// 学科
+				this.$axios.get('/api/app/study/period/tree',{
+		    		params:{
+		    			"haveCourse": "1",
+		    			"haveGrade": "0"
+		    		}
+				}).then(res => {
+		          	if(res.status == 200 && res.data.code == '0000'){
+	//		          	this.courses = JSON.parse(JSON.stringify(res.data.data));
+			          	this.courses = res.data.data;
+			          	for(var i=0; i < this.courses.length; i++){
+			          		for(var j=0; j < this.courses[i].courses.length;j++){
+			          			this.courses[i].courses[j].studyPeriod = this.courses[i].courses[j].courseName;
+			          		}
+			          	}
+			          	this.courseId = this.courses[0].courses[0].id;
+			          	this.studyPeriod = this.courses[0].studyPeriod;
+			          	this.courseName = this.courses[0].courses[0].courseName;
+	    				this.queryCoursesData(); // 请求树
+		          	}
+		        });
+		     },
+		    queryCoursesData() {
+		      	// 请求树
+		        this.$axios.get('/api/app/knowledgeTree/tree',{
+		    		params:{
+		    			"courseId": this.courseId
+		    		}
+				}).then(res => {
+		          	if(res.status == 200 && res.data.code == '0000'){
+			          	this.data = res.data.data;
+	//		          	console.log(this.data);
+			          	let data = {
+			          		id:this.data[0].id,
+			          		parentId:this.data[0].parentId
+			          	}
+	//		          	console.log(this.data)
+		          	}
+		       	});
+		    },
+		    queryArchitectureType() {
+		    	// 请求体系类型
+		        this.$axios.get('/api/app/combobox/architecture/type').then(res => {
+		        	console.log(res)
+		          	if(res.status == 200 && res.data.code == '0000'){
+		          		
+			          	this.architectureType = res.data.data;
+	//		          	console.log(this.data);
+	//		          	console.log(this.data)
+		          	}
+		       	});
+		    },
+		    // 确定选择
+		    saveSelect() {
+		    	this.selectVisible = false; // 控制弹窗显示隐藏
+		    	let selectVal = this.$refs.tree.getCheckedNodes();
+		    	console.log(this.$refs.tree.getCheckedNodes());
+		    	var flat;
+		    	for(var i=0;i<selectVal.length;i++){
+		    		flat = true;
+		    		for(var j=0; j < this.form.knowledges.length;j++){
+		    			if(selectVal[i].id == this.form.knowledges[j].knowledgeId){
+		    				flat = false;
+		    			}
+		    		}
+		    		if(flat){
+		    			this.form.knowledges.push({
+			    			knowledgeId:selectVal[i].id,
+			    			knowledgeName:selectVal[i].label
+			    		})
+		    		}
+		    	}
+		    	console.log(this.form.knowledges)
+		    },
         	// 保存编辑
             saveAdd() {
             	if(this.isDisable){
             		this.isDisable = false;
-	            	this.$axios.post("/api/app/knowledgeTree/add",
+	            	this.$axios.post("/api/app/architectureTree/add",
 		                this.form
 		            ).then((res) => {
 		            	if(res.status == 200 && res.data.code == '0000'){
@@ -125,7 +277,7 @@
 					          message: "提交成功",
 					          type: 'success',
 					          onClose:function(){
-					          	router.push('/elementManage');
+					          	router.push('/systemType');
 					          }
 					        });
 				        }else{

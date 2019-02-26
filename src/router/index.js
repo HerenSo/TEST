@@ -59,6 +59,7 @@ export default new Router({
                 },
                 {
                     path: '/systemAdd',
+                    name: 'systemAdd',
                     component: resolve => require(['../components/page/systemManage/SystemAdd.vue'], resolve),
                     meta: { title: '体系结构新增' }
                 },

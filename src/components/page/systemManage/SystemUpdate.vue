@@ -200,7 +200,7 @@
 		    	this.queryCourse(); // 请求学科
 		    	this.selectVisible = true; // 控制弹窗显示隐藏
 		    },
-			handleChange(value) {
+			handleChange(value) { // 选择学科
 		        console.log(value);
 		        this.courseId = value[value.length-1];
 //		      	this.queryMaterial();

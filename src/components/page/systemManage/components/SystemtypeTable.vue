@@ -29,11 +29,15 @@
             </el-table-column>
             <el-table-column prop="contentName" label="体系名称" >
             </el-table-column>
-            <el-table-column prop="knowledgeName" label="知识元名称" width="120">
+            <el-table-column prop="courseName" label="学科" width="120">
+            </el-table-column>
+            <el-table-column prop="categoryName" label="科类" width="120">
+            </el-table-column>
+            <el-table-column prop="gradeName" label="年级" width="80">
+            </el-table-column>
+            <el-table-column prop="owner" label="归属人" width="80">
             </el-table-column>
             <el-table-column prop="creator" label="创建人" width="80">
-            </el-table-column>
-            <el-table-column prop="createTime" label="创建时间" width="120">
             </el-table-column>
             <el-table-column prop="auditor" label="审核人" width="80">
             </el-table-column>
@@ -105,15 +109,19 @@
                 idx: -1,
                 elId:null,
                 elParentId:null,
+                materialId: null,
+                gradeId: null,
                 studyCourses:null,
                 total: 1
             }
         },
         mounted() {
         	bus.$on('elParam', (data) => {
-	        	// console.log(data)
+	        	 console.log(data)
 	        	this.elId = data.id;
 	        	this.elParentId = data.parentId;
+		       	this.materialId = data.materialId;
+		       	this.gradeId = data.gradeId;
            		this.getData();
 	      	})
         	// 获取审核状态数据
@@ -192,18 +200,20 @@
             },
             add() {
             	this.$router.push({
-	                path:'/elementAdd',
-	                name: 'elementAdd',
+	                path:'/systemAdd',
+	                name: 'systemAdd',
 	                query: { 
                     	"parentId": this.elParentId, // 父节点ID，顶级父节点传0
 	    				"courseId": this.elId,
+		        		"materialId": this.materialId,
+		        		"gradeId": this.gradeId,
 	    				"courseName": this.studyCourses
 	                }
 	            })
             },
             handleCheck(id,type) {
 //          	console.log(id + "--")
-                this.$router.push('/elementDetails?id='+id+'&type='+type);
+                this.$router.push('/systemDetails?id='+id+'&type='+type);
             },
             handleEdit(id,courseId,parentId) {
             	this.$router.push('/systemUpdate?id='+id);

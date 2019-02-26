@@ -4,25 +4,33 @@
 			<el-form ref="form" :model="form" label-width="120px" class="demo-ruleForm">
 	        	<el-row :gutter="20">
 	        		<el-col :span="12">
-		                <el-form-item label="节点名称">
+		                <el-form-item label="体系名称">
 		                    <el-input v-model="form.contentName" readonly></el-input>
 		                </el-form-item>
-	               	</el-col>
-	        		<!--<el-col :span="12">
-	                <el-form-item label="体系类型">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>-->
+	               </el-col>
 	        		<el-col :span="12">
-	                <el-form-item label="相关知识元">
-	                	<el-tooltip class="item" effect="light" :content="form.knowledgesName" placement="right">
-	                    	<el-input v-model="form.knowledgesName" readonly></el-input>
-	                    </el-tooltip>
+	                <el-form-item label="体系类型">
+	                    <el-input v-model="form.typeName"></el-input>
+	                </el-form-item>
+	               	</el-col>
+	        		<el-col :span="12">
+	                <el-form-item label="学科">
+	                    	<el-input v-model="form.categoryName" readonly></el-input>
 	                </el-form-item>
 	               	</el-col>
 	        		<el-col :span="12">
 	                <el-form-item label="科类">
-	                	<el-input v-model="form.categoryName" readonly></el-input>
+	                	<el-input v-model="form.courseName" readonly></el-input>
+	                </el-form-item>
+	               	</el-col>
+	        		<el-col :span="12">
+	                <el-form-item label="年级">
+	                    	<el-input v-model="form.gradeName" readonly></el-input>
+	                </el-form-item>
+	               	</el-col>
+	        		<el-col :span="12">
+	                <el-form-item label="归属人">
+	                	<el-input v-model="form.owner" readonly></el-input>
 	                </el-form-item>
 	               	</el-col>
 	        		<!--<el-col :span="12">
@@ -160,7 +168,7 @@
         	checkpass(val) {
         		if(this.isDisable){
             		this.isDisable = false;
-	        		this.$axios.post("/api/app/knowledgeTree/audit",{
+	        		this.$axios.post("/api/app/architectureTree/audit",{
 			    			"id": this.form.id,
 			    			"auditStatus": val
 		            }).then((res) => {
@@ -175,7 +183,7 @@
 					          message: this.msg,
 					          type: 'success',
 					          onClose:function(){
-					          	router.push('/elementCheck');
+					          	router.push('/systemType');
 					          }
 					        });
 		            	}else{

@@ -110,7 +110,9 @@
 	      	handleNodeClick(data) {
 		        let elParam = {
 		        	id: data.id,
-		        	parentId: data.parentId
+		        	parentId: data.parentId,
+		        	materialId: this.materialId,
+		        	gradeId: this.fasciclesId
 		        }
 		        bus.$emit('elParam', elParam);
 	      	},
