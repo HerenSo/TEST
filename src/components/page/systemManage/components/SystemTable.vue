@@ -2,7 +2,7 @@
 	<div class="container">
 		<div class="handle-box">
 			<div class="demo-input-suffix">
-				节点名称：
+				体系名称：
 				<el-input v-model="contentName" placeholder="" clearable class="handle-input-sm m-r-10"></el-input>
 			</div>
 			<div class="demo-input-suffix">
@@ -17,8 +17,8 @@
 			    </el-date-picker>
 			</div>
 			<el-select v-model="auditStatus" placeholder="审核状态" class="handle-select m-r-10">
-                <el-option key="0" label="全部" value="全部" ></el-option>
-                <el-option :key="item.id" :label="item.label" :value="item.value" v-for="item in auditStatusList"></el-option>
+                <el-option key="0" label="全部" value=" " ></el-option>
+                <el-option :key="item.id" :label="item.label" :value="item.acronym" v-for="item in auditStatusList"></el-option>
             </el-select>
 	        <el-button type="primary" icon="search" @click="search">搜索</el-button>
         </div>
@@ -26,7 +26,7 @@
             <!--<el-table-column type="selection" width="55" align="center"></el-table-column>-->
             <el-table-column prop="courseId" label="序号" width="50"><!--sortable--> 
             </el-table-column>
-            <el-table-column prop="typeName" label="体系类型" >
+            <el-table-column prop="contentName" label="体系名称" >
             </el-table-column>
             <el-table-column prop="knowledgeName" label="知识元名称" width="120">
             </el-table-column>
@@ -42,9 +42,9 @@
             </el-table-column>
             <el-table-column fixed="right" label="操作" width="160" align="center">
                 <template slot-scope="scope">
-                    <el-button type="text" icon="el-icon-lx-attention" @click="handleCheck(scope.$index, scope.row)">查看</el-button>
-                    <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                    <el-button type="text" class="red"  icon="el-icon-delete" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                    <el-button type="text" icon="el-icon-lx-attention" @click="handleCheck(data[scope.$index].id)">查看</el-button>
+                    <el-button type="text" icon="el-icon-edit" @click="handleEdit(data[scope.$index].id)">编辑</el-button>
+                    <el-button type="text" class="red"  icon="el-icon-delete" @click="">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -67,46 +67,6 @@
 	                    <el-input v-model="form.address"></el-input>
 	                </el-form-item>
 	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="学科">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="科类">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="审核状态">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="上架状态">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="创建人">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="创建日期">
-	                    <el-date-picker type="date" placeholder="选择日期" v-model="form.date" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="审核人">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="审核日期">
-	                    <el-date-picker type="date" placeholder="选择日期" v-model="form.date" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
-	                </el-form-item>
-	                </el-col>
                 </el-row>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -212,7 +172,7 @@
 		    			"contentName": this.contentName, // 体系名称，没有则传空字符串或不传
 		    			"category": "", // 学科类型，没有则传空字符串或不传
 		    			"auditStatus": this.auditStatus, // 审核状态，没有则传空字符串或不传
-		    			"rows": 1, // 每页记录数，默认为25
+		    			"rows": 10, // 每页记录数，默认为25
 						"page": this.cur_page // 当前页码
 		    		}
                 }).then((res) => {
@@ -233,19 +193,12 @@
             filterTag(value, row) {
                 return row.tag === value;
             },
-            handleEdit(index, row) {
-                this.idx = index;
-                const item = this.tableData[index];
-                this.form = {
-                    name: item.name,
-                    date: item.date,
-                    address: item.address
-                }
-                this.editVisible = true;
+            handleEdit(id,courseId,parentId) {
+            	this.$router.push('/systemUpdate?id='+id);
             },
-            handleCheck(index, row) {
-                this.idx = index;
-                this.delVisible = true;
+            handleCheck(id,courseId,parentId) {
+            	console.log(id);
+                this.$router.push('/systemDetails?id='+id);
             },
             handleSelectionChange(val) {
                 this.multipleSelection = val;

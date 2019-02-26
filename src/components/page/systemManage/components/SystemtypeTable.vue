@@ -2,70 +2,55 @@
 	<div class="container">
 		<div class="handle-box">
 			<div class="demo-input-suffix">
-				名称：
-				<el-input v-model="select_word" placeholder="" clearable class="handle-input-sm m-r-10"></el-input>
-			</div>
-			<div class="demo-input-suffix">
-				学科：
-				<el-input v-model="select_word" placeholder="" clearable class="handle-input-sm m-r-10"></el-input>
-			</div>
-			<div class="demo-input-suffix">
-				科类：
-				<el-input v-model="select_word" placeholder="" clearable class="handle-input-sm m-r-10"></el-input>
-			</div>
-			<div class="demo-input-suffix">
 				体系名称：
-				<el-input v-model="select_word" placeholder="" clearable class="handle-input-md m-r-10"></el-input>
+				<el-input v-model="contentName" placeholder="" clearable class="handle-input-sm m-r-10"></el-input>
 			</div>
 			<div class="demo-input-suffix">
-				创建时间：
 				<el-date-picker
-			      v-model="form.date"
-			      value-format="yyyy-MM-dd"
-			      type="date"
-			      placeholder="选择日期"
-			      class="m-r-10">
+				  class="data_range m-r-10"
+			      v-model="date"
+			      type="daterange"
+			      range-separator="至"
+			      start-placeholder="开始日期"
+			      end-placeholder="结束日期"
+			      value-format="yyyy-MM-dd">
 			    </el-date-picker>
 			</div>
-			<el-select v-model="select_cate" placeholder="状态" class="handle-select m-r-10">
-                <el-option key="1" label="已审核" value="已审核"></el-option>
-                <el-option key="2" label="未审核" value="未审核"></el-option>
+			<el-select v-model="auditStatus" placeholder="审核状态" class="handle-select m-r-10">
+                <el-option key="0" label="全部" value=" " ></el-option>
+                <el-option :key="item.id" :label="item.label" :value="item.acronym" v-for="item in auditStatusList"></el-option>
             </el-select>
 	        <el-button type="primary" icon="search" @click="search">搜索</el-button>
-	        <el-button type="primary" icon="search" >新增</el-button>
+	        <el-button type="primary" icon="search" @click="add">新增</el-button>
         </div>
-        <el-table :data="data" border class="table" stripe ref="multipleTable" @selection-change="handleSelectionChange">
+        <el-table :data="data" border class="table" stripe ref="multipleTable" @selection-change="">
             <!--<el-table-column type="selection" width="55" align="center"></el-table-column>-->
-            <el-table-column prop="" label="序号" width="50"><!--sortable--> 
+            <el-table-column prop="courseId" label="序号" width="50"><!--sortable--> 
             </el-table-column>
-            <el-table-column prop="name" label="体系名称" width="120">
+            <el-table-column prop="contentName" label="体系名称" >
             </el-table-column>
-            <el-table-column prop="name" label="学科" >
+            <el-table-column prop="knowledgeName" label="知识元名称" width="120">
             </el-table-column>
-            <el-table-column prop="name" label="科类" >
+            <el-table-column prop="creator" label="创建人" width="80">
             </el-table-column>
-            <el-table-column prop="" label="年级">
+            <el-table-column prop="createTime" label="创建时间" width="120">
             </el-table-column>
-            <el-table-column prop="" label="归属人" >
+            <el-table-column prop="auditor" label="审核人" width="80">
             </el-table-column>
-            <el-table-column prop="" label="创建人" >
+            <el-table-column prop="auditStatusName" label="审核状态" width="80">
             </el-table-column>
-            <el-table-column prop="" label="审核人" >
+            <el-table-column prop="remarks" label="备注" >
             </el-table-column>
-            <el-table-column prop="" label="审核状态" >
-            </el-table-column>
-            <el-table-column prop="" label="备注" width="120">
-            </el-table-column>
-            <el-table-column fixed="right" label="操作" width="190" align="center">
+            <el-table-column fixed="right" label="操作" width="160" align="center">
                 <template slot-scope="scope">
-                    <el-button type="text" icon="el-icon-lx-attention" @click="handleCheck(scope.$index, scope.row)">查看</el-button>
-                    <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">审核</el-button>
-                    <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">上架</el-button>
+                    <el-button type="text" icon="el-icon-lx-attention" @click="handleCheck(data[scope.$index].id,1)">查看</el-button>
+                    <el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" v-if="data[scope.$index].auditStatus == 5 || data[scope.$index].auditStatus == 15" @click="handleCheck(data[scope.$index].id,2)">审核</el-button>
+                    <el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" v-if="data[scope.$index].auditStatus == 10" @click="handleCheck(data[scope.$index].id,2)">反审核</el-button>
                 </template>
             </el-table-column>
         </el-table>
         <div class="pagination">
-            <el-pagination background @current-change="handleCurrentChange" layout="prev, pager, next" :total="1000">
+            <el-pagination background @current-change="handleCurrentChange" :page-count="total" layout="prev, pager, next" >
             </el-pagination>
         </div>
         
@@ -83,46 +68,6 @@
 	                    <el-input v-model="form.address"></el-input>
 	                </el-form-item>
 	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="学科">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="科类">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="审核状态">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="上架状态">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="创建人">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="创建日期">
-	                    <el-date-picker type="date" placeholder="选择日期" v-model="form.date" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="审核人">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="审核日期">
-	                    <el-date-picker type="date" placeholder="选择日期" v-model="form.date" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
-	                </el-form-item>
-	                </el-col>
                 </el-row>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -134,6 +79,7 @@
 </template>
 
 <script>
+    import bus from '../../../common/bus';
 	export default{
 		name: "systemtypeTable",
 		data() {
@@ -148,36 +94,69 @@
                 is_search: false,
                 editVisible: false,
                 delVisible: false,
+                contentName: '',
+                date: '',
+                auditStatusList: [],
+                auditStatus: '',
                 form: {
                     name: '',
                     address: ''
                 },
-                idx: -1
+                idx: -1,
+                elId:null,
+                elParentId:null,
+                studyCourses:null,
+                total: 1
             }
         },
-        created() {
-            this.getData();
+        mounted() {
+        	bus.$on('elParam', (data) => {
+	        	// console.log(data)
+	        	this.elId = data.id;
+	        	this.elParentId = data.parentId;
+           		this.getData();
+	      	})
+        	// 获取审核状态数据
+         	if(localStorage.getItem("auditStatus")){
+         		this.auditStatusList = JSON.parse(localStorage.getItem("auditStatus"));
+         	}else{
+         		this.$axios.get("/api/app/combobox/auditStatus/list").then((res) => {
+					if(res.status=="200" && res.data.code == '0000'){
+						this.auditStatusList = res.data.data;
+						localStorage.setItem("auditStatus",JSON.stringify(this.auditStatusList));
+						// console.log(this.auditStatusList)
+					}
+				})
+         	}
+         	
+	      	this.getData();
         },
         computed: {
             data() {
                 return this.tableData.filter((d) => {
                     let is_del = false;
                     for (let i = 0; i < this.del_list.length; i++) {
-                        if (d.name === this.del_list[i].name) {
+                        if (d.contentName === this.del_list[i].contentName) {
                             is_del = true;
                             break;
                         }
                     }
                     if (!is_del) {
-                        if (d.address.indexOf(this.select_cate) > -1 &&
-                            (d.name.indexOf(this.select_word) > -1 ||
-                                d.address.indexOf(this.select_word) > -1)
+                        if (d.category.indexOf(this.select_cate) > -1 &&
+                            (d.contentName.indexOf(this.select_word) > -1 ||
+                                d.category.indexOf(this.select_word) > -1)
                         ) {
                             return d;
                         }
                     }
                 })
-            }
+            },
+            beginTime: function () {
+            	return this.date[0];
+		    },
+            endTime: function () {
+            	return this.date[1];
+		    }
         },
         methods: {
             // 分页导航
@@ -187,41 +166,51 @@
             },
             // 获取 easy-mock 的模拟数据
             getData() {
-                // 开发环境使用 easy-mock 数据，正式环境使用 json 文件
-                if (process.env.NODE_ENV === 'development') {
-                    this.url = '/ms/table/list';
-                };
-                this.$axios.post(this.url, {
-                    page: this.cur_page
+                this.$axios.get("/api/app/architectureTree/list",{
+                    params:{
+		    			"courseId": this.elId, // 学科ID
+		    			"parentId": this.elParentId, // 父节点ID，顶级父节点传0
+		    			"beginTime": this.beginTime, // 开始日期，没有则传空字符串或不传
+		    			"endTime": this.endTime, // 结束日期，没有则传空字符串或不传
+		    			"contentName": this.contentName, // 体系名称，没有则传空字符串或不传
+		    			"category": "", // 学科类型，没有则传空字符串或不传
+		    			"auditStatus": this.auditStatus, // 审核状态，没有则传空字符串或不传
+		    			"rows": 10, // 每页记录数，默认为25
+						"page": this.cur_page // 当前页码
+		    		}
                 }).then((res) => {
-                    this.tableData = res.data.list;
+                	if(res.status == 200 && res.data.code == '0000'){
+	                	this.total = res.data.data.records;
+	                	// console.log(this.total)
+	                    this.tableData = res.data.data.rows;
+	                }
                 })
             },
             search() {
-                this.is_search = true;
+            	this.cur_page = 1;
+                this.getData();
             },
-            formatter(row, column) {
-                return row.address;
+            add() {
+            	this.$router.push({
+	                path:'/elementAdd',
+	                name: 'elementAdd',
+	                query: { 
+                    	"parentId": this.elParentId, // 父节点ID，顶级父节点传0
+	    				"courseId": this.elId,
+	    				"courseName": this.studyCourses
+	                }
+	            })
             },
-            filterTag(value, row) {
-                return row.tag === value;
+            handleCheck(id,type) {
+//          	console.log(id + "--")
+                this.$router.push('/elementDetails?id='+id+'&type='+type);
             },
-            handleEdit(index, row) {
-                this.idx = index;
-                const item = this.tableData[index];
-                this.form = {
-                    name: item.name,
-                    date: item.date,
-                    address: item.address
-                }
-                this.editVisible = true;
+            handleEdit(id,courseId,parentId) {
+            	this.$router.push('/systemUpdate?id='+id);
             },
-            handleCheck(index, row) {
+            handleDelete(index, row) {
                 this.idx = index;
                 this.delVisible = true;
-            },
-            handleSelectionChange(val) {
-                this.multipleSelection = val;
             },
             // 保存编辑
             saveEdit() {
@@ -235,7 +224,13 @@
                 this.$message.success('删除成功');
                 this.delVisible = false;
             }
-        }
+        },
+       	watch:{
+	        elId(val, oldVal){//普通的watch监听
+	            // console.log("a: "+val, oldVal);
+	            this.getData();
+	        }
+	    }
 	}
 </script>
 

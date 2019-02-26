@@ -18,11 +18,11 @@
 			</div>
 			<el-select v-model="auditStatus" placeholder="审核状态" class="handle-select m-r-10">
                 <el-option key="0" label="全部" value="全部" ></el-option>
-                <el-option :key="item.id" :label="item.label" :value="item.value" v-for="item in auditStatusList"></el-option>
+                <el-option :key="item.id" :label="item.label" :value="item.acronym" v-for="item in auditStatusList"></el-option>
             </el-select>
 			<el-select v-model="shelfStatus" placeholder="上架状态" class="handle-select m-r-10">
                 <el-option key="0" label="全部" value="全部" ></el-option>
-                <el-option :key="item.id" :label="item.label" :value="item.value" v-for="item in shelfStatusList"></el-option>
+                <el-option :key="item.id" :label="item.label" :value="item.acronym" v-for="item in shelfStatusList"></el-option>
             </el-select>
 	        <el-button type="primary" icon="search" @click="search">搜索</el-button>
         </div>

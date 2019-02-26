@@ -26,11 +26,11 @@
 			</div>
 			<el-select v-model="auditStatus" placeholder="审核状态" class="handle-select m-r-10">
                 <el-option key="0" label="全部" value="全部" ></el-option>
-                <el-option :key="item.id" :label="item.label" :value="item.value" v-for="item in auditStatusList"></el-option>
+                <el-option :key="item.id" :label="item.label" :value="item.acronym" v-for="item in auditStatusList"></el-option>
             </el-select>
 			<el-select v-model="shelfStatus" placeholder="上架状态" class="handle-select m-r-10">
                 <el-option key="0" label="全部" value="全部" ></el-option>
-                <el-option :key="item.id" :label="item.label" :value="item.value" v-for="item in shelfStatusList"></el-option>
+                <el-option :key="item.id" :label="item.label" :value="item.acronym" v-for="item in shelfStatusList"></el-option>
             </el-select>
 	        <el-button type="primary" icon="search" @click="search" class="m-r-10">搜索</el-button>
 	        <el-button type="primary" icon="search" @click="add">新增</el-button>
@@ -50,6 +50,8 @@
             <el-table-column prop="createTime" label="创建时间" width="180">
             </el-table-column>
             <el-table-column prop="auditStatusName" label="审核状态" >
+            </el-table-column>
+            <el-table-column prop="shelfStatusName" label="上架状态" >
             </el-table-column>
             <el-table-column fixed="right" label="操作" width="120" align="center">
                 <template slot-scope="scope">
@@ -191,7 +193,7 @@
 					}
 				})
          	}
-            this.getData();
+//          this.getData();
         },
         computed: {
             data() {
@@ -239,7 +241,7 @@
 		    			"category": "", // 学科类型，没有则传空字符串或不传
 		    			"auditStatus": this.auditStatus, // 审核状态，没有则传空字符串或不传
 		    			"shelfStatus": this.shelfStatus, // 上架状态，没有则传空字符串或不传
-		    			"rows": 1, // 每页记录数，默认为25
+		    			"rows": 10, // 每页记录数，默认为25
 						"page": this.cur_page // 当前页码
 		    		}
                 }).then((res) => {

@@ -1,7 +1,7 @@
 <template>
 	<div>
 	<div class="container m-b-20">
-		<el-dropdown class="courses" trigger="click">
+		<!--<el-dropdown class="courses" trigger="click">
 			<span class="el-dropdown-link">
 			    {{studyCourses}}<i class="el-icon-arrow-down el-icon--right"></i>
 			</span>
@@ -13,7 +13,15 @@
 		        	</div>
 				</el-dropdown-item>
 	        </el-dropdown-menu>
-	   </el-dropdown>
+	   </el-dropdown>-->
+        <el-cascader
+		    expand-trigger="hover"
+		    :options="courses"
+		    v-model="selectedOptions"
+		    :value="studyCourses"
+		    :props="props"
+		    @change="handleChange">
+		</el-cascader>
 	</div>
 	<div class="container">
 		<!--<div class="text-color-blue p-tb-10">高中化学综合库</div>-->
@@ -35,41 +43,52 @@
 		name: 'elementTree',
 		data() {
 	      	return {
-		        data: [{
-		          label: '一级 1',
-		          children: [{
-		            label: '二级 1-1',
-		            children: [{
-		              label: '三级 1-1-1'
-		            }]
-		          }]
-		        }],
+		        data: [],
 		        courses: [],
 		        studyPeriod:'', // 初始默认 学级
+		        studyId: '',
 		        courseName:'', // 初始默认 学课
 		        courseId: null, // 初始默认 学课ID
 		        defaultProps: {
-		          label: 'label',
 		          children: 'children',
-		        }
+		          label: 'label'
+		        },
+		        props:{
+		        	label:'studyPeriod',
+		        	value: 'id',
+            		children: 'courses'
+		        },
+		        selectedOptions:[]
 		    };
 	    },
+	    computed: {
+		    studyCourses: function () {
+		      return this.studyPeriod + ' ' + this.courseName;
+		    }
+		},
 	    methods: {
-	      handleNodeClick(data) {
-	        let elParam = {
-	        	id: data.id,
-	        	parentId: data.parentId,
-	        	studyCourses: this.studyCourses
-	        }
-	        bus.$emit('elParam', elParam);
-	      },
-	      selectCourse(id,courseName,studyPeriod) {
-	      	console.log(id)
-	      	this.courseId = id;
-	      	this.courseName = courseName;
-	      	this.studyPeriod = studyPeriod;
-	      	this.queryCoursesData();
-	      },
+			handleChange(value) {
+		        console.log(value);
+		        this.courseId = value[value.length-1];
+//		        this.studyPeriod = this.courses[0].studyPeriod;
+//	          	this.courseName = this.courses[0].courses[0].courseName;
+		      	this.queryCoursesData();
+		    },
+	        handleNodeClick(data) {
+		        let elParam = {
+		        	id: data.id,
+		        	parentId: data.parentId,
+		        	studyCourses: this.studyCourses
+		        }
+		        bus.$emit('elParam', elParam);
+		    },
+//	      selectCourse(id,courseName,studyPeriod) {
+//	      	console.log(id)
+//	      	this.courseId = id;
+//	      	this.courseName = courseName;
+//	      	this.studyPeriod = studyPeriod;
+//	      	this.queryCoursesData();
+//	      },
 	      queryCoursesData() {
 	      	// 请求树
 	        this.$axios.get('/api/app/knowledgeTree/tree',{
@@ -84,11 +103,6 @@
 	       });
 	      }
 	    },
-	    computed: {
-		    studyCourses: function () {
-		      return this.studyPeriod + ' ' + this.courseName;
-		    }
-		},
 	    mounted: function () {
 	    	// 学科
 			this.$axios.get('/api/app/study/period/tree',{
@@ -100,9 +114,16 @@
 	          	if(res.status == 200 && res.data.code == '0000'){
 //		          	this.courses = JSON.parse(JSON.stringify(res.data.data));
 		          	this.courses = res.data.data;
+		          	for(var i=0; i < this.courses.length; i++){
+		          		for(var j=0; j < this.courses[i].courses.length;j++){
+		          			this.courses[i].courses[j].studyPeriod = this.courses[i].courses[j].courseName;
+		          		}
+		          	}
 		          	this.courseId = this.courses[0].courses[0].id;
 		          	this.studyPeriod = this.courses[0].studyPeriod;
+		          	this.studyId = this.courses[0].id;
 		          	this.courseName = this.courses[0].courses[0].courseName;
+		          	this.selectedOptions = [this.studyId,this.courseId];
 		          	this.queryCoursesData();
 	          	}
 	        });

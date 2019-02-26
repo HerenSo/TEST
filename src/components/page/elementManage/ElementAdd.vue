@@ -36,7 +36,7 @@
         		<el-col :span="12">
                 <el-form-item label="上架状态">
 					<el-select v-model="form.shelfStatus" placeholder="请选择上架状态">
-		                <el-option :key="item.id" :label="item.label" :value="item.value" v-for="item in shelfStatusList"></el-option>
+		                <el-option :key="item.id" :label="item.label" :value="item.acronym" v-for="item in shelfStatusList"></el-option>
 		           </el-select>
                 </el-form-item>
                	</el-col>
@@ -80,7 +80,7 @@
 <script>
 	import router from '@/router';
 	export default{
-		name: "systemTable",
+		name: "elementAdd",
 		data() {
             return {
                 form: {

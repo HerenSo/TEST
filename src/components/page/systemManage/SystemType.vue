@@ -7,18 +7,20 @@
        	</div>
         <div>
 			<el-row :gutter="20">
-				<el-col :span="24"><systemtype-table></systemtype-table></el-col>
+				<el-col :span="5"><system-tree class=""></system-tree></el-col>
+				<el-col :span="19"><systemtype-table></systemtype-table></el-col>
 			</el-row>
 		</div>
 	</div>
 </template>
 
 <script>
+	import systemTree from './components/SystemTree.vue';
 	import systemtypeTable from './components/SystemtypeTable.vue';
 	export default{
 		name: 'systemType',
 		components: {
-			systemtypeTable
+			systemTree,systemtypeTable
 		}
 	}
 </script>

@@ -58,6 +58,21 @@ export default new Router({
                     meta: { title: '体系结构管理' }
                 },
                 {
+                    path: '/systemAdd',
+                    component: resolve => require(['../components/page/systemManage/SystemAdd.vue'], resolve),
+                    meta: { title: '体系结构新增' }
+                },
+                {
+                    path: '/systemUpdate',
+                    component: resolve => require(['../components/page/systemManage/SystemUpdate.vue'], resolve),
+                    meta: { title: '体系结构修改' }
+                },
+                {
+                    path: '/systemDetails',
+                    component: resolve => require(['../components/page/systemManage/SystemDetails.vue'], resolve),
+                    meta: { title: '体系结构详情' }
+                },
+                {
                     path: '/systemType',
                     component: resolve => require(['../components/page/systemManage/SystemType.vue'], resolve),
                     meta: { title: '体系结构类型管理' }

@@ -15,7 +15,7 @@
                	</el-col>-->
         		<el-col :span="12">
                 <el-form-item label="学科">
-                    <el-input v-model="form.courseName" readonly></el-input>
+                    <el-input v-model="courseName" :disabled="true"></el-input>
                     <el-input v-model="form.courseId" class="hidden"></el-input>
                     <el-input v-model="form.parentId" class="hidden"></el-input>
                 </el-form-item>
@@ -35,7 +35,9 @@
                	</el-col>-->
         		<el-col :span="12">
                 <el-form-item label="上架状态">
-                    <el-input v-model="auditStatusName" readonly></el-input>
+					<el-select v-model="form.shelfStatus" placeholder="请选择上架状态">
+		                <el-option :key="item.id" :label="item.label" :value="item.value" v-for="item in shelfStatusList"></el-option>
+		           </el-select>
                 </el-form-item>
                	</el-col>
         		<!--<el-col :span="12">
@@ -68,7 +70,7 @@
         <div class="text-center">
 	        <span slot="footer" class="dialog-footer">
 	            <router-link to='elementManage'class="m-r-10"><el-button >取 消</el-button></router-link>
-	            <el-button type="primary" @click="saveEdit" >确 定</el-button>
+	            <el-button type="primary" @click="saveAdd">确 定</el-button>
 	        </span>
         </div>
         </div>
@@ -76,19 +78,16 @@
 </template>
 
 <script>
-    import bus from '../../common/bus';
 	import router from '@/router';
 	export default{
-		name: "elementUpdate",
+		name: "systemTable",
 		data() {
             return {
                 form: {
-                	"id": null,
                     "name": '', // 知识元名称
 					"category": '', // 学科类别
-					"courseName": '',// 学科name
-					"courseId": '', //学科ID
-					"parentId": '', // 父节点ID,顶级传0
+					"courseId": null, //学科ID
+					"parentId": null, // 父节点ID,顶级传0
 					"seq": '', // 排序
 					"shelfStatus": '', //上架状态
 					"remarks": '' //备注
@@ -96,45 +95,30 @@
                 rules: {
 		          name: [
 		            { required: true, message: '请输入知识元名称', trigger: 'blur' }
-		          ]
+		          ],
+		          category: [
+		            { required: true, message: '请选择学科类别', trigger: 'change' }
+		          ],
 	            },
-	            isDisable: true,
-	            auditStatusName: ""
+	            courseName: "", // 学科名称
+	            shelfStatusList: [],
+	            isDisable: true
             }
         },
-        created(){
-        	this.form.id = this.$route.query.id;
-         	console.log(this.form.id)
-        },
         mounted() {
-         	this.$axios.get("/api/app/knowledgeTree/get",{
-                params:{
-	    			"id": this.form.id
-	    		}
-            }).then((res) => {
-            	if(res.status == 200 && res.data.code == '0000'){
-	            	let data = res.data.data;
-	                this.form.id = data.id;
-	                this.form.name = data.name;
-	                this.form.category = data.category;
-	                this.form.courseName = data.courseName;
-	                this.form.courseId = data.courseId;
-	                this.form.parentId = data.parentId;
-	                this.form.seq = data.seq;
-	                this.form.shelfStatus = data.shelfStatus;
-	                this.form.remarks = data.remarks;
-	                this.auditStatusName = data.auditStatusName;
-	            	// console.log(this.form)
-            	}
-            })
+        	// console.log(this.$route.query)
+        	this.courseName = this.$route.query.courseName;
+        	this.form.courseId = this.$route.query.courseId;
+        	this.form.parentId = this.$route.query.parentId;
+        	this.shelfStatusList = JSON.parse(localStorage.getItem("shelfStatus"));
         },
         methods: {
         	// 保存编辑
-            saveEdit() {
+            saveAdd() {
             	if(this.isDisable){
             		this.isDisable = false;
-            		this.$axios.post("/api/app/knowledgeTree/update",
-	                	this.form
+	            	this.$axios.post("/api/app/knowledgeTree/add",
+		                this.form
 		            ).then((res) => {
 		            	if(res.status == 200 && res.data.code == '0000'){
 			            	this.$message({
@@ -148,8 +132,7 @@
 				        	this.isDisable = true;
 				        }
 		            })
-            	}
-            	
+		        }
             }
        }
    }

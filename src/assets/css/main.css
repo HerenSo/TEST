@@ -106,6 +106,9 @@ a {
 .text-center{
     text-align: center;
 }
+.text-left{
+    text-align: left;
+}
 
 .form-box{
     padding: 30px 20px;
@@ -114,6 +117,20 @@ a {
 }
 .hidden{
     display: none;
+}
+
+.demo-block {
+    border: 1px solid #dcdfe6;
+    border-radius: 4px;
+    padding: 6px 12px;
+    min-height: 34px;
+}
+.el-tag {
+    margin-right: 10px;
+}
+
+.el-dialog__body{
+	padding: 10px 30px;
 }
 
 /*下拉*/

@@ -4,8 +4,8 @@
 			<el-form ref="form" :model="form" label-width="120px" class="demo-ruleForm">
 	        	<el-row :gutter="20">
 	        		<el-col :span="12">
-		                <el-form-item label="知识元名称">
-		                    <el-input v-model="form.name" readonly></el-input>
+		                <el-form-item label="节点名称">
+		                    <el-input v-model="form.contentName" readonly></el-input>
 		                </el-form-item>
 	               	</el-col>
 	        		<!--<el-col :span="12">
@@ -14,15 +14,15 @@
 	                </el-form-item>
 	               	</el-col>-->
 	        		<el-col :span="12">
-	                <el-form-item label="学科">
-	                    <el-input v-model="form.courseName" readonly></el-input>
-	                    <el-input v-model="form.courseId" class="hidden"></el-input>
-	                    <el-input v-model="form.parentId" class="hidden"></el-input>
+	                <el-form-item label="相关知识元">
+	                	<el-tooltip class="item" effect="light" :content="form.knowledgesName" placement="right">
+	                    	<el-input v-model="form.knowledgesName" readonly></el-input>
+	                    </el-tooltip>
 	                </el-form-item>
 	               	</el-col>
 	        		<el-col :span="12">
 	                <el-form-item label="科类">
-	                	<el-input v-model="form.category" readonly></el-input>
+	                	<el-input v-model="form.categoryName" readonly></el-input>
 	                </el-form-item>
 	               	</el-col>
 	        		<!--<el-col :span="12">
@@ -34,32 +34,27 @@
 	                <el-form-item label="审核状态">
 	                    <el-input v-model="form.auditStatusName" readonly></el-input>
 	                </el-form-item>
-	               	</el-col>
-	        		<el-col :span="12">
-	                <el-form-item label="上架状态">
-	                    <el-input v-model="form.shelfStatusName" readonly></el-input>
-	                </el-form-item>
-	               	</el-col>
+	               </el-col>
 	        		<el-col :span="12">
 	                <el-form-item label="创建人">
 	                    <el-input v-model="form.creator" readonly></el-input>
 	                </el-form-item>
 	               	</el-col>
 	        		<el-col :span="12">
-	                <el-form-item label="创建日期">
+	                <el-form-item label="创建时间">
 	                    <el-input v-model="form.createTime" readonly></el-input>
 	                </el-form-item>
 	               </el-col>
 	        		<el-col :span="12">
-	                <el-form-item label="排序">
-	                    <el-input v-model="form.seq" readonly></el-input>
+	                <el-form-item label="审核人">
+	                    <el-input v-model="form.auditor" readonly></el-input>
 	                </el-form-item>
 	               	</el-col>
-	               	<el-col :span="24">
-	               	<el-form-item label="备注">
-					    <el-input type="textarea" v-model="form.remarks" readonly></el-input>
-					</el-form-item>
-					</el-col>
+	        		<el-col :span="12">
+	                <el-form-item label="审核时间">
+	                    <el-input v-model="form.auditTime" readonly></el-input>
+	                </el-form-item>
+	              </el-col>
 	            </el-row>
 	        </el-form>
 	        <div class="text-center" v-if="ischeck">
@@ -84,7 +79,7 @@
     import bus from '../../common/bus';
 	import router from '@/router';
 	export default{
-		name: "elementDetails",
+		name: "systemTable",
 		data() {
             return {
                 form: {},
@@ -108,13 +103,18 @@
 //       	console.log(this.form.id)
         },
         mounted() {
-         	this.$axios.get("/api/app/knowledgeTree/get",{
+         	this.$axios.get("/api/app/architectureTree/get",{
                 params:{
 	    			"id": this.form.id
 	    		}
             }).then((res) => {
             	if(res.status == 200 && res.data.code == '0000'){
 	                this.form = res.data.data;
+	                let knowledgesNamelist = [];
+	                for(var i=0;i<this.form.knowledges.length;i++){
+	                	knowledgesNamelist.push(this.form.knowledges[i].knowledgeName);
+	                }
+	                this.form.knowledgesName = knowledgesNamelist.join(",");
 	                if(this.form.auditStatus == '10'){
 	                	this.ischeckpass = true;
 	                }else{
