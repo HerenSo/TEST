@@ -53,6 +53,7 @@
                     ]
                 },
                 userToken: '',
+                userName: "",
                 codeUrl:'/api/app/captcha'
             }
         },
@@ -67,7 +68,9 @@
 				          console.log(res.data);
 //				          alert('登陆成功');
 				          this.userToken = res.data.data.tokenId;
+				          this.userName = res.data.data.userName;
 				          localStorage.setItem("userToken",this.userToken);
+				          localStorage.setItem("ms_username",this.userName);
 //				          // 将用户token保存到vuex中
 //				          _this.changeLogin({ Authorization: _this.userToken });
 				          _this.$router.push('/elementManage');
