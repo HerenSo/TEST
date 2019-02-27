@@ -56,7 +56,7 @@
         		<el-col :span="12">
                 <el-form-item label="年级" required>
                     <el-select v-model="form.gradeId" placeholder="请选择年级">
-				      <el-option :label="item.label" :value="item.value" v-for="item in architectureType"></el-option>
+				      <el-option :label="item.gradeName" :value="item.id" v-for="item in grade"></el-option>
 				    </el-select>
                 </el-form-item>
                	</el-col>
@@ -65,6 +65,16 @@
                 	<el-input v-model="form.owner"></el-input>
                 </el-form-item>
                </el-col>
+        		<el-col :span="12">
+                <el-form-item label="排序">
+                    <el-input v-model="form.seq"></el-input>
+                </el-form-item>
+               	</el-col>
+               	<el-col :span="24">
+               	<el-form-item label="备注">
+				    <el-input type="textarea" v-model="form.remarks"></el-input>
+				</el-form-item>
+				</el-col>
             </el-row>
             </el-row>
         </el-form>
@@ -147,6 +157,7 @@
 	            courseName: "", // 学科名称
 	            typeName:"",
 	            architectureType: [], // 体系类型
+	            grade:[], // 年级列表
 	            auditStatus: "",
 	            defaultProps: {
 		          children: 'children',
@@ -165,7 +176,6 @@
             }
         },
         mounted() {
-        	this.queryArchitectureType();
 //        	 console.log(this.$route.query)
         	this.courseName = this.$route.query.courseName;
         	this.form.courseId = this.$route.query.courseId;
@@ -174,6 +184,8 @@
         	this.form.gradeId = this.$route.query.gradeId;
         	this.auditStatus = JSON.parse(localStorage.getItem("auditStatus"));
         	this.selectedOptions = [this.form.gradeId,this.form.courseId];
+        	this.queryArchitectureType();
+        	this.queryGrade();
         },
         methods: {
         	handleClose(tag) { // 删除知识元
@@ -238,6 +250,22 @@
 		          	if(res.status == 200 && res.data.code == '0000'){
 		          		
 			          	this.architectureType = res.data.data;
+	//		          	console.log(this.data);
+	//		          	console.log(this.data)
+		          	}
+		       	});
+		    },
+		    queryGrade() {
+		    	// 请求年纪
+		        this.$axios.get('/api/app/study/grade/tree',{
+		        	params:{
+		        		periodId:this.form.materialId
+		        	}
+		        }).then(res => {
+		        	console.log(res)
+		          	if(res.status == 200 && res.data.code == '0000'){
+		          		
+			          	this.grade = res.data.data;
 	//		          	console.log(this.data);
 	//		          	console.log(this.data)
 		          	}

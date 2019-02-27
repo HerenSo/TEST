@@ -22,13 +22,13 @@
             </el-select>
 	        <el-button type="primary" icon="search" @click="search">搜索</el-button>
         </div>
-        <el-table :data="data" border class="table" stripe ref="multipleTable" @selection-change="handleSelectionChange">
+        <el-table :data="data" border class="table"  tooltip-effect="light" stripe ref="multipleTable" @selection-change="handleSelectionChange">
             <!--<el-table-column type="selection" width="55" align="center"></el-table-column>-->
             <el-table-column prop="courseId" label="序号" width="50"><!--sortable--> 
             </el-table-column>
             <el-table-column prop="contentName" label="体系名称" >
             </el-table-column>
-            <el-table-column prop="knowledgeName" label="知识元名称" width="120">
+            <el-table-column prop="knowledgeName" label="知识元名称" width="120" show-overflow-tooltip>
             </el-table-column>
             <el-table-column prop="creator" label="创建人" width="80">
             </el-table-column>
@@ -38,7 +38,7 @@
             </el-table-column>
             <el-table-column prop="auditStatusName" label="审核状态" width="80">
             </el-table-column>
-            <el-table-column prop="remarks" label="备注" >
+            <el-table-column prop="remarks" label="备注" show-overflow-tooltip>
             </el-table-column>
             <el-table-column fixed="right" label="操作" width="160" align="center">
                 <template slot-scope="scope">
@@ -126,7 +126,7 @@
 					}
 				})
          	}
-	      	this.getData();
+//	      	this.getData();
         },
         computed: {
             data() {
@@ -187,21 +187,12 @@
             	this.cur_page = 1;
                 this.getData();
             },
-            formatter(row, column) {
-                return row.address;
-            },
-            filterTag(value, row) {
-                return row.tag === value;
-            },
             handleEdit(id,courseId,parentId) {
             	this.$router.push('/systemUpdate?id='+id);
             },
             handleCheck(id,courseId,parentId) {
             	console.log(id);
                 this.$router.push('/systemDetails?id='+id);
-            },
-            handleSelectionChange(val) {
-                this.multipleSelection = val;
             },
             handleDelete(index, row) {
                 this.idx = index;

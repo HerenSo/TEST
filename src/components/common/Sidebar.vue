@@ -82,40 +82,40 @@
                                 title: '试题审核'
                             }
                         ]
-                    },
-                    {
-                        icon: 'el-icon-lx-home',
-                        index: '4',
-                        title: '系统管理',
-                        subs: [
-                            {
-                                index: 'dashboard',
-                                title: '角色管理'
-                            },
-                            {
-                                index: 'icon',
-                                title: '用户管理'
-                            },
-                            {
-                                index: 'editor',
-                                title: '菜单管理'
-                            },
-                            {
-                                index: 'markdown',
-                                title: '日志管理'
-                            }
-                        ]
-                    },
-                    {
-                        icon: 'el-icon-lx-cascades',
-                        index: 'table',
-                        title: '日志管理'
-                    },
-                    {
-                        icon: 'el-icon-lx-copy',
-                        index: 'tabs',
-                        title: '接口管理'
                     }
+//                  {
+//                      icon: 'el-icon-lx-home',
+//                      index: '4',
+//                      title: '系统管理',
+//                      subs: [
+//                          {
+//                              index: 'dashboard',
+//                              title: '角色管理'
+//                          },
+//                          {
+//                              index: 'icon',
+//                              title: '用户管理'
+//                          },
+//                          {
+//                              index: 'editor',
+//                              title: '菜单管理'
+//                          },
+//                          {
+//                              index: 'markdown',
+//                              title: '日志管理'
+//                          }
+//                      ]
+//                  },
+//                  {
+//                      icon: 'el-icon-lx-cascades',
+//                      index: 'table',
+//                      title: '日志管理'
+//                  },
+//                  {
+//                      icon: 'el-icon-lx-copy',
+//                      index: 'tabs',
+//                      title: '接口管理'
+//                  }
                 ]
             }
         },

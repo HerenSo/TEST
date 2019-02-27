@@ -17,13 +17,13 @@
 			    </el-date-picker>
 			</div>
 			<el-select v-model="auditStatus" placeholder="审核状态" class="handle-select m-r-10">
-                <el-option key="0" label="全部" value=" " ></el-option>
+                <el-option key="0" label="全部" value="" ></el-option>
                 <el-option :key="item.id" :label="item.label" :value="item.acronym" v-for="item in auditStatusList"></el-option>
             </el-select>
 	        <el-button type="primary" icon="search" @click="search">搜索</el-button>
 	        <el-button type="primary" icon="search" @click="add">新增</el-button>
         </div>
-        <el-table :data="data" border class="table" stripe ref="multipleTable" @selection-change="">
+        <el-table :data="data" border class="table" tooltip-effect="light" stripe ref="multipleTable" @selection-change="">
             <!--<el-table-column type="selection" width="55" align="center"></el-table-column>-->
             <el-table-column prop="courseId" label="序号" width="50"><!--sortable--> 
             </el-table-column>
@@ -31,7 +31,7 @@
             </el-table-column>
             <el-table-column prop="courseName" label="学科" width="120">
             </el-table-column>
-            <el-table-column prop="categoryName" label="科类" width="120">
+            <el-table-column prop="category" label="科类" width="120">
             </el-table-column>
             <el-table-column prop="gradeName" label="年级" width="80">
             </el-table-column>
@@ -43,7 +43,7 @@
             </el-table-column>
             <el-table-column prop="auditStatusName" label="审核状态" width="80">
             </el-table-column>
-            <el-table-column prop="remarks" label="备注" >
+            <el-table-column prop="remarks" label="备注" show-overflow-tooltip>
             </el-table-column>
             <el-table-column fixed="right" label="操作" width="160" align="center">
                 <template slot-scope="scope">
@@ -188,7 +188,7 @@
 		    		}
                 }).then((res) => {
                 	if(res.status == 200 && res.data.code == '0000'){
-	                	this.total = res.data.data.records;
+	                	this.total = res.data.data.total;
 	                	// console.log(this.total)
 	                    this.tableData = res.data.data.rows;
 	                }

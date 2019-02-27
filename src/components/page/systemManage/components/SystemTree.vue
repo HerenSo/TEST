@@ -138,7 +138,13 @@
 	    		this.queryCoursesData(); // 请求树
 	      	},
 	      	selectFascicle(id,index) {
-	      	
+	      		for(let i = 0; i <this.fasciclesList.length; i++){
+	          		this.fasciclesList[i].select = false;
+	          	}
+	          	this.fasciclesList[index].select = true; // 默认选中第一个
+	      		this.fasciclesName = this.fasciclesList[index].fasciclesName;
+	          	this.fasciclesId = this.fasciclesList[index].id;
+	    		this.queryCoursesData(); // 请求树
 	      	},
 	     	queryMaterial() {
 		     	// 教材
