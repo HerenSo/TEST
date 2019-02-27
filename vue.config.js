@@ -1,5 +1,5 @@
 module.exports = {
-    baseUrl: './',
+    baseUrl: process.env.NODE_ENV === "production" ? "/shihe-bank/" : "./",
     productionSourceMap: false,
     devServer: {
         proxy: {
