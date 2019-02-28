@@ -111,7 +111,7 @@
 //       	console.log(this.form.id)
         },
         mounted() {
-         	this.$axios.get("/api/app/architectureTree/get",{
+         	this.$axios.get("app/architectureTree/get",{
                 params:{
 	    			"id": this.form.id
 	    		}
@@ -141,7 +141,7 @@
         	putpass(val) {
         		if(this.isDisable){
             		this.isDisable = false;
-	        		this.$axios.post("/api/app/knowledgeTree/shelf",{
+	        		this.$axios.post("app/knowledgeTree/shelf",{
 		    			"id": this.form.id,
 		    			"shelfStatus": val
 		            }).then((res) => {
@@ -168,7 +168,7 @@
         	checkpass(val) {
         		if(this.isDisable){
             		this.isDisable = false;
-	        		this.$axios.post("/api/app/architectureTree/audit",{
+	        		this.$axios.post("app/architectureTree/audit",{
 			    			"id": this.form.id,
 			    			"auditStatus": val
 		            }).then((res) => {

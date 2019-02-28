@@ -76,8 +76,8 @@
 		    },
 	        handleNodeClick(data) {
 		        let elParam = {
-		        	id: data.id,
-		        	parentId: data.parentId,
+		        	id: this.studyId,
+		        	parentId: data.id,
 		        	studyCourses: this.studyCourses
 		        }
 		        bus.$emit('elParam', elParam);
@@ -91,7 +91,7 @@
 //	      },
 	      queryCoursesData() {
 	      	// 请求树
-	        this.$axios.get('/api/app/knowledgeTree/tree',{
+	        this.$axios.get('app/knowledgeTree/tree',{
 	    		params:{
 	    			"courseId": this.courseId
 	    		}
@@ -105,7 +105,7 @@
 	    },
 	    mounted: function () {
 	    	// 学科
-			this.$axios.get('/api/app/study/period/tree',{
+			this.$axios.get('app/study/period/tree',{
 	    		params:{
 	    			"haveCourse": "1",
 	    			"haveGrade": "0"

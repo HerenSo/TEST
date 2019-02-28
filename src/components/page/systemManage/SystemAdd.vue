@@ -87,34 +87,32 @@
         </div>
         <!-- 编辑弹出框 -->
         <el-dialog title="选择知识元" :visible.sync="selectVisible" width="60%">
-            <el-form ref="form" :model="form" label-width="120px">
-            	<el-row :gutter="10">
-            		<el-col :span="24">
-            			<div class="p-10">
-						   <el-cascader
-						    expand-trigger="hover"
-						    :options="courses"
-						    v-model="selectedOptions"
-						    :props="props"
-						    @change="handleChange">
-						  </el-cascader>
-						</div>
-						<div class="">
-							<el-tree
-							  :data="data"
-							  show-checkbox
-							  default-expand-all
-							  node-key="id"
-							  ref="tree"
-							  highlight-current
-							  :props="defaultProps"
-							  accordion
-							  @node-click="">
-							</el-tree>
-						</div>
-            		</el-col>
-                </el-row>
-            </el-form>
+        	<el-row :gutter="10">
+        		<el-col :span="24">
+        			<div class="p-10">
+					   <el-cascader
+					    expand-trigger="hover"
+					    :options="courses"
+					    v-model="selectedOptions"
+					    :props="props"
+					    @change="handleChange">
+					  </el-cascader>
+					</div>
+					<div class="">
+						<el-tree
+						  :data="data"
+						  show-checkbox
+						  default-expand-all
+						  node-key="id"
+						  ref="tree"
+						  highlight-current
+						  :props="defaultProps"
+						  accordion
+						  @node-click="">
+						</el-tree>
+					</div>
+        		</el-col>
+           </el-row>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="selectVisible = false">取 消</el-button>
                 <el-button type="primary" @click="saveSelect">确 定</el-button>
@@ -181,7 +179,7 @@
         	this.form.courseId = this.$route.query.courseId;
         	this.form.parentId = this.$route.query.parentId;
         	this.form.materialId = this.$route.query.materialId;
-        	this.form.gradeId = this.$route.query.gradeId;
+//      	this.form.gradeId = this.$route.query.gradeId;
         	this.auditStatus = JSON.parse(localStorage.getItem("auditStatus"));
         	this.selectedOptions = [this.form.gradeId,this.form.courseId];
         	this.queryArchitectureType();
@@ -204,7 +202,7 @@
 		   },
 		    queryCourse() {
 		      	// 学科
-				this.$axios.get('/api/app/study/period/tree',{
+				this.$axios.get('app/study/period/tree',{
 		    		params:{
 		    			"haveCourse": "1",
 		    			"haveGrade": "0"
@@ -227,7 +225,7 @@
 		     },
 		    queryCoursesData() {
 		      	// 请求树
-		        this.$axios.get('/api/app/knowledgeTree/tree',{
+		        this.$axios.get('app/knowledgeTree/tree',{
 		    		params:{
 		    			"courseId": this.courseId
 		    		}
@@ -245,7 +243,7 @@
 		    },
 		    queryArchitectureType() {
 		    	// 请求体系类型
-		        this.$axios.get('/api/app/combobox/architecture/type').then(res => {
+		        this.$axios.get('app/combobox/architecture/type').then(res => {
 		        	console.log(res)
 		          	if(res.status == 200 && res.data.code == '0000'){
 		          		
@@ -257,7 +255,7 @@
 		    },
 		    queryGrade() {
 		    	// 请求年纪
-		        this.$axios.get('/api/app/study/grade/tree',{
+		        this.$axios.get('app/study/grade/tree',{
 		        	params:{
 		        		periodId:this.form.materialId
 		        	}
@@ -297,18 +295,20 @@
             saveAdd() {
             	if(this.isDisable){
             		this.isDisable = false;
-	            	this.$axios.post("/api/app/architectureTree/add",
+	            	this.$axios.post("app/architectureTree/add",
 		                this.form
-		            ).then((res) => {
-		            	if(res.status == 200 && res.data.code == '0000'){
-			            	this.$message({
-					          message: "提交成功",
-					          type: 'success',
-					          onClose:function(){
-					          	router.push('/systemType');
-					          }
-					        });
-				        }else{
+		           ).then((res) => {
+		           		if(res){
+			            	if(res.status == 200 && res.data.code == '0000'){
+				            	this.$message({
+						          message: "提交成功",
+						          type: 'success',
+						          onClose:function(){
+						          	router.push('/systemType');
+						          }
+						        });
+					        }
+		           		}else{
 				        	this.isDisable = true;
 				        }
 		            })

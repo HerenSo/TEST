@@ -109,10 +109,11 @@
 		    },
 	      	handleNodeClick(data) {
 		        let elParam = {
-		        	id: data.id,
-		        	parentId: data.parentId,
+		        	id: this.courseId,
+		        	parentId: data.id,
 		        	materialId: this.materialId,
-		        	gradeId: this.fasciclesId
+		        	gradeId: this.materialId,
+		        	fasciclesId:this.fasciclesId || 1
 		        }
 		        bus.$emit('elParam', elParam);
 	      	},
@@ -148,7 +149,7 @@
 	      	},
 	     	queryMaterial() {
 		     	// 教材
-		     	this.$axios.get('/api/app/study/course/material/tree',{
+		     	this.$axios.get('app/study/course/material/tree',{
 		    		params:{
 		    			"courseId": this.courseId,
 		    			"haveFascicle": "1"
@@ -173,7 +174,7 @@
 	     	},
 	     	queryCoursesData() {
 		      	// 请求树
-		        this.$axios.get('/api/app/architectureTree/tree',{
+		        this.$axios.get('app/architectureTree/tree',{
 		    		params:{
 		    			"gradeId": this.fasciclesId || 1,
 		    			"materialId": this.materialId,
@@ -195,7 +196,7 @@
 	    },
 	    mounted: function () {
 	    	// 学科
-			this.$axios.get('/api/app/study/period/tree',{
+			this.$axios.get('app/study/period/tree',{
 	    		params:{
 	    			"haveCourse": "1",
 	    			"haveGrade": "0"

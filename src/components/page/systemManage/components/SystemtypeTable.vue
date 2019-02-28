@@ -120,7 +120,8 @@
 	        	 console.log(data)
 	        	this.elId = data.id;
 	        	this.elParentId = data.parentId;
-		       	this.materialId = data.materialId;
+	        	this.materialId = data.materialId;
+		        this.fasciclesId = data.fasciclesId;
 		       	this.gradeId = data.gradeId;
            		this.getData();
 	      	})
@@ -128,7 +129,7 @@
          	if(localStorage.getItem("auditStatus")){
          		this.auditStatusList = JSON.parse(localStorage.getItem("auditStatus"));
          	}else{
-         		this.$axios.get("/api/app/combobox/auditStatus/list").then((res) => {
+         		this.$axios.get("app/combobox/auditStatus/list").then((res) => {
 					if(res.status=="200" && res.data.code == '0000'){
 						this.auditStatusList = res.data.data;
 						localStorage.setItem("auditStatus",JSON.stringify(this.auditStatusList));
@@ -136,8 +137,8 @@
 					}
 				})
          	}
-         	
-	      	this.getData();
+//       	
+//	      	this.getData();
         },
         computed: {
             data() {
@@ -174,10 +175,12 @@
             },
             // 获取 easy-mock 的模拟数据
             getData() {
-                this.$axios.get("/api/app/architectureTree/list",{
+                this.$axios.get("app/architectureTree/list",{
                     params:{
 		    			"courseId": this.elId, // 学科ID
 		    			"parentId": this.elParentId, // 父节点ID，顶级父节点传0
+		    			"materialId": this.materialId, //教材
+		    			"fasciclesId": this.fasciclesId, // 分册
 		    			"beginTime": this.beginTime, // 开始日期，没有则传空字符串或不传
 		    			"endTime": this.endTime, // 结束日期，没有则传空字符串或不传
 		    			"contentName": this.contentName, // 体系名称，没有则传空字符串或不传
@@ -236,7 +239,7 @@
             }
         },
        	watch:{
-	        elId(val, oldVal){//普通的watch监听
+	        elParentId(val, oldVal){//普通的watch监听
 	            // console.log("a: "+val, oldVal);
 	            this.getData();
 	        }

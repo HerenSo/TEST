@@ -10,7 +10,7 @@ import './assets/css/icon.css';
 import './assets/css/main.css';
 import './components/common/directives';
 import "babel-polyfill";
-import MyPligin  from './untils/index'; // 全局
+//import MyPligin  from './untils/index'; // 全局
 import http from './untils/http';
 
 Vue.config.productionTip = false;
@@ -18,7 +18,7 @@ Vue.use(VueResource);
 Vue.use(ElementUI, {
     size: 'small'
 });
-Vue.use(MyPligin);
+//Vue.use(MyPligin);
 Vue.prototype.$axios = axios;
 //depot();
 

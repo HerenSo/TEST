@@ -22,7 +22,7 @@
             </el-select>
 	        <el-button type="primary" icon="search" @click="search">搜索</el-button>
         </div>
-        <el-table :data="data" border class="table"  tooltip-effect="light" stripe ref="multipleTable" @selection-change="handleSelectionChange">
+        <el-table :data="data" border class="table"  tooltip-effect="light" stripe ref="multipleTable" >
             <!--<el-table-column type="selection" width="55" align="center"></el-table-column>-->
             <el-table-column prop="courseId" label="序号" width="50"><!--sortable--> 
             </el-table-column>
@@ -104,6 +104,8 @@
                 idx: -1,
                 elId:null,
                 elParentId:null,
+                materialId:null,
+                fasciclesId:null,
                 total: 1
             }
         },
@@ -112,13 +114,15 @@
 	        	// console.log(data)
 	        	this.elId = data.id;
 	        	this.elParentId = data.parentId;
+	        	this.materialId = data.materialId;
+		        this.fasciclesId = data.fasciclesId;
            		this.getData();
 	      	})
         	// 获取审核状态数据
          	if(localStorage.getItem("auditStatus")){
          		this.auditStatusList = JSON.parse(localStorage.getItem("auditStatus"));
          	}else{
-         		this.$axios.get("/api/app/combobox/auditStatus/list").then((res) => {
+         		this.$axios.get("app/combobox/auditStatus/list").then((res) => {
 					if(res.status=="200" && res.data.code == '0000'){
 						this.auditStatusList = res.data.data;
 						localStorage.setItem("auditStatus",JSON.stringify(this.auditStatusList));
@@ -163,10 +167,12 @@
             },
             // 获取 easy-mock 的模拟数据
             getData() {
-                this.$axios.get("/api/app/architectureTree/list",{
+                this.$axios.get("app/architectureTree/list",{
                     params:{
 		    			"courseId": this.elId, // 学科ID
 		    			"parentId": this.elParentId, // 父节点ID，顶级父节点传0
+		    			"materialId": this.materialId,
+		    			"fasciclesId": this.fasciclesId,
 		    			"beginTime": this.beginTime, // 开始日期，没有则传空字符串或不传
 		    			"endTime": this.endTime, // 结束日期，没有则传空字符串或不传
 		    			"contentName": this.contentName, // 体系名称，没有则传空字符串或不传
@@ -177,7 +183,7 @@
 		    		}
                 }).then((res) => {
                 	if(res.status == 200 && res.data.code == '0000'){
-	                	this.total = res.data.data.records;
+	                	this.total = res.data.data.total;
 	                	// console.log(this.total)
 	                    this.tableData = res.data.data.rows;
 	                }
@@ -212,7 +218,7 @@
             }
         },
        	watch:{
-	        elId(val, oldVal){//普通的watch监听
+	        elParentId(val, oldVal){//普通的watch监听
 	            // console.log("a: "+val, oldVal);
 	            this.getData();
 	        }

@@ -104,7 +104,7 @@
          	if(localStorage.getItem("auditStatus")){
          		this.auditStatusList = JSON.parse(localStorage.getItem("auditStatus"));
          	}else{
-         		this.$axios.get("/api/app/combobox/auditStatus/list").then((res) => {
+         		this.$axios.get("app/combobox/auditStatus/list").then((res) => {
 					if(res.status=="200" && res.data.code == '0000'){
 						this.auditStatusList = res.data.data;
 						localStorage.setItem("auditStatus",JSON.stringify(this.auditStatusList));
@@ -117,14 +117,14 @@
          	if(localStorage.getItem("shelfStatus")){
          		this.shelfStatusList = JSON.parse(localStorage.getItem("shelfStatus"));
          	}else{
-         		this.$axios.get("/api/app/combobox/shelfStatus/list").then((res) => {
+         		this.$axios.get("app/combobox/shelfStatus/list").then((res) => {
 					if(res.status=="200" && res.data.code == '0000'){
 						this.shelfStatusList = res.data.data;
 						localStorage.setItem("shelfStatus",JSON.stringify(this.shelfStatusList));
 					}
 				})
          	}
-            this.getData();
+//          this.getData();
         },
         computed: {
             data() {
@@ -161,7 +161,7 @@
             },
             // 获取 easy-mock 的模拟数据
             getData() {
-                this.$axios.get("/api/app/knowledgeTree/list",{
+                this.$axios.get("app/knowledgeTree/list",{
                     params:{
 		    			"courseId": this.elId, // 学科ID
 		    			"parentId": this.elParentId, // 父节点ID，顶级父节点传0
@@ -195,7 +195,7 @@
             }
         },
        	watch:{
-	        elId(val, oldVal){//普通的watch监听
+	        elParentId(val, oldVal){//普通的watch监听
 //	            console.log("a: "+val, oldVal);
 	            this.cur_page = 1;
 	            this.getData();

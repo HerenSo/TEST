@@ -162,7 +162,7 @@
          	console.log(this.form.id)
         },
         mounted() {
-         	this.$axios.get("/api/app/architectureTree/get",{
+         	this.$axios.get("app/architectureTree/get",{
                 params:{
 	    			"id": this.form.id
 	    		}
@@ -208,7 +208,7 @@
 		   },
 		    queryCourse() {
 		      	// 学科
-				this.$axios.get('/api/app/study/period/tree',{
+				this.$axios.get('app/study/period/tree',{
 		    		params:{
 		    			"haveCourse": "1",
 		    			"haveGrade": "0"
@@ -231,7 +231,7 @@
 		     },
 		    queryCoursesData() {
 		      	// 请求树
-		        this.$axios.get('/api/app/knowledgeTree/tree',{
+		        this.$axios.get('app/knowledgeTree/tree',{
 		    		params:{
 		    			"courseId": this.courseId
 		    		}
@@ -280,7 +280,7 @@
             	}
             	if(this.isDisable){
             		this.isDisable = false;
-            		this.$axios.post("/api/app/architectureTree/update",
+            		this.$axios.post("app/architectureTree/update",
 	                	this.form
 		            ).then((res) => {
 		            	if(res.status == 200 && res.data.code == '0000'){

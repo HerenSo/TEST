@@ -117,7 +117,7 @@
             saveAdd() {
             	if(this.isDisable){
             		this.isDisable = false;
-	            	this.$axios.post("/api/app/knowledgeTree/add",
+	            	this.$axios.post("app/knowledgeTree/add",
 		                this.form
 		            ).then((res) => {
 		            	if(res.status == 200 && res.data.code == '0000'){

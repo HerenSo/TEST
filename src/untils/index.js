@@ -4,7 +4,7 @@ import { Message } from 'element-ui';
 Vue.prototype.$axios = axios;
 let auditStatus = [];
 
-axios.get("/api/app/combobox/auditStatus/list",{
+axios.get("app/combobox/auditStatus/list",{
 	headers:{
 		tokenId: localStorage.getItem("userToken")
 	}

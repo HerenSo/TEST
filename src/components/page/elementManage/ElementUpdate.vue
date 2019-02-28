@@ -107,7 +107,7 @@
          	console.log(this.form.id)
         },
         mounted() {
-         	this.$axios.get("/api/app/knowledgeTree/get",{
+         	this.$axios.get("app/knowledgeTree/get",{
                 params:{
 	    			"id": this.form.id
 	    		}
@@ -133,7 +133,7 @@
             saveEdit() {
             	if(this.isDisable){
             		this.isDisable = false;
-            		this.$axios.post("/api/app/knowledgeTree/update",
+            		this.$axios.post("app/knowledgeTree/update",
 	                	this.form
 		            ).then((res) => {
 		            	if(res.status == 200 && res.data.code == '0000'){
