@@ -25,8 +25,8 @@
         </div>
         <el-table :data="data" border class="table" tooltip-effect="light" stripe ref="multipleTable" @selection-change="">
             <!--<el-table-column type="selection" width="55" align="center"></el-table-column>-->
-            <el-table-column prop="courseId" label="序号" width="50"><!--sortable--> 
-            </el-table-column>
+            <!--<el-table-column prop="courseId" label="序号" width="50">
+            </el-table-column>-->
             <el-table-column prop="contentName" label="体系名称" >
             </el-table-column>
             <el-table-column prop="courseName" label="学科" width="120">
@@ -175,6 +175,10 @@
             },
             // 获取 easy-mock 的模拟数据
             getData() {
+            	if(this.elParentId == null){
+            		this.tableData = [];
+            		return;
+            	}
                 this.$axios.get("app/architectureTree/list",{
                     params:{
 		    			"courseId": this.elId, // 学科ID

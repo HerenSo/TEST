@@ -98,7 +98,11 @@
 			}).then(res => {
 	          	if(res.status == 200 && res.data.code == '0000'){
 		          	this.data = res.data.data;
-		          	this.handleNodeClick(this.data[0]);
+		          	if(this.data.length > 0){
+		          		this.handleNodeClick({id:0});// 初始传 0
+		          	}else{
+		          		this.handleNodeClick({id:null}); 
+		          	}
 	          	}
 	       });
 	      }

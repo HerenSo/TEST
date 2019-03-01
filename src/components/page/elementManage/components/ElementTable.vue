@@ -37,8 +37,8 @@
         </div>
         <el-table :data="data" border class="table" stripe ref="multipleTable" @selection-change="handleSelectionChange">
             <!--<el-table-column type="selection" width="55" align="center"></el-table-column>-->
-            <el-table-column prop="id" label="序号" width="50"><!--sortable--> 
-            </el-table-column>
+            <!--<el-table-column prop="id" label="序号" width="50">
+            </el-table-column>-->
             <el-table-column prop="courseName" label="学科" >
             </el-table-column>
             <el-table-column prop="category" label="科类" >
@@ -231,6 +231,10 @@
             // 获取 list数据
             getData() {
             	console.log(this.elParentId)
+            	if(this.elParentId == null){
+            		this.tableData = [];
+            		return;
+            	}
                 this.$axios.get("app/knowledgeTree/list",{
                     params:{
 		    			"courseId": this.elId, // 学科ID

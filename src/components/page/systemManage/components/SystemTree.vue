@@ -36,8 +36,8 @@
 			        </div>
 					<div class="">
 						<label>分册：</label>
-						<el-button type="primary" v-if="item.select" v-for="item in fasciclesList" :data-id="item.id" @click="selectFascicle(item.id,index)">{{item.fascicleName}}</el-button>
-						<el-button type="text" v-if="!item.select"  v-for="item in fasciclesList" :data-id="item.id" @click="selectFascicle(item.id,index)">{{item.fascicleName}}</el-button>
+						<el-button type="primary" v-if="item.select" v-for="(item,index) in fasciclesList" :data-id="item.id" @click="selectFascicle(item.id,index)">{{item.fascicleName}}</el-button>
+						<el-button type="text" v-if="!item.select"  v-for="(item,index) in fasciclesList" :data-id="item.id" @click="selectFascicle(item.id,index)">{{item.fascicleName}}</el-button>
 			        </div>
 		        </el-dropdown-menu>
 		   </el-dropdown>
@@ -141,9 +141,9 @@
 	      	selectFascicle(id,index) {
 	      		for(let i = 0; i <this.fasciclesList.length; i++){
 	          		this.fasciclesList[i].select = false;
-	          	}
+	          }
 	          	this.fasciclesList[index].select = true; // 默认选中第一个
-	      		this.fasciclesName = this.fasciclesList[index].fasciclesName;
+	      		this.fasciclesName = this.fasciclesList[index].fascicleName;
 	          	this.fasciclesId = this.fasciclesList[index].id;
 	    		this.queryCoursesData(); // 请求树
 	      	},
@@ -162,11 +162,16 @@
 				        	this.materialId = this.material[0].id;
 				          	this.materialName = this.material[0].materialName;
 			          		this.fasciclesList = this.material[0].fascicles;
+			          	}else{
+			          		this.materialName = "暂无";
+			          		this.fasciclesList = [];
 			          	}
 			          	if(this.fasciclesList.length > 0){
 			          		this.fasciclesList[0].select = true; // 默认选中第一个
 				          	this.fasciclesName = this.fasciclesList[0].fascicleName;
 				          	this.fasciclesId = this.fasciclesList[0].id;
+			          	}else{
+			          		this.fasciclesName = "暂无";
 			          	}
 			    		this.queryCoursesData(); // 请求树
 			    	}
@@ -185,11 +190,15 @@
 			          	this.data = res.data.data;
 	//		          	console.log(this.data);
 			          	let data = {
-			          		id:this.data[0].id,
-			          		parentId:this.data[0].parentId
+			          		id:0 // 初始传 0
+//			          		parentId:this.data[0].parentId
 			          	}
 	//		          	console.log(this.data)
-			          	this.handleNodeClick(data);
+						if(this.data.length > 0){
+			          		this.handleNodeClick(data);// 初始传 0
+			          	}else{
+			          		this.handleNodeClick({id:null}); 
+			          	}
 		          	}
 		       	});
 	     	}
