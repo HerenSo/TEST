@@ -43,6 +43,9 @@ a {
 .p-lr-10{
     padding: 0 10px;
 }
+.p-40{
+    padding: 40px;
+}
 .m-r-10{
 	margin-right: 10px;
 }
@@ -58,6 +61,7 @@ a {
 .collapse-btn:hover{
 	background: #3a8ee6;
 }
+
 
 /* 字体颜色 */
 .text-color-blue {
@@ -155,13 +159,18 @@ a {
 .material{
     padding: 10px 20px;
 }
-.material button.el-button--primary{
+.material button{
+    padding: 4px 8px !important;
+}
+.material button.button_primary{
     padding: 4px 8px !important;
     color: #fff;
     background-color: #409EFF;
     border-color: #409EFF;
 }
-
+.el-popper[x-placement^=bottom]{
+    margin-top: 6px;
+}
 .content-box {
     position: absolute;
     left: 250px;
@@ -414,4 +423,35 @@ a {
 }
 .dropdown .el-submenu .el-menu-item{
 	min-width: auto;
+}
+
+/*试题*/
+.test_list ul{
+    list-style: none;
+}
+.test_list ul li{
+    padding: 25px 0 0 0;
+    border: 1px solid #f2f6fc;
+    margin: 15px 0;
+}
+.test_list ul li .test_content{
+    padding: 0 10px;
+}
+.test_list ul li .test_info{
+    padding:0 10px;
+    line-height: 32px;
+    background: #ecf5ff;
+    font-size: 14px;
+}
+.test_list ul li .test_info > span{
+    padding-right: 20px;
+}
+.test_html{
+    padding:0 0 10px 0;
+}
+.test_dethtml{
+    /*border-radius: 4px;
+    border: 1px solid #dcdfe6;*/
+    padding: 10px 0;
+    /*padding: 10px;*/
 }

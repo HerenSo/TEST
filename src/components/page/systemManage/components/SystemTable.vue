@@ -83,7 +83,6 @@
 		name: "systemTable",
 		data() {
             return {
-                url: './vuetable.json',
                 tableData: [],
                 cur_page: 1,
                 multipleSelection: [],
@@ -204,10 +203,10 @@
             	console.log(id);
                 this.$router.push('/systemDetails?id='+id);
             },
-            handleDelete(index, row) {
-                this.idx = index;
-                this.delVisible = true;
-            },
+//          handleDelete(index, row) {
+//              this.idx = index;
+//              this.delVisible = true;
+//          },
             // 保存编辑
             saveEdit() {
                 this.$set(this.tableData, this.idx, this.form);
@@ -225,6 +224,14 @@
 	        elParentId(val, oldVal){//普通的watch监听
 	            // console.log("a: "+val, oldVal);
 	            this.getData();
+	        },
+	        elId(val, oldVal){ // 
+	        	this.cur_page = 1;
+	        	this.getData();
+	        },
+	        fasciclesId(val, oldVal){ // 
+                this.cur_page = val;
+	        	this.getData();
 	        }
 	    }
 	}

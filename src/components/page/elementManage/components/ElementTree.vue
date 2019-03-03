@@ -67,18 +67,28 @@
 		    }
 		},
 	    methods: {
-			handleChange(value) {
+			handleChange(value) { // 选学科
 		        console.log(value);
 		        this.courseId = value[value.length-1];
+		        console.log("学科ID="+this.courseId);
 //		        this.studyPeriod = this.courses[0].studyPeriod;
+				for(var i=0;i < this.courses.length;i++){
+					for(var j=0;j<this.courses[i].courses.length;j++){
+						if(this.courseId == this.courses[i].courses[j].id){
+							this.studyPeriod = this.courses[i].studyPeriod;
+							this.courseName = this.courses[i].courses[j].courseName;
+							break;
+						}
+					}
+				}
 //	          	this.courseName = this.courses[0].courses[0].courseName;
 		      	this.queryCoursesData();
 		    },
-	        handleNodeClick(data) {
+	        handleNodeClick(data) { // 树点击
 		        let elParam = {
-		        	id: this.studyId,
+		        	id: this.courseId,
 		        	parentId: data.id,
-		        	studyCourses: this.studyCourses
+		        	studyCourses: this.courseName
 		        }
 		        bus.$emit('elParam', elParam);
 		    },
@@ -98,11 +108,7 @@
 			}).then(res => {
 	          	if(res.status == 200 && res.data.code == '0000'){
 		          	this.data = res.data.data;
-		          	if(this.data.length > 0){
-		          		this.handleNodeClick({id:0});// 初始传 0
-		          	}else{
-		          		this.handleNodeClick({id:null}); 
-		          	}
+		          	this.handleNodeClick({id:0});// 初始传 0
 	          	}
 	       });
 	      }

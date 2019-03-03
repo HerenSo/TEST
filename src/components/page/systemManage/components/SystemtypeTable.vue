@@ -88,7 +88,6 @@
 		name: "systemtypeTable",
 		data() {
             return {
-                url: './vuetable.json',
                 tableData: [],
                 cur_page: 1,
                 multipleSelection: [],
@@ -111,6 +110,7 @@
                 elParentId:null,
                 materialId: null,
                 gradeId: null,
+                courseName: null,
                 studyCourses:null,
                 total: 1
             }
@@ -123,6 +123,7 @@
 	        	this.materialId = data.materialId;
 		        this.fasciclesId = data.fasciclesId;
 		       	this.gradeId = data.gradeId;
+		       	this.courseName = data.courseName;
            		this.getData();
 	      	})
         	// 获取审核状态数据
@@ -214,7 +215,7 @@
 	    				"courseId": this.elId,
 		        		"materialId": this.materialId,
 		        		"gradeId": this.gradeId,
-	    				"courseName": this.studyCourses
+	    				"courseName": this.courseName
 	                }
 	            })
             },
@@ -245,7 +246,16 @@
        	watch:{
 	        elParentId(val, oldVal){//普通的watch监听
 	            // console.log("a: "+val, oldVal);
+                this.cur_page = val;
 	            this.getData();
+	        },
+	        elId(val, oldVal){ // 
+                this.cur_page = val;
+	        	this.getData();
+	        },
+	        fasciclesId(val, oldVal){ // 
+                this.cur_page = val;
+	        	this.getData();
 	        }
 	    }
 	}

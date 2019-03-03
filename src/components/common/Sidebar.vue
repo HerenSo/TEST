@@ -78,8 +78,12 @@
                                 title: '试题管理'
                             },
                             {
-                                index: 'form',
-                                title: '试题审核'
+                                index: 'testElement',
+                                title: '知识元选题'
+                            },
+                            {
+                                index: 'testSystem',
+                                title: '体系结构选题'
                             }
                         ]
                     }

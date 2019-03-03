@@ -84,6 +84,26 @@ export default new Router({
                     component: resolve => require(['../components/page/testManage/TestManage.vue'], resolve),
                     meta: { title: '试题管理' }
                 },
+                {
+                    path: '/testElement',
+                    component: resolve => require(['../components/page/testManage/TestElement.vue'], resolve),
+                    meta: { title: '知识元选题' }
+                },
+                {
+                    path: '/testSystem',
+                    component: resolve => require(['../components/page/testManage/TestSystem.vue'], resolve),
+                    meta: { title: '体系结构选题' }
+                },
+                {
+                    path: '/testDetails',
+                    component: resolve => require(['../components/page/testManage/TestDetails.vue'], resolve),
+                    meta: { title: '试题详情' }
+                },
+                {
+                    path: '/testAdd',
+                    component: resolve => require(['../components/page/testManage/TestAdd.vue'], resolve),
+                    meta: { title: '试题新增' }
+                },
 //              {
 //                  path: '/table',
 //                  component: resolve => require(['../components/page/BaseTable.vue'], resolve),

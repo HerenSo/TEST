@@ -1,68 +1,92 @@
 <template>
 	<div class="container">
-		<div class="form-box">
+		<div class="p-40">
 			<el-form ref="form" :model="form" label-width="120px" class="demo-ruleForm">
 	        	<el-row :gutter="20">
+	        		<el-col :span="24">
+		                <label>试题题干:</label>
+		                <div class="test_dethtml" v-html="form.questionHtml"></div>
+	               	</el-col>
+	        		<el-col :span="24">
+		                <label>答案:</label>
+		                <div class="test_dethtml" v-html="form.answerHtml"></div>
+	               	</el-col>
+	        		<el-col :span="24">
+		                <label>解析:</label>
+		                <div class="test_dethtml" v-html="form.answerHtml"></div>
+	               	</el-col>
 	        		<el-col :span="12">
-		                <el-form-item label="体系名称">
-		                    <el-input v-model="form.contentName" readonly></el-input>
-		                </el-form-item>
-	               </el-col>
-	        		<el-col :span="12">
-	                <el-form-item label="体系类型">
-	                    <el-input v-model="form.typeName"></el-input>
+	                <el-form-item label="资源编号">
+	                    <el-input v-model="form.resourceNo" readonly></el-input>
 	                </el-form-item>
 	               	</el-col>
 	        		<el-col :span="12">
 	                <el-form-item label="学科">
-	                    	<el-input v-model="form.courseName" readonly></el-input>
+	                    <el-input v-model="form.courseName" readonly></el-input>
+	                </el-form-item>
+	               	</el-col>
+	        		<el-col :span="12">
+	                <el-form-item label="区域">
+	                    <el-input v-model="form.region" readonly></el-input>
 	                </el-form-item>
 	               	</el-col>
 	        		<el-col :span="12">
 	                <el-form-item label="科类">
-	                	<el-input v-model="form.categoryName" readonly></el-input>
+	                	<el-input v-model="form.category" readonly></el-input>
 	                </el-form-item>
 	               	</el-col>
 	        		<el-col :span="12">
-	                <el-form-item label="年级">
-	                    	<el-input v-model="form.gradeName" readonly></el-input>
+	                <el-form-item label="题型">
+	                	<el-input v-model="form.questionTypeName" readonly></el-input>
 	                </el-form-item>
 	               	</el-col>
 	        		<el-col :span="12">
-	                <el-form-item label="归属人">
-	                	<el-input v-model="form.owner" readonly></el-input>
+	                <el-form-item label="年份">
+	                	<el-input v-model="form.year" readonly></el-input>
 	                </el-form-item>
 	               	</el-col>
-	        		<!--<el-col :span="12">
-	                <el-form-item label="审核状态">
-	                    <el-input v-model="form.address"></el-input>
+	        		<el-col :span="12">
+	                <el-form-item label="难度系数">
+	                	<el-input v-model="form.year" readonly></el-input>
 	                </el-form-item>
-	               	</el-col>-->
+	               	</el-col>
+	        		<el-col :span="12">
+		                <el-form-item label="知识元名称">
+		                	<el-tooltip class="item" effect="light" :content="form.knowledgesName" placement="right">
+		                    	<el-input v-model="form.knowledgesName" readonly></el-input>
+    						</el-tooltip>
+		                </el-form-item>
+	                </el-col>
 	        		<el-col :span="12">
 	                <el-form-item label="审核状态">
 	                    <el-input v-model="form.auditStatusName" readonly></el-input>
 	                </el-form-item>
-	               </el-col>
+	               	</el-col>
+	        		<el-col :span="12">
+	                <el-form-item label="上架状态">
+	                    <el-input v-model="form.shelfStatusName" readonly></el-input>
+	                </el-form-item>
+	               	</el-col>
 	        		<el-col :span="12">
 	                <el-form-item label="创建人">
 	                    <el-input v-model="form.creator" readonly></el-input>
 	                </el-form-item>
 	               	</el-col>
 	        		<el-col :span="12">
-	                <el-form-item label="创建时间">
+	                <el-form-item label="创建日期">
 	                    <el-input v-model="form.createTime" readonly></el-input>
 	                </el-form-item>
 	               </el-col>
 	        		<el-col :span="12">
-	                <el-form-item label="审核人">
-	                    <el-input v-model="form.auditor" readonly></el-input>
+	                <el-form-item label="修改人">
+	                    <el-input v-model="form.updater" readonly></el-input>
 	                </el-form-item>
 	               	</el-col>
 	        		<el-col :span="12">
-	                <el-form-item label="审核时间">
-	                    <el-input v-model="form.auditTime" readonly></el-input>
+	                <el-form-item label="修改日期">
+	                    <el-input v-model="form.updateTime" readonly></el-input>
 	                </el-form-item>
-	              </el-col>
+	                </el-col>
 	            </el-row>
 	        </el-form>
 	        <div class="text-center" v-if="ischeck">
@@ -87,7 +111,7 @@
     import bus from '../../common/bus';
 	import router from '@/router';
 	export default{
-		name: "systemTable",
+		name: "testDetails",
 		data() {
             return {
                 form: {},
@@ -111,7 +135,7 @@
 //       	console.log(this.form.id)
         },
         mounted() {
-         	this.$axios.get("app/architectureTree/get",{
+         	this.$axios.get("app/question/message/get",{
                 params:{
 	    			"id": this.form.id
 	    		}
@@ -123,6 +147,8 @@
 	                	knowledgesNamelist.push(this.form.knowledges[i].knowledgeName);
 	                }
 	                this.form.knowledgesName = knowledgesNamelist.join(",");
+	                console.log(this.form.knowledgesName);
+	                console.log("-------------知识元-----------")
 	                if(this.form.auditStatus == '10'){
 	                	this.ischeckpass = true;
 	                }else{
@@ -141,7 +167,7 @@
         	putpass(val) {
         		if(this.isDisable){
             		this.isDisable = false;
-	        		this.$axios.post("app/knowledgeTree/shelf",{
+	        		this.$axios.post("app/question/message/shelf",{
 		    			"id": this.form.id,
 		    			"shelfStatus": val
 		            }).then((res) => {
@@ -156,7 +182,7 @@
 					          message: this.msg,
 					          type: 'success',
 					          onClose:function(){
-					          	router.push('/systemType');
+					          	router.push('/testManage');
 					          }
 					        });
 		            	}else{
@@ -168,7 +194,7 @@
         	checkpass(val) {
         		if(this.isDisable){
             		this.isDisable = false;
-	        		this.$axios.post("app/architectureTree/audit",{
+	        		this.$axios.post("app/question/message/audit",{
 			    			"id": this.form.id,
 			    			"auditStatus": val
 		            }).then((res) => {
@@ -183,7 +209,7 @@
 					          message: this.msg,
 					          type: 'success',
 					          onClose:function(){
-					          	router.push('/systemType');
+					          	router.push('/testManage');
 					          }
 					        });
 		            	}else{

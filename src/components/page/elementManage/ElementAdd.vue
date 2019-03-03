@@ -15,14 +15,14 @@
                	</el-col>-->
         		<el-col :span="12">
                 <el-form-item label="学科">
-                    <el-input v-model="courseName" :disabled="true"></el-input>
+                    <el-input v-model="courseName" readonly></el-input>
                     <el-input v-model="form.courseId" class="hidden"></el-input>
                     <el-input v-model="form.parentId" class="hidden"></el-input>
                 </el-form-item>
                	</el-col>
         		<el-col :span="12">
                 <el-form-item label="科类" prop="category" required>
-                	<el-select v-model="form.category" placeholder="请选择科类">
+                	<el-select v-model="form.category" placeholder="请选择科类" >
 				      <el-option label="普文" value="普文"></el-option>
 				      <el-option label="普理" value="普理"></el-option>
 				    </el-select>
@@ -85,11 +85,11 @@
             return {
                 form: {
                     "name": '', // 知识元名称
-					"category": '', // 学科类别
+					"category": '普文', // 学科类别
 					"courseId": null, //学科ID
 					"parentId": null, // 父节点ID,顶级传0
 					"seq": '', // 排序
-					"shelfStatus": '', //上架状态
+					"shelfStatus": '5', //上架状态
 					"remarks": '' //备注
                 },
                 rules: {
