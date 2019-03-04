@@ -48,7 +48,7 @@
                	</el-col>
                	<el-col :span="12">
 	                <el-form-item label="难度系数">
-               			<el-select  v-model="form.difficulty" placeholder="请选择难度系数">
+               			<el-select  v-model="form.diffculty" placeholder="请选择难度系数">
 			                <el-option :key="item.id" :label="item.difficultyName" :value="item.id" v-for="item in questionDifficultyList"></el-option>
 			            </el-select>
             		</el-form-item>
@@ -126,7 +126,7 @@
     import { quillEditor } from 'vue-quill-editor';
 	import router from '@/router';
 	export default{
-		name: "testTable",
+		name: "testAdd",
 		components: {
             quillEditor
         },
@@ -304,7 +304,7 @@
 		    		}
 		    		if(flat){
 		    			this.form.knowledges.push({
-			    			knowledgeId:selectVal[i].id
+			    			"knowledgeId":selectVal[i].id
 //			    			knowledgeName:selectVal[i].label
 			    		})
 		    			this.knowledges.push({
@@ -328,7 +328,7 @@
 						          message: "提交成功",
 						          type: 'success',
 						          onClose:function(){
-						          	router.push('/systemType');
+						          	router.push('/testManage');
 						          }
 						        });
 					        }

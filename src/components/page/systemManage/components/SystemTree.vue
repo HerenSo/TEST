@@ -105,7 +105,7 @@
 				}
 //	          	this.courseName = this.courses[0].courses[0].courseName;
 	      		this.queryMaterial();
-		      	this.queryCoursesData();
+//		      	this.queryCoursesData();
 		    },
 	      	handleNodeClick(data) {
 		        let elParam = {
@@ -177,7 +177,9 @@
 				          	this.fasciclesId = this.fasciclesList[0].id;
 			          	}else{
 			          		this.fasciclesName = "暂无";
+//			          		this.fasciclesId = null;
 			          	}
+			          	console.log("this.fasciclesId="+this.fasciclesId)
 			    		this.queryCoursesData(); // 请求树
 			    	}
 		        });

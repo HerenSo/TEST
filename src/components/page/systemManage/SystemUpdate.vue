@@ -134,6 +134,7 @@
 	            },
 	            courses: [], // 学科列表
 		        material: [], // 教材列表
+		        periodId:"",
 		        studyPeriod:'', // 初始默认 学级
 		        courseName:'', // 初始默认 学课
 		        courseId: null, // 初始默认 学课ID
@@ -186,7 +187,7 @@
 	                this.auditor = data.auditor;
 	                this.auditTime = data.auditTime;
 	                this.auditStatusName = data.auditStatusName;
-	                this.selectedOptions = [this.form.gradeId,this.form.courseId];
+//	                this.selectedOptions = [this.form.gradeId,this.form.courseId];
 //	            	console.log(this.form)
             	}
             })
@@ -222,9 +223,11 @@
 			          			this.courses[i].courses[j].studyPeriod = this.courses[i].courses[j].courseName;
 			          		}
 			          	}
+			          	this.periodId = this.courses[0].id;
 			          	this.courseId = this.courses[0].courses[0].id;
 			          	this.studyPeriod = this.courses[0].studyPeriod;
 			          	this.courseName = this.courses[0].courses[0].courseName;
+			          	this.selectedOptions = [this.periodId,this.courseId];
 	    				this.queryCoursesData(); // 请求树
 		          	}
 		        });

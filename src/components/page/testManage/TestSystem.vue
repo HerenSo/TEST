@@ -16,11 +16,11 @@
 
 <script>
 	import systemTree from '../systemManage/components/SystemTree.vue';
-	import systemtypeTable from './components/TestList.vue';
+	import testList from './components/TestList.vue';
 	export default{
 		name: 'testSystem',
 		components: {
-			systemTree,systemtypeTable
+			systemTree,testList
 		}
 	}
 </script>

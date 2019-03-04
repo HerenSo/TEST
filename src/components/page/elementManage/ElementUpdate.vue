@@ -104,7 +104,7 @@
         },
         created(){
         	this.form.id = this.$route.query.id;
-         	console.log(this.form.id)
+//       	console.log(this.form.id)
         },
         mounted() {
          	this.$axios.get("app/knowledgeTree/get",{

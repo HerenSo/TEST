@@ -85,7 +85,7 @@
             return {
                 form: {
                     "name": '', // 知识元名称
-					"category": '普文', // 学科类别
+					"category": '普理', // 学科类别
 					"courseId": null, //学科ID
 					"parentId": null, // 父节点ID,顶级传0
 					"seq": '', // 排序

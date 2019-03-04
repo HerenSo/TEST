@@ -100,6 +100,11 @@ export default new Router({
                     meta: { title: '试题详情' }
                 },
                 {
+                    path: '/testUpdate',
+                    component: resolve => require(['../components/page/testManage/TestUpdate.vue'], resolve),
+                    meta: { title: '试题修改' }
+                },
+                {
                     path: '/testAdd',
                     component: resolve => require(['../components/page/testManage/TestAdd.vue'], resolve),
                     meta: { title: '试题新增' }

@@ -71,7 +71,7 @@
 		        console.log(value);
 		        this.courseId = value[value.length-1];
 		        console.log("学科ID="+this.courseId);
-//		        this.studyPeriod = this.courses[0].studyPeriod;
+		        this.studyPeriod = this.courses[0].studyPeriod;
 				for(var i=0;i < this.courses.length;i++){
 					for(var j=0;j<this.courses[i].courses.length;j++){
 						if(this.courseId == this.courses[i].courses[j].id){
@@ -88,7 +88,7 @@
 		        let elParam = {
 		        	id: this.courseId,
 		        	parentId: data.id,
-		        	studyCourses: this.courseName
+		        	studyCourses: this.studyCourses
 		        }
 		        bus.$emit('elParam', elParam);
 		    },

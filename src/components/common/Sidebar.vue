@@ -60,11 +60,11 @@
                         subs: [
                             {
                                 index: 'systemType',
-                                title: '体系结构类型管理'
+                                title: '体系结构管理'
                             },
                             {
                                 index: 'systemManage',
-                                title: '体系结构管理'
+                                title: '体系结构审核'
                             }
                         ]
                     },

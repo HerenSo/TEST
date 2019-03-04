@@ -62,6 +62,7 @@
         			</div>
         		</li>
         	</ul>
+        	<div class="text-center p-tb-20" v-if="tableData.length == 0">暂无数据</div>
         </div>
         <div class="pagination">
             <el-pagination background @current-change="handleCurrentChange" :page-count="total" layout="prev, pager, next">
@@ -72,6 +73,7 @@
 </template>
 
 <script>
+    import bus from '../../../common/bus';
 	export default{
 		name: "testList",
 		data() {
@@ -80,6 +82,9 @@
                 cur_page: 1,
                 select_cate: '',
                 select_word: '',
+                courseId: "",
+                knowledgeId: "", // 知识元Id
+                architectureId: "", // 体系ID
                 examType:"", // 考试类型
                 questionType: "", // 题型
                 questionDifficulty: "", //难度系数
@@ -98,7 +103,14 @@
 //      	this.queryExamType(); // 获取考试类型
         	this.queryQuestionType();//获取题型列表
         	this.queryQuestionDifficulty();//获取难度系数
-        	
+        	bus.$on('elParam', (data) => {
+        		this.courseId = data.id;
+        		if(data.studyCourses){
+        			this.knowledgeId = data.parentId;
+        		}else{
+        			this.architectureId = data.parentId;
+        		}
+	      	})
          	// 获取审核状态数据
          	if(localStorage.getItem("auditStatus")){
          		this.auditStatusList = JSON.parse(localStorage.getItem("auditStatus"));
@@ -131,9 +143,9 @@
             getData() {
                 this.$axios.get("app/question/message/list",{
                     params:{
-                    	"courseId":"",//		学科ID
-						"knowledgeId":"",//  知识元ID
-						"architectureId":"",//	体系ID
+                    	"courseId":this.courseId,//		学科ID
+						"knowledgeId":this.knowledgeId,//  知识元ID
+						"architectureId":this.architectureId,//	体系ID
 						"region":"",
 		    			"shelfStatus":"",
                     	"name":"", // 试题名称
@@ -185,35 +197,24 @@
 			    	}
 		        });
             },
-            filterTag(value, row) {
-                return row.tag === value;
-            },
             handleEdit(id) {
-                this.$router.push('/systemUpdate?id='+id);
+                this.$router.push('/testUpdate?id='+id);
             },
             handleCheck(id,type) {
                 this.$router.push('/testDetails?id='+id+'&type='+type);
-            },
-            handleSelectionChange(val) {
-                this.multipleSelection = val;
-            },
-            handleDelete(index, row) {
-                this.idx = index;
-                this.delVisible = true;
-            },
-            // 保存编辑
-            saveEdit() {
-                this.$set(this.tableData, this.idx, this.form);
-                this.editVisible = false;
-                this.$message.success(`修改第 ${this.idx+1} 行成功`);
-            },
-            // 确定删除
-            deleteRow(){
-                this.tableData.splice(this.idx, 1);
-                this.$message.success('删除成功');
-                this.delVisible = false;
             }
-        }
+        },
+       	watch:{
+	        knowledgeId(val, oldVal){//普通的watch监听
+	            console.log("a: "+val, oldVal);
+	            this.cur_page = 1;
+	            this.getData();
+	        },
+	        architectureId(val, oldVal){ // 
+	        	this.cur_page = 1;
+	        	this.getData();
+	        }
+	    }
 	}
 </script>
 
