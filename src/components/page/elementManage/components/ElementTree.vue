@@ -29,8 +29,10 @@
 		  :data="data"
 		  :props="defaultProps"
 		  node-key="id"
+		  default-expand-all
 		  highlight-current
-		  accordion
+		  :current-node-key="checked"
+		  ref="tree"
 		  @node-click="handleNodeClick">
 		</el-tree>
 	</div>
@@ -58,7 +60,9 @@
 		        	value: 'id',
             		children: 'courses'
 		        },
-		        selectedOptions:[]
+		        selectedOptions:[],
+		        local:"", // 是否缓存学科
+		        checked:"" // 默认选中的子节点
 		    };
 	    },
 	    computed: {
@@ -81,6 +85,13 @@
 						}
 					}
 				}
+				let selecteCourse = {
+          			studyPeriod: this.studyPeriod,
+          			courseName: this.courseName,
+          			studyId: value[0],
+          			courseId:value[1]
+          		}
+		        localStorage.setItem("selectedOptions",JSON.stringify(selecteCourse));
 //	          	this.courseName = this.courses[0].courses[0].courseName;
 		      	this.queryCoursesData();
 		    },
@@ -91,6 +102,14 @@
 		        	studyCourses: this.studyCourses
 		        }
 		        bus.$emit('elParam', elParam);
+		        if(this.local !=0){
+		        	localStorage.setItem("treeCheck",data.id);
+		        }else{
+		        	this.$nextTick(() => {
+			        	this.checked = localStorage.getItem("treeCheck");
+			          	this.$refs.tree.setCurrentKey(this.checked);
+			        });
+		        }
 		    },
 //	      selectCourse(id,courseName,studyPeriod) {
 //	      	console.log(id)
@@ -109,11 +128,15 @@
 	          	if(res.status == 200 && res.data.code == '0000'){
 		          	this.data = res.data.data;
 		          	this.handleNodeClick({id:0});// 初始传 0
+		          	
 	          	}
 	       });
 	      }
 	    },
 	    mounted: function () {
+	    	this.local = this.$route.query.localStorage;
+	    	
+//	    	console.log(this.local)
 	    	// 学科
 			this.$axios.get('app/study/period/tree',{
 	    		params:{
@@ -129,11 +152,28 @@
 		          			this.courses[i].courses[j].studyPeriod = this.courses[i].courses[j].courseName;
 		          		}
 		          	}
-		          	this.courseId = this.courses[0].courses[0].id;
-		          	this.studyPeriod = this.courses[0].studyPeriod;
-		          	this.studyId = this.courses[0].id;
-		          	this.courseName = this.courses[0].courses[0].courseName;
-		          	this.selectedOptions = [this.studyId,this.courseId];
+		          	if(this.local != 0){
+			          	this.courseId = this.courses[0].courses[0].id;
+			          	this.studyPeriod = this.courses[0].studyPeriod;
+			          	this.studyId = this.courses[0].id;
+			          	this.courseName = this.courses[0].courses[0].courseName;
+		          		this.selectedOptions = [this.studyId,this.courseId];
+		          		let selecteCourse = {
+		          			studyPeriod: this.studyPeriod,
+		          			courseName: this.courseName,
+		          			studyId: this.studyId,
+		          			courseId:this.courseId
+		          		}
+		          		localStorage.setItem("selectedOptions",JSON.stringify(selecteCourse));
+		          	}else{
+		          		let selecteCourse = JSON.parse(localStorage.getItem("selectedOptions"));
+		          		this.courseId = selecteCourse.courseId;
+			          	this.studyPeriod = selecteCourse.studyPeriod;
+			          	this.studyId = selecteCourse.studyId;
+			          	this.courseName = selecteCourse.courseName;
+			          	this.selectedOptions = [this.studyId,this.courseId];
+		          	}
+		          	
 		          	this.queryCoursesData();
 	          	}
 	        });
