@@ -30,84 +30,84 @@ export default new Router({
                 {
                     path: '/elementManage',
                     component: resolve => require(['../components/page/elementManage/ElementManage.vue'], resolve),
-                    meta: { title: '知识元管理' }
+                    meta: { title: '知识元管理', keepAlive: true, isBack:false }
                 },
                 {
                     path: '/elementCheck',
                     component: resolve => require(['../components/page/elementManage/ElementCheck.vue'], resolve),
-                    meta: { title: '知识元审核' }
+                    meta: { title: '知识元审核', keepAlive: true, isBack:false }
                 },
                 {
                     path: '/elementAdd',
                     name: 'elementAdd',
                     component: resolve => require(['../components/page/elementManage/ElementAdd.vue'], resolve),
-                    meta: { title: '知识元新增' }
+                    meta: { title: '知识元新增', keepAlive: false, isBack:false }
                 },
                 {
                     path: '/elementUpdate',
                     component: resolve => require(['../components/page/elementManage/ElementUpdate.vue'], resolve),
-                    meta: { title: '知识元修改' }
+                    meta: { title: '知识元修改', keepAlive: false, isBack:false }
                 },
                 {
                     path: '/elementDetails',
                     component: resolve => require(['../components/page/elementManage/ElementDetails.vue'], resolve),
-                    meta: { title: '知识元查看' }
+                    meta: { title: '知识元查看', keepAlive: false, isBack:false }
                 },
                 {
                     path: '/systemManage',
                     component: resolve => require(['../components/page/systemManage/SystemManage.vue'], resolve),
-                    meta: { title: '体系结构管理' }
+                    meta: { title: '体系结构管理', keepAlive: true, isBack:false }
                 },
                 {
                     path: '/systemAdd',
                     name: 'systemAdd',
                     component: resolve => require(['../components/page/systemManage/SystemAdd.vue'], resolve),
-                    meta: { title: '体系结构新增' }
+                    meta: { title: '体系结构新增', keepAlive: false, isBack:false }
                 },
                 {
                     path: '/systemUpdate',
                     component: resolve => require(['../components/page/systemManage/SystemUpdate.vue'], resolve),
-                    meta: { title: '体系结构修改' }
+                    meta: { title: '体系结构修改', keepAlive: false, isBack:false }
                 },
                 {
                     path: '/systemDetails',
                     component: resolve => require(['../components/page/systemManage/SystemDetails.vue'], resolve),
-                    meta: { title: '体系结构详情' }
+                    meta: { title: '体系结构详情', keepAlive: false, isBack:false }
                 },
                 {
                     path: '/systemType',
                     component: resolve => require(['../components/page/systemManage/SystemType.vue'], resolve),
-                    meta: { title: '体系结构类型管理' }
+                    meta: { title: '体系结构类型管理', keepAlive: true, isBack:false }
                 },
                 {
                     path: '/testManage',
                     component: resolve => require(['../components/page/testManage/TestManage.vue'], resolve),
-                    meta: { title: '试题管理' }
+                    meta: { title: '试题管理', keepAlive: true, isBack:false }
                 },
                 {
                     path: '/testElement',
                     component: resolve => require(['../components/page/testManage/TestElement.vue'], resolve),
-                    meta: { title: '知识元选题' }
+                    meta: { title: '知识元选题', keepAlive: true, isBack:false }
                 },
                 {
                     path: '/testSystem',
                     component: resolve => require(['../components/page/testManage/TestSystem.vue'], resolve),
-                    meta: { title: '体系结构选题' }
+                    meta: { title: '体系结构选题', keepAlive: true, isBack:false }
                 },
                 {
                     path: '/testDetails',
                     component: resolve => require(['../components/page/testManage/TestDetails.vue'], resolve),
-                    meta: { title: '试题详情' }
+                    meta: { title: '试题详情', keepAlive: false, isBack:false }
                 },
                 {
                     path: '/testUpdate',
                     component: resolve => require(['../components/page/testManage/TestUpdate.vue'], resolve),
-                    meta: { title: '试题修改' }
+                    meta: { title: '试题修改', keepAlive: false, isBack:false }
                 },
                 {
                     path: '/testAdd',
                     component: resolve => require(['../components/page/testManage/TestAdd.vue'], resolve),
-                    meta: { title: '试题新增' }
+                    meta: { title: '试题新增', keepAlive: false, isBack:false }
                 },
 //              {
 //                  path: '/table',

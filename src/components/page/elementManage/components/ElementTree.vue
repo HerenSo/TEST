@@ -31,7 +31,6 @@
 		  node-key="id"
 		  default-expand-all
 		  highlight-current
-		  :current-node-key="checked"
 		  ref="tree"
 		  @node-click="handleNodeClick">
 		</el-tree>
@@ -72,9 +71,9 @@
 		},
 	    methods: {
 			handleChange(value) { // 选学科
-		        console.log(value);
+//		        console.log(value);
 		        this.courseId = value[value.length-1];
-		        console.log("学科ID="+this.courseId);
+//		        console.log("学科ID="+this.courseId);
 		        this.studyPeriod = this.courses[0].studyPeriod;
 				for(var i=0;i < this.courses.length;i++){
 					for(var j=0;j<this.courses[i].courses.length;j++){
@@ -102,14 +101,6 @@
 		        	studyCourses: this.studyCourses
 		        }
 		        bus.$emit('elParam', elParam);
-		        if(this.local !=0){
-		        	localStorage.setItem("treeCheck",data.id);
-		        }else{
-		        	this.$nextTick(() => {
-			        	this.checked = localStorage.getItem("treeCheck");
-			          	this.$refs.tree.setCurrentKey(this.checked);
-			        });
-		        }
 		    },
 //	      selectCourse(id,courseName,studyPeriod) {
 //	      	console.log(id)
@@ -135,7 +126,7 @@
 	    },
 	    mounted: function () {
 	    	this.local = this.$route.query.localStorage;
-	    	
+	        
 //	    	console.log(this.local)
 	    	// 学科
 			this.$axios.get('app/study/period/tree',{

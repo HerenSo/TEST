@@ -100,9 +100,15 @@
             }
         },
         created() {
+        },
+        mounted() {
 //      	this.queryExamType(); // 获取考试类型
         	this.queryQuestionType();//获取题型列表
         	this.queryQuestionDifficulty();//获取难度系数
+//      	this.getData();
+			if(this.$route.path == "/testManage"){
+				this.getData();
+			}
         	bus.$on('elParam', (data) => {
         		this.courseId = data.id;
         		if(data.studyCourses){
@@ -123,7 +129,7 @@
 					}
 				})
          	}
-            this.getData();
+            
         },
         computed: {
             beginTime: function () {
@@ -139,7 +145,7 @@
                 this.cur_page = val;
                 this.getData();
             },
-            // 获取 easy-mock 的模拟数据
+            // 获取数据
             getData() {
                 this.$axios.get("app/question/message/list",{
                     params:{
@@ -206,7 +212,7 @@
         },
        	watch:{
 	        knowledgeId(val, oldVal){//普通的watch监听
-	            console.log("a: "+val, oldVal);
+//	            console.log("a: "+val, oldVal);
 	            this.cur_page = 1;
 	            this.getData();
 	        },

@@ -78,7 +78,7 @@
         </el-form>
         <div class="text-center">
 	        <span slot="footer" class="dialog-footer">
-	            <router-link to='elementManage'class="m-r-10"><el-button >取 消</el-button></router-link>
+	            <router-link :to='topath'class="m-r-10"><el-button >取 消</el-button></router-link>
 	            <el-button type="primary" @click="saveAdd">确 定</el-button>
 	        </span>
         </div>
@@ -171,10 +171,17 @@
 	            isDisable: true, // 防止重复提交
 	            auditStatusName: "",
 	            knowledges: [],
-	            selectVisible: false
+	            selectVisible: false,
+	            topath: "" // 返回路径
             }
         },
+        beforeRouteEnter (to, from, next) {
+//		    console.log(from.path);
+		    localStorage.setItem("backpath",from.path+"?localStorage=0");
+		    next();
+		},
         mounted() {
+        	this.topath = localStorage.getItem("backpath"); // 获取返回路径
         	this.form.id = this.$route.query.id;
         	this.getDate(); // 获取详情
         	this.queryQuestionType();//获取题型列表
@@ -354,7 +361,7 @@
 						          message: "提交成功",
 						          type: 'success',
 						          onClose:function(){
-						          	router.push('/testManage');
+						          	router.push(this.topath);
 						          }
 						        });
 					        }

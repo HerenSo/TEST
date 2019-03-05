@@ -7,7 +7,8 @@
             <div class="content">
                 <transition name="move" mode="out-in">
                     <keep-alive :include="tagsList">
-                        <router-view></router-view>
+                        <router-view v-if="$route.meta.keepAlive"></router-view>
+                        <router-view v-if="!$route.meta.keepAlive"></router-view>
                     </keep-alive>
                 </transition>
             </div>

@@ -17,6 +17,7 @@
 <script>
 	import systemTree from './components/SystemTree.vue';
 	import systemtypeTable from './components/SystemtypeTable.vue';
+	import router from '@/router'
 	export default{
 		name: 'systemType',
 		components: {

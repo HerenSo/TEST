@@ -42,7 +42,9 @@
 			<el-tree
 			  :data="data"
 			  :props="defaultProps"
+		  	  node-key="id"
 			  accordion
+		      default-expand-all
 			  @node-click="handleNodeClick">
 			</el-tree>
 		</div>
@@ -76,7 +78,8 @@
 		        	value: 'id',
             		children: 'courses'
 		        },
-		        selectedOptions:[]
+		        selectedOptions:[],
+		        local:"" // 是否缓存学科
 		    };
 	    },
 	    computed: {
@@ -89,8 +92,8 @@
 		    }
 		},
 	    methods: {
-	    	handleChange(value) {
-		        console.log(value);
+	    	handleChange(value) { // 选学科
+//		        console.log(value);
 		        this.courseId = value[value.length-1];
 		        console.log("学科ID="+this.courseId);
 //		        this.studyPeriod = this.courses[0].studyPeriod;
@@ -103,6 +106,13 @@
 						}
 					}
 				}
+				let selecteCourse = {
+          			studyPeriod: this.studyPeriod,
+          			courseName: this.courseName,
+          			studyId: value[0],
+          			courseId:value[1]
+          		}
+		        localStorage.setItem("selectedOptions",JSON.stringify(selecteCourse));
 //	          	this.courseName = this.courses[0].courses[0].courseName;
 	      		this.queryMaterial();
 //		      	this.queryCoursesData();
@@ -152,6 +162,47 @@
 	          	this.fasciclesId = this.fasciclesList[index].id;
 	    		this.queryCoursesData(); // 请求树
 	      	},
+	      	queryCourse() {
+	      		// 学科
+				this.$axios.get('app/study/period/tree',{
+		    		params:{
+		    			"haveCourse": "1",
+		    			"haveGrade": "0"
+		    		}
+				}).then(res => {
+		          	if(res.status == 200 && res.data.code == '0000'){
+	//		          	this.courses = JSON.parse(JSON.stringify(res.data.data));
+			          	this.courses = res.data.data;
+			          	for(var i=0; i < this.courses.length; i++){
+			          		for(var j=0; j < this.courses[i].courses.length;j++){
+			          			this.courses[i].courses[j].studyPeriod = this.courses[i].courses[j].courseName;
+			          		}
+			          	}
+			          	if(this.local != 0){
+				          	this.courseId = this.courses[0].courses[0].id;
+				          	this.studyPeriod = this.courses[0].studyPeriod;
+				          	this.studyId = this.courses[0].id;
+				          	this.courseName = this.courses[0].courses[0].courseName;
+				          	this.selectedOptions = [this.studyId,this.courseId];
+				          	let selecteCourse = {
+			          			studyPeriod: this.studyPeriod,
+			          			courseName: this.courseName,
+			          			studyId: this.studyId,
+			          			courseId:this.courseId
+			          		}
+			          		localStorage.setItem("selectedOptions",JSON.stringify(selecteCourse));
+				        }else{
+			          		let selecteCourse = JSON.parse(localStorage.getItem("selectedOptions"));
+			          		this.courseId = selecteCourse.courseId;
+				          	this.studyPeriod = selecteCourse.studyPeriod;
+				          	this.studyId = selecteCourse.studyId;
+				          	this.courseName = selecteCourse.courseName;
+				          	this.selectedOptions = [this.studyId,this.courseId];
+			          	}
+				        this.queryMaterial(); // 请求教材
+		          	}
+		        });
+		    },
 	     	queryMaterial() {
 		     	// 教材
 		     	this.$axios.get('app/study/course/material/tree',{
@@ -177,7 +228,7 @@
 				          	this.fasciclesId = this.fasciclesList[0].id;
 			          	}else{
 			          		this.fasciclesName = "暂无";
-//			          		this.fasciclesId = null;
+			          		this.fasciclesId = null;
 			          	}
 			          	console.log("this.fasciclesId="+this.fasciclesId)
 			    		this.queryCoursesData(); // 请求树
@@ -208,32 +259,17 @@
 		       	}
 	     	}
 	    },
+		created (){
+			this.local = this.$route.query.localStorage;
+			if(!this.$route.meta.isBack){
+		    	// 如果isBack是false，表明需要获取新数据，否则就不再请求，直接使用缓存的数据
+			    this.queryCourse();
+			}
+			// 恢复成默认的false，避免isBack一直是true，导致下次无法获取数据
+			this.$route.meta.isBack=false
+		},
 	    mounted: function () {
-	    	// 学科
-			this.$axios.get('app/study/period/tree',{
-	    		params:{
-	    			"haveCourse": "1",
-	    			"haveGrade": "0"
-	    		}
-			}).then(res => {
-	          	if(res.status == 200 && res.data.code == '0000'){
-//		          	this.courses = JSON.parse(JSON.stringify(res.data.data));
-		          	this.courses = res.data.data;
-		          	for(var i=0; i < this.courses.length; i++){
-		          		for(var j=0; j < this.courses[i].courses.length;j++){
-		          			this.courses[i].courses[j].studyPeriod = this.courses[i].courses[j].courseName;
-		          		}
-		          	}
-		          	this.courseId = this.courses[0].courses[0].id;
-		          	this.studyPeriod = this.courses[0].studyPeriod;
-		          	this.studyId = this.courses[0].id;
-		          	this.courseName = this.courses[0].courses[0].courseName;
-		          	this.selectedOptions = [this.studyId,this.courseId];
-		          	this.queryMaterial(); // 请求教材
-	          	}
-	        });
-	        
-			
+	    	
 	    }
 	}
 </script>

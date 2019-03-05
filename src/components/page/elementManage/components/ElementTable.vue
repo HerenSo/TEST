@@ -53,10 +53,11 @@
             </el-table-column>
             <el-table-column prop="shelfStatusName" label="上架状态" >
             </el-table-column>
-            <el-table-column fixed="right" label="操作" width="120" align="center">
+            <el-table-column fixed="right" label="操作" width="180" align="center">
                 <template slot-scope="scope">
                     <el-button type="text" icon="el-icon-lx-attention" @click="handleCheck(data[scope.$index].id)">查看</el-button>
                     <el-button type="text" icon="el-icon-edit" @click="handleEdit(data[scope.$index].id,data[scope.$index].courseId,data[scope.$index].parentId)">编辑</el-button>
+                    <el-button type="text" class="red" icon="el-icon-delete" @click="handleDelete(data[scope.$index].id)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -66,67 +67,17 @@
         </div>
         
         <!-- 编辑弹出框 -->
-        <!--<el-dialog title="编辑" :visible.sync="editVisible" width="40%">
-            <el-form ref="form" :model="form" label-width="120px">
+        <el-dialog title="删除" :visible.sync="delVisible" width="40%">
             	<el-row :gutter="20">
             		<el-col :span="12">
-		                <el-form-item label="知识元名称">
-		                    <el-input v-model="form.name"></el-input>
-		                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="体系类型">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="学科">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="科类">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="审核状态">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="上架状态">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="创建人">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="创建日期">
-	                    <el-date-picker type="date" placeholder="选择日期" v-model="form.date" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="审核人">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="审核日期">
-	                    <el-date-picker type="date" placeholder="选择日期" v-model="form.date" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
-	                </el-form-item>
-	                </el-col>
-                </el-row>
-            </el-form>
+		                确定删除？
+	               </el-col>
+               </el-row>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="editVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveEdit">确 定</el-button>
+                <el-button @click="delVisible = false">取 消</el-button>
+                <el-button type="primary" @click="sureDel">确 定</el-button>
             </span>
         </el-dialog>
-	-->
 	</div>
 </template>
 
@@ -143,7 +94,6 @@
                 select_word: '',
                 del_list: [],
                 is_search: false,
-                editVisible: false,
                 delVisible: false,
                 name: '',
                 date: '',
@@ -277,6 +227,17 @@
 	                }
 	            })
             },
+            sureDel() {
+            	this.$axios.get("app/knowledgeTree/disable",{
+                    params:{
+		    			"id": this.del_list // ID
+		    		}
+                }).then((res) => {
+                	if(res.status == 200 && res.data.code == '0000'){
+	                	this.delVisible = false;
+	                }
+                })
+            },
             handleEdit(id,courseId,parentId) {
             	this.$router.push('/elementUpdate?id='+id);
             },
@@ -284,8 +245,9 @@
             	console.log(id);
                 this.$router.push('/elementDetails?id='+id);
             },
-            handleSelectionChange(val) {
-                this.multipleSelection = val;
+            handleDelete(val) {
+				this.delVisible = true;
+				this.del_list = val;
             }
        	},
        	watch:{

@@ -69,20 +69,20 @@
 		        <span slot="footer" class="dialog-footer">
 		            <el-button type="primary" @click="checkpass(15)" v-if="ischeckpass" class="m-r-10">审核不通过</el-button>
 		            <el-button type="primary" @click="checkpass(10)" v-else class="m-r-10">审核通过</el-button>
-		            <router-link to='elementCheck' ><el-button >取 消</el-button></router-link>
+		            <router-link to='systemType' ><el-button >取 消</el-button></router-link>
 		        </span>
 	        </div>
-	        <div class="text-center" v-if="isput">
+	        <div class="text-center" v-else-if="isput">
 		        <span slot="footer" class="dialog-footer">
 		            <el-button type="primary" @click="putpass(5)" v-if="isputpass" class="m-r-10">下架</el-button>
 		            <el-button type="primary" @click="putpass(10)" v-else  class="m-r-10">上架</el-button>
-		            <router-link to='elementCheck' ><el-button >取 消</el-button></router-link>
+		            <router-link to='systemType' ><el-button >取 消</el-button></router-link>
 		        </span>
 	        </div>
 	        <div class="text-center" v-else>
 		        <span slot="footer" class="dialog-footer">
-		            <router-link to='elementCheck' v-if="fromCheck"><el-button >返回</el-button></router-link>
-		            <router-link to='elementManage' v-else><el-button >返回</el-button></router-link>
+		            <router-link to='systemType' v-if="fromCheck"><el-button >返回</el-button></router-link>
+		            <router-link to='systemManage' v-else><el-button >返回</el-button></router-link>
 		        </span>
 	        </div>
         </div>
