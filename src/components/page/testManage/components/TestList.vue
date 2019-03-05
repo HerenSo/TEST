@@ -58,6 +58,8 @@
                    			<el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" v-if="item.auditStatus == 10" @click="handleCheck(item.id,2)">反审核</el-button>
                     		<el-button type="text" class="text-color-success" icon="el-icon-lx-tag" v-if="item.shelfStatus == 5" @click="handleCheck(item.id,3)">上架</el-button>
                     		<el-button type="text" class="text-color-success" icon="el-icon-lx-tag" v-if="item.shelfStatus == 10" @click="handleCheck(item.id,3)">下架</el-button>
+                    		<el-button type="text" class="text-color-danger" icon="el-icon-lx-delete" v-if="item.dataStatus == 1" @click="handleDelete(item.id)">删除</el-button>
+                    		<el-button type="text" class="text-color-danger" icon="el-icon-lx-refresh" v-if="item.dataStatus == 0" @click="handleEnable(item.id)">恢复</el-button>
         				</div>
         			</div>
         		</li>
@@ -69,6 +71,27 @@
             </el-pagination>
         </div>
         
+         <!-- 删除弹出框 -->
+        <el-dialog title="删除" :visible.sync="delVisible" width="40%">
+            	<el-row :gutter="20">
+            		<el-col :span="12"> 确定删除吗？</el-col>
+               </el-row>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="delVisible = false">取 消</el-button>
+                <el-button type="primary" @click="sureDel" >确 定</el-button>
+            </span>
+        </el-dialog>
+        
+        <!-- 恢复弹出框 -->
+        <el-dialog title="恢复" :visible.sync="enableDelVisible" width="40%">
+            	<el-row :gutter="20">
+            		<el-col :span="12"> 确定恢复吗？</el-col>
+               </el-row>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="delVisible = false">取 消</el-button>
+                <el-button type="primary" @click="sureEnable" >确 定</el-button>
+            </span>
+        </el-dialog>
 	</div>
 </template>
 
@@ -80,8 +103,10 @@
             return {
                 tableData: [],
                 cur_page: 1,
-                select_cate: '',
-                select_word: '',
+                del_list: [], // 删除ID
+                enable_list:[], // 恢复ID
+                delVisible: false, // 控制删除弹窗
+                enableDelVisible:false,  // 控制恢复弹窗
                 courseId: "",
                 knowledgeId: "", // 知识元Id
                 architectureId: "", // 体系ID
@@ -179,6 +204,32 @@
             add() {
             	this.$router.push('/testAdd')
             },
+            sureDel() {
+            	this.$axios.get("app/question/message/disable",{
+                    params:{
+		    			"ids": this.del_list // ID
+		    		}
+                }).then((res) => {
+                	if(res.status == 200 && res.data.code == '0000'){
+	                	this.delVisible = false;
+	                	this.getData();
+	                	this.$message.success(res.data.msg);
+	                }
+                })
+            },
+            sureEnable() {
+            	this.$axios.get("app/question/message/enable",{
+                    params:{
+		    			"ids": this.enable_list // ID
+		    		}
+                }).then((res) => {
+                	if(res.status == 200 && res.data.code == '0000'){
+	                	this.enableDelVisible = false;
+	                	this.getData();
+	                	this.$message.success(res.data.msg);
+	                }
+                })
+            },
             queryExamType() {
                 // 考试类型
 		     	this.$axios.get('app/exam/type/tree').then(res => {
@@ -208,6 +259,14 @@
             },
             handleCheck(id,type) {
                 this.$router.push('/testDetails?id='+id+'&type='+type);
+            },
+            handleDelete(val) {
+				this.delVisible = true;
+				this.del_list = val;
+            },
+            handleEnable(val) {
+				this.enableDelVisible = true;
+				this.enable_list = val;
             }
         },
        	watch:{

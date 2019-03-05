@@ -35,7 +35,7 @@
 	        <el-button type="primary" icon="search" @click="search" class="m-r-10">搜索</el-button>
 	        <el-button type="primary" icon="search" @click="add">新增</el-button>
         </div>
-        <el-table :data="data" border class="table" stripe ref="multipleTable" @selection-change="handleSelectionChange">
+        <el-table :data="data" border class="table" stripe ref="multipleTable" >
             <!--<el-table-column type="selection" width="55" align="center"></el-table-column>-->
             <!--<el-table-column prop="id" label="序号" width="50">
             </el-table-column>-->
@@ -57,7 +57,8 @@
                 <template slot-scope="scope">
                     <el-button type="text" icon="el-icon-lx-attention" @click="handleCheck(data[scope.$index].id)">查看</el-button>
                     <el-button type="text" icon="el-icon-edit" @click="handleEdit(data[scope.$index].id,data[scope.$index].courseId,data[scope.$index].parentId)">编辑</el-button>
-                    <el-button type="text" class="red" icon="el-icon-delete" @click="handleDelete(data[scope.$index].id)">删除</el-button>
+                    <el-button type="text" class="red" v-if="data[scope.$index].dataStatus == 1" icon="el-icon-delete" @click="handleDelete(data[scope.$index].id)">删除</el-button>
+                    <el-button type="text" class="red" v-if="data[scope.$index].dataStatus == 0" icon="el-icon-refresh" @click="handleEnable(data[scope.$index].id)">恢复</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -66,16 +67,25 @@
             </el-pagination>
         </div>
         
-        <!-- 编辑弹出框 -->
+        <!-- 删除弹出框 -->
         <el-dialog title="删除" :visible.sync="delVisible" width="40%">
             	<el-row :gutter="20">
-            		<el-col :span="12">
-		                确定删除？
-	               </el-col>
+            		<el-col :span="12"> 确定删除吗？</el-col>
                </el-row>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="delVisible = false">取 消</el-button>
-                <el-button type="primary" @click="sureDel">确 定</el-button>
+                <el-button type="primary" @click="sureDel" >确 定</el-button>
+            </span>
+        </el-dialog>
+        
+        <!-- 恢复弹出框 -->
+        <el-dialog title="恢复" :visible.sync="enableDelVisible" width="40%">
+            	<el-row :gutter="20">
+            		<el-col :span="12"> 确定恢复吗？</el-col>
+               </el-row>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="delVisible = false">取 消</el-button>
+                <el-button type="primary" @click="sureEnable" >确 定</el-button>
             </span>
         </el-dialog>
 	</div>
@@ -93,8 +103,10 @@
                 select_cate: '',
                 select_word: '',
                 del_list: [],
+                enable_list:[],
                 is_search: false,
                 delVisible: false,
+                enableDelVisible:false,
                 name: '',
                 date: '',
                 auditStatusList: [],
@@ -230,11 +242,26 @@
             sureDel() {
             	this.$axios.get("app/knowledgeTree/disable",{
                     params:{
-		    			"id": this.del_list // ID
+		    			"ids": this.del_list // ID
 		    		}
                 }).then((res) => {
                 	if(res.status == 200 && res.data.code == '0000'){
 	                	this.delVisible = false;
+	                	this.getData();
+	                	this.$message.success(res.data.msg);
+	                }
+                })
+            },
+            sureEnable() {
+            	this.$axios.get("app/knowledgeTree/enable",{
+                    params:{
+		    			"ids": this.enable_list // ID
+		    		}
+                }).then((res) => {
+                	if(res.status == 200 && res.data.code == '0000'){
+	                	this.enableDelVisible = false;
+	                	this.getData();
+	                	this.$message.success(res.data.msg);
 	                }
                 })
             },
@@ -248,6 +275,10 @@
             handleDelete(val) {
 				this.delVisible = true;
 				this.del_list = val;
+            },
+            handleEnable(val) {
+				this.enableDelVisible = true;
+				this.enable_list = val;
             }
        	},
        	watch:{

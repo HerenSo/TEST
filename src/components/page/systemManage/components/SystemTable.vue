@@ -44,7 +44,8 @@
                 <template slot-scope="scope">
                     <el-button type="text" icon="el-icon-lx-attention" @click="handleCheck(data[scope.$index].id)">查看</el-button>
                     <el-button type="text" icon="el-icon-edit" @click="handleEdit(data[scope.$index].id)">编辑</el-button>
-                    <el-button type="text" class="red"  icon="el-icon-delete" @click="">删除</el-button>
+                    <el-button type="text" class="red" v-if="data[scope.$index].dataStatus == 1" icon="el-icon-delete" @click="handleDelete(data[scope.$index].id)">删除</el-button>
+                    <el-button type="text" class="red" v-if="data[scope.$index].dataStatus == 0" icon="el-icon-refresh" @click="handleEnable(data[scope.$index].id)">恢复</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -53,25 +54,25 @@
             </el-pagination>
         </div>
         
-        <!-- 编辑弹出框 -->
-        <el-dialog title="编辑" :visible.sync="editVisible" width="40%">
-            <el-form ref="form" :model="form" label-width="120px">
+         <!-- 删除弹出框 -->
+        <el-dialog title="删除" :visible.sync="delVisible" width="40%">
             	<el-row :gutter="20">
-            		<el-col :span="12">
-		                <el-form-item label="知识元名称">
-		                    <el-input v-model="form.name"></el-input>
-		                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="体系类型">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>
-                </el-row>
-            </el-form>
+            		<el-col :span="12"> 确定删除吗？</el-col>
+               </el-row>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="editVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveEdit">确 定</el-button>
+                <el-button @click="delVisible = false">取 消</el-button>
+                <el-button type="primary" @click="sureDel" >确 定</el-button>
+            </span>
+        </el-dialog>
+        
+        <!-- 恢复弹出框 -->
+        <el-dialog title="恢复" :visible.sync="enableDelVisible" width="40%">
+            	<el-row :gutter="20">
+            		<el-col :span="12"> 确定恢复吗？</el-col>
+               </el-row>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="delVisible = false">取 消</el-button>
+                <el-button type="primary" @click="sureEnable" >确 定</el-button>
             </span>
         </el-dialog>
 	</div>
@@ -89,9 +90,10 @@
                 select_cate: '',
                 select_word: '',
                 del_list: [],
+                enable_list:[],
                 is_search: false,
-                editVisible: false,
                 delVisible: false,
+                enableDelVisible:false,
                 contentName: '',
                 date: '',
                 auditStatusList: [],
@@ -196,6 +198,32 @@
             	this.cur_page = 1;
                 this.getData();
             },
+            sureDel() {
+            	this.$axios.get("app/architectureTree/disable",{
+                    params:{
+		    			"ids": this.del_list // ID
+		    		}
+                }).then((res) => {
+                	if(res.status == 200 && res.data.code == '0000'){
+	                	this.delVisible = false;
+	                	this.getData();
+	                	this.$message.success(res.data.msg);
+	                }
+                })
+            },
+            sureEnable() {
+            	this.$axios.get("app/architectureTree/enable",{
+                    params:{
+		    			"ids": this.enable_list // ID
+		    		}
+                }).then((res) => {
+                	if(res.status == 200 && res.data.code == '0000'){
+	                	this.enableDelVisible = false;
+	                	this.getData();
+	                	this.$message.success(res.data.msg);
+	                }
+                })
+            },
             handleEdit(id,courseId,parentId) {
             	this.$router.push('/systemUpdate?id='+id);
             },
@@ -203,21 +231,13 @@
             	console.log(id);
                 this.$router.push('/systemDetails?id='+id);
             },
-//          handleDelete(index, row) {
-//              this.idx = index;
-//              this.delVisible = true;
-//          },
-            // 保存编辑
-            saveEdit() {
-                this.$set(this.tableData, this.idx, this.form);
-                this.editVisible = false;
-                this.$message.success(`修改第 ${this.idx+1} 行成功`);
+            handleDelete(val) {
+				this.delVisible = true;
+				this.del_list = val;
             },
-            // 确定删除
-            deleteRow(){
-                this.tableData.splice(this.idx, 1);
-                this.$message.success('删除成功');
-                this.delVisible = false;
+            handleEnable(val) {
+				this.enableDelVisible = true;
+				this.enable_list = val;
             }
         },
        	watch:{
