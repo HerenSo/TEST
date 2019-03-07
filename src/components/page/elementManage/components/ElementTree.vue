@@ -1,40 +1,28 @@
 <template>
 	<div>
-	<div class="container m-b-20">
-		<!--<el-dropdown class="courses" trigger="click">
-			<span class="el-dropdown-link">
-			    {{studyCourses}}<i class="el-icon-arrow-down el-icon--right"></i>
-			</span>
-			<el-dropdown-menu slot="dropdown" class="coursesDropdown">
-				<el-dropdown-item class="coursesDropdown_item" v-for="item in courses" :data-studyid="item.id">
-					<label>{{item.studyPeriod}}</label>
-					<div class="coursesList">
-		        		<el-button size="mini" v-for="course in item.courses" :data-courseid="course.id" @click="selectCourse(course.id,course.courseName,item.studyPeriod)">{{course.courseName}}</el-button>
-		        	</div>
-				</el-dropdown-item>
-	        </el-dropdown-menu>
-	   </el-dropdown>-->
-        <el-cascader
-		    expand-trigger="hover"
-		    :options="courses"
-		    v-model="selectedOptions"
-		    :value="studyCourses"
-		    :props="props"
-		    @change="handleChange">
-		</el-cascader>
-	</div>
-	<div class="container">
-		<!--<div class="text-color-blue p-tb-10">高中化学综合库</div>-->
-		<el-tree
-		  :data="data"
-		  :props="defaultProps"
-		  node-key="id"
-		  default-expand-all
-		  highlight-current
-		  ref="tree"
-		  @node-click="handleNodeClick">
-		</el-tree>
-	</div>
+		<!--学科-->
+		<div class="container m-b-20">
+	        <el-cascader
+			    expand-trigger="hover"
+			    :options="courses"
+			    v-model="selectedOptions"
+			    :value="studyCourses"
+			    :props="props"
+			    @change="handleChange">
+			</el-cascader>
+		</div>
+		<!--知识元树-->
+		<div class="container">
+			<el-tree
+			  :data="data"
+			  :props="defaultProps"
+			  node-key="id"
+			  default-expand-all
+			  highlight-current
+			  ref="tree"
+			  @node-click="handleNodeClick">
+			</el-tree>
+		</div>
 	</div>
 </template>
 
@@ -44,36 +32,33 @@
 		name: 'elementTree',
 		data() {
 	      	return {
-		        data: [],
-		        courses: [],
-		        studyPeriod:'', // 初始默认 学级
-		        studyId: '',
+		        data: [], // 知识元树数据
+		        courses: [],// 学科数据
+		        studyPeriod:'', // 初始默认 学段
+		        studyId: '', // 学段ID
 		        courseName:'', // 初始默认 学课
 		        courseId: null, // 初始默认 学课ID
-		        defaultProps: {
+		        defaultProps: { // 知识元树数据配置
 		          children: 'children',
 		          label: 'label'
-		        },
-		        props:{
+		        }, 
+		        props:{ // 学科数据配置
 		        	label:'studyPeriod',
 		        	value: 'id',
             		children: 'courses'
 		        },
-		        selectedOptions:[],
-		        local:"", // 是否缓存学科
-		        checked:"" // 默认选中的子节点
+		        selectedOptions:[], // 学段学科选择绑定的ID
+		        local:"" // 是否缓存学科
 		    };
 	    },
 	    computed: {
-		    studyCourses: function () {
+		    studyCourses: function () { // 拼接学段学科名称
 		      return this.studyPeriod + ' ' + this.courseName;
 		    }
 		},
 	    methods: {
 			handleChange(value) { // 选学科
-//		        console.log(value);
 		        this.courseId = value[value.length-1];
-//		        console.log("学科ID="+this.courseId);
 		        this.studyPeriod = this.courses[0].studyPeriod;
 				for(var i=0;i < this.courses.length;i++){
 					for(var j=0;j<this.courses[i].courses.length;j++){
@@ -90,9 +75,8 @@
           			studyId: value[0],
           			courseId:value[1]
           		}
-		        localStorage.setItem("selectedOptions",JSON.stringify(selecteCourse));
-//	          	this.courseName = this.courses[0].courses[0].courseName;
-		      	this.queryCoursesData();
+		        localStorage.setItem("selectedOptions",JSON.stringify(selecteCourse)); // 缓存学科选择状态
+		      	this.queryCoursesData(); // 请求树
 		    },
 	        handleNodeClick(data) { // 树点击
 		        let elParam = {
@@ -100,15 +84,8 @@
 		        	parentId: data.id,
 		        	studyCourses: this.studyCourses
 		        }
-		        bus.$emit('elParam', elParam);
+		        bus.$emit('elParam', elParam); // 传递参数给table
 		    },
-//	      selectCourse(id,courseName,studyPeriod) {
-//	      	console.log(id)
-//	      	this.courseId = id;
-//	      	this.courseName = courseName;
-//	      	this.studyPeriod = studyPeriod;
-//	      	this.queryCoursesData();
-//	      },
 	      queryCoursesData() {
 	      	// 请求树
 	        this.$axios.get('app/knowledgeTree/tree',{
@@ -125,10 +102,8 @@
 	      }
 	    },
 	    mounted: function () {
-	    	this.local = this.$route.query.localStorage;
-	        
-//	    	console.log(this.local)
-	    	// 学科
+	    	this.local = this.$route.query.localStorage; // 从子页面传过来，用于判断是否使用缓存
+	    	// 请求学科
 			this.$axios.get('app/study/period/tree',{
 	    		params:{
 	    			"haveCourse": "1",
@@ -136,14 +111,13 @@
 	    		}
 			}).then(res => {
 	          	if(res.status == 200 && res.data.code == '0000'){
-//		          	this.courses = JSON.parse(JSON.stringify(res.data.data));
 		          	this.courses = res.data.data;
 		          	for(var i=0; i < this.courses.length; i++){
 		          		for(var j=0; j < this.courses[i].courses.length;j++){
 		          			this.courses[i].courses[j].studyPeriod = this.courses[i].courses[j].courseName;
 		          		}
 		          	}
-		          	if(this.local != 0){
+		          	if(this.local != 0){ // 判断是否使用缓存
 			          	this.courseId = this.courses[0].courses[0].id;
 			          	this.studyPeriod = this.courses[0].studyPeriod;
 			          	this.studyId = this.courses[0].id;
@@ -165,7 +139,7 @@
 			          	this.selectedOptions = [this.studyId,this.courseId];
 		          	}
 		          	
-		          	this.queryCoursesData();
+		          	this.queryCoursesData(); // 请求树
 	          	}
 	        });
 	        

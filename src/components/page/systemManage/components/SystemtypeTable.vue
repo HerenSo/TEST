@@ -23,10 +23,8 @@
 	        <el-button type="primary" icon="search" @click="search">搜索</el-button>
 	        <el-button type="primary" icon="search" @click="add">新增</el-button>
         </div>
+        <!--table-data-->
         <el-table :data="data" border class="table" tooltip-effect="light" stripe ref="multipleTable" @selection-change="">
-            <!--<el-table-column type="selection" width="55" align="center"></el-table-column>-->
-            <!--<el-table-column prop="courseId" label="序号" width="50">
-            </el-table-column>-->
             <el-table-column prop="contentName" label="体系名称" >
             </el-table-column>
             <el-table-column prop="courseName" label="学科" width="120">
@@ -57,28 +55,7 @@
             <el-pagination background @current-change="handleCurrentChange" :page-count="total" layout="prev, pager, next" >
             </el-pagination>
         </div>
-        
-        <!-- 编辑弹出框 -->
-        <el-dialog title="编辑" :visible.sync="editVisible" width="40%">
-            <el-form ref="form" :model="form" label-width="120px">
-            	<el-row :gutter="20">
-            		<el-col :span="12">
-		                <el-form-item label="知识元名称">
-		                    <el-input v-model="form.name"></el-input>
-		                </el-form-item>
-	               	</el-col>
-            		<el-col :span="12">
-	                <el-form-item label="体系类型">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>
-                </el-row>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="editVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveEdit">确 定</el-button>
-            </span>
-        </el-dialog>
+        <!--table-data END-->
 	</div>
 </template>
 
@@ -88,42 +65,37 @@
 		name: "systemtypeTable",
 		data() {
             return {
-                tableData: [],
-                cur_page: 1,
-                multipleSelection: [],
-                select_cate: '',
-                select_word: '',
-                del_list: [],
-                is_search: false,
-                editVisible: false,
-                delVisible: false,
-                contentName: '',
-                date: '',
-                auditStatusList: [],
-                auditStatus: '',
-                form: {
-                    name: '',
-                    address: ''
-                },
-                idx: -1,
-                elId:null,
-                elParentId:null,
-                materialId: null,
+                data: [],
+                data: [], // table数据
+                cur_page: 1, // 当前分页
+                multipleSelection: [], // 点击当前tr
+                del_list: [], // 当前点击的删除ID
+                enable_list:[], // 当前点击的恢复ID
+                delVisible: false, // 控制删除弹窗
+                enableDelVisible:false, // 控制恢复弹窗
+                contentName: '', // 体系名称检索
+                date: '', // 日期检索
+                auditStatusList: [], // 审核状态列表
+                auditStatus: '', // 审核状态检索
+                elId:null, // 知识元树传给table的ID
+                elParentId:null, // 知识元树传给table的父级ID
+                materialId:null, // 知识元树传给table的教材ID
+                fasciclesId:null, // 知识元树传给table的分册ID
                 gradeId: null,
                 courseName: null,
                 studyCourses:null,
-                total: 1
+                total: 1 // 分页数
             }
         },
         mounted() {
-        	bus.$on('elParam', (data) => {
-	        	 console.log(data)
+        	bus.$on('elParam', (data) => { // 监听elementTable组件传过来的值
 	        	this.elId = data.id;
 	        	this.elParentId = data.parentId;
 	        	this.materialId = data.materialId;
 		        this.fasciclesId = data.fasciclesId;
 		       	this.gradeId = data.gradeId;
 		       	this.courseName = data.courseName;
+		       	this.cur_page = 1;
            		this.getData();
 	      	})
         	// 获取审核状态数据
@@ -134,33 +106,11 @@
 					if(res.status=="200" && res.data.code == '0000'){
 						this.auditStatusList = res.data.data;
 						localStorage.setItem("auditStatus",JSON.stringify(this.auditStatusList));
-						// console.log(this.auditStatusList)
 					}
 				})
          	}
-//       	
-//	      	this.getData();
         },
-        computed: {
-            data() {
-                return this.tableData.filter((d) => {
-                    let is_del = false;
-                    for (let i = 0; i < this.del_list.length; i++) {
-                        if (d.contentName === this.del_list[i].contentName) {
-                            is_del = true;
-                            break;
-                        }
-                    }
-                    if (!is_del) {
-                        if (d.category.indexOf(this.select_cate) > -1 &&
-                            (d.contentName.indexOf(this.select_word) > -1 ||
-                                d.category.indexOf(this.select_word) > -1)
-                        ) {
-                            return d;
-                        }
-                    }
-                })
-            },
+        computed: { // 计算开始和结束日期
             beginTime: function () {
             	return this.date[0];
 		    },
@@ -174,7 +124,7 @@
                 this.cur_page = val;
                 this.getData();
             },
-            // 获取 easy-mock 的模拟数据
+            // 获取 table 数据
             getData() {
             	if(this.elParentId == null){
             		this.tableData = [];
@@ -197,16 +147,15 @@
                 }).then((res) => {
                 	if(res.status == 200 && res.data.code == '0000'){
 	                	this.total = res.data.data.total;
-	                	// console.log(this.total)
-	                    this.tableData = res.data.data.rows;
+	                    this.data = res.data.data.rows;
 	                }
                 })
             },
-            search() {
+            search() { // 搜索
             	this.cur_page = 1;
                 this.getData();
             },
-            add() {
+            add() { // 新增
             	this.$router.push({
 	                path:'/systemAdd',
 	                name: 'systemAdd',
@@ -219,45 +168,27 @@
 	                }
 	            })
             },
-            handleCheck(id,type) {
-//          	console.log(id + "--")
+            handleCheck(id,type) { // 查看操作
                 this.$router.push('/systemDetails?id='+id+'&type='+type);
             },
-            handleEdit(id,courseId,parentId) {
+            handleEdit(id,courseId,parentId) { // 编辑操作
             	this.$router.push('/systemUpdate?id='+id);
-            },
-            handleDelete(index, row) {
-                this.idx = index;
-                this.delVisible = true;
-            },
-            // 保存编辑
-            saveEdit() {
-                this.$set(this.tableData, this.idx, this.form);
-                this.editVisible = false;
-                this.$message.success(`修改第 ${this.idx+1} 行成功`);
-            },
-            // 确定删除
-            deleteRow(){
-                this.tableData.splice(this.idx, 1);
-                this.$message.success('删除成功');
-                this.delVisible = false;
             }
-        },
-       	watch:{
-	        elParentId(val, oldVal){//普通的watch监听
-	            // console.log("a: "+val, oldVal);
-                this.cur_page = val;
-	            this.getData();
-	        },
-	        elId(val, oldVal){ // 
-                this.cur_page = val;
-	        	this.getData();
-	        },
-	        fasciclesId(val, oldVal){ // 
-                this.cur_page = val;
-	        	this.getData();
-	        }
-	    }
+        }
+//     	watch:{
+//	        elParentId(val, oldVal){//普通的watch监听
+//              this.cur_page = val;
+//	            this.getData();
+//	        },
+//	        elId(val, oldVal){ // 
+//              this.cur_page = val;
+//	        	this.getData();
+//	        },
+//	        fasciclesId(val, oldVal){ // 
+//              this.cur_page = val;
+//	        	this.getData();
+//	        }
+//	    }
 	}
 </script>
 

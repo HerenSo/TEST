@@ -114,6 +114,19 @@ a {
     text-align: left;
 }
 
+/*input*/
+.el-input input[readonly],.el-textarea textarea[readonly]{
+	background: #f9f9f9;
+}
+
+.el-select input[readonly],.el-input.el-input--suffix input[readonly]{
+	background: none;
+}
+.el-form-item.is-success .el-input__inner{
+	border-color: #dcdfe6;
+}
+
+
 .form-box{
     padding: 30px 20px;
     /*margin: 0 auto;*/

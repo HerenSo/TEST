@@ -97,30 +97,29 @@
 		data() {
             return {
                 form: {},
-                fromCheck: false,
-                ischeck: null,
-                ischeckpass: null,
-                isput: null,
-                isputpass: null,
-                msg: "",
-                isDisable: true
+                fromCheck: false, // 是否是查看页面
+                ischeck: false, // 是否是审核页面
+                ischeckpass: false, // 审核是否通过
+                isput: false, // 是否是上架页面
+                isputpass: false, // 是否上架
+                msg: "", // 提示信息
+                isDisable: true // 防止重复提交
             }
         },
         created(){
         	this.form.id = this.$route.query.id;
-//      	console.log("type="+this.$route.query.type)
-			if(this.$route.query.type == 1){
+			if(this.$route.query.type == 1){ // 查看
         		this.fromCheck = true;
         	}
-        	if(this.$route.query.type == 2){
+        	if(this.$route.query.type == 2){ // 审核
         		this.ischeck = true;
         	}
-        	if(this.$route.query.type == 3){
+        	if(this.$route.query.type == 3){ // 上架
         		this.isput = true;
         	}
-//       	console.log(this.form.id)
         },
         mounted() {
+        	//  请求详情
          	this.$axios.get("app/architectureTree/get",{
                 params:{
 	    			"id": this.form.id
@@ -143,11 +142,11 @@
 	                }else{
 	                	this.isputpass = false;
 	                }
-	            	// console.log(this.form)
             	}
             })
         },
         methods: {
+        	// 上架提交
         	putpass(val) {
         		if(this.isDisable){
             		this.isDisable = false;
@@ -175,6 +174,7 @@
 		            })
 	            }
         	},
+        	// 审核提交
         	checkpass(val) {
         		if(this.isDisable){
             		this.isDisable = false;

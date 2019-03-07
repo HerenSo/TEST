@@ -83,7 +83,7 @@
 	        </span>
         </div>
         </div>
-        <!-- 编辑弹出框 -->
+        <!-- 选择知识元弹出框 -->
         <el-dialog title="选择知识元" :visible.sync="selectVisible" width="60%">
         	<el-row :gutter="10">
         		<el-col :span="24">
@@ -170,12 +170,12 @@
 		        	value: 'id',
             		children: 'courses'
 		        },
-		        selectedOptions:[],
-		        selectedOptions2:[],
+		        selectedOptions:[], // 选择知识元中的 学段学科ID
+		        selectedOptions2:[], // 选中绑定的学段学科ID
 	            isDisable: true, // 防止重复提交
 	            auditStatusName: "",
 	            knowledges: [],
-	            selectVisible: false,
+	            selectVisible: false, // 控制选择知识元弹窗
 	            topath: "" // 返回路径
             }
         },
@@ -214,13 +214,11 @@
         	this.auditStatus = JSON.parse(localStorage.getItem("auditStatus"));
         },
         methods: {
-        	onEditorChange({ editor, html, text }) {
-                this.form.questionHtml = html;
-//              console.log(html)
+        	onEditorChange({ editor, html, text }) { 
+                this.form.questionHtml = html; // 获取题干HTML
             },
-        	answerEditorChange({ editor, html, text }) {
-                this.form.answerHtml = html;
-//              console.log(html)
+        	answerEditorChange({ editor, html, text }) { 
+                this.form.answerHtml = html; // 获取答案HTML
             },
         	handleClose(tag) { // 删除知识元
 		        this.form.knowledges.splice(this.form.knowledges.indexOf(tag), 1);
@@ -231,12 +229,10 @@
 		    	this.selectVisible = true; // 控制弹窗显示隐藏
 		    },
 			handleChange(value) { // 选择学科
-		        console.log(value);
 		        this.courseId = value[value.length-1];
 		      	this.queryCoursesData();
 		    },
 			handleChange2(value) { // 选择学科
-		        console.log(value);
 		        this.form.courseId = value[value.length-1];
 		    },
 		    queryQuestionType() {
@@ -264,7 +260,6 @@
 		    		}
 				}).then(res => {
 		          	if(res.status == 200 && res.data.code == '0000'){
-	//		          	this.courses = JSON.parse(JSON.stringify(res.data.data));
 			          	this.courses = res.data.data;
 			          	for(var i=0; i < this.courses.length; i++){
 			          		for(var j=0; j < this.courses[i].courses.length;j++){
@@ -287,12 +282,10 @@
 				}).then(res => {
 		          	if(res.status == 200 && res.data.code == '0000'){
 			          	this.data = res.data.data;
-	//		          	console.log(this.data);
 			          	let data = {
 			          		id:this.data[0].id,
 			          		parentId:this.data[0].parentId
 			          	}
-	//		          	console.log(this.data)
 		          	}
 		       	});
 		    },

@@ -8,11 +8,6 @@
 		                    <el-input v-model="form.name" readonly></el-input>
 		                </el-form-item>
 	               	</el-col>
-	        		<!--<el-col :span="12">
-	                <el-form-item label="体系类型">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>-->
 	        		<el-col :span="12">
 	                <el-form-item label="学科">
 	                    <el-input v-model="form.courseName" readonly></el-input>
@@ -25,11 +20,6 @@
 	                	<el-input v-model="form.category" readonly></el-input>
 	                </el-form-item>
 	               	</el-col>
-	        		<!--<el-col :span="12">
-	                <el-form-item label="审核状态">
-	                    <el-input v-model="form.address"></el-input>
-	                </el-form-item>
-	               	</el-col>-->
 	        		<el-col :span="12">
 	                <el-form-item label="审核状态">
 	                    <el-input v-model="form.auditStatusName" readonly></el-input>
@@ -62,6 +52,7 @@
 					</el-col>
 	            </el-row>
 	        </el-form>
+	        <!-- 控制页面性质 -->
 	        <div class="text-center" v-if="ischeck">
 		        <span slot="footer" class="dialog-footer">
 		            <el-button type="primary" @click="checkpass(15)" v-if="ischeckpass" class="m-r-10">审核不通过</el-button>
@@ -94,30 +85,29 @@
 		data() {
             return {
                 form: {},
-                fromCheck: false,
-                ischeck: false,
-                ischeckpass: false,
-                isput: false,
-                isputpass: false,
-                msg: "",
-                isDisable: true
+                fromCheck: false, // 是否是查看页面
+                ischeck: false, // 是否是审核页面
+                ischeckpass: false, // 审核是否通过
+                isput: false, // 是否是上架页面
+                isputpass: false, // 是否上架
+                msg: "", // 提示信息
+                isDisable: true // 防止重复提交
             }
         },
         created(){
         	this.form.id = this.$route.query.id;
-//      	console.log("type="+this.$route.query.type)
-			if(this.$route.query.type == 1){
+			if(this.$route.query.type == 1){ // 查看
         		this.fromCheck = true;
         	}
-        	if(this.$route.query.type == 2){
+        	if(this.$route.query.type == 2){ // 审核
         		this.ischeck = true;
         	}
-        	if(this.$route.query.type == 3){
+        	if(this.$route.query.type == 3){ // 上架
         		this.isput = true;
         	}
-//       	console.log(this.form.id)
         },
         mounted() {
+			//  请求详情
          	this.$axios.get("app/knowledgeTree/get",{
                 params:{
 	    			"id": this.form.id
@@ -135,11 +125,11 @@
 	                }else{
 	                	this.isputpass = false;
 	                }
-	            	// console.log(this.form)
             	}
             })
         },
         methods: {
+        	// 上架提交
         	putpass(val) {
         		if(this.isDisable){
             		this.isDisable = false;
@@ -167,6 +157,7 @@
 		            })
 	            }
         	},
+        	// 审核提交
         	checkpass(val) {
         		if(this.isDisable){
             		this.isDisable = false;

@@ -5,10 +5,6 @@
                 <el-option key="0" label="全部" value=" " ></el-option>
                 <el-option :key="item.id" :label="item.questionType" :value="item.id" v-for="item in questionTypeList"></el-option>
             </el-select>
-			<!--<el-select  v-model="examType" placeholder="考试类型" class="handle-select m-r-10">
-                <el-option key="0" label="全部" value=" " ></el-option>
-                <el-option :key="item.id" :label="item.examType" :value="item.id" v-for="item in examTypeList"></el-option>
-            </el-select>-->
 			<el-select  v-model="questionDifficulty" placeholder="难度" class="handle-select m-r-10">
                 <el-option key="0" label="全部" value=" " ></el-option>
                 <el-option :key="item.id" :label="item.difficultyName" :value="item.id" v-for="item in questionDifficultyList"></el-option>
@@ -53,7 +49,6 @@
         				<div class="handle">
         					<el-button type="text" icon="el-icon-lx-attention" @click="handleCheck(item.id,1)">查看</el-button>
                    			<el-button type="text" icon="el-icon-edit" @click="handleEdit(item.id)">编辑</el-button>
-                    		<!--<el-button type="text"  icon="el-icon-delete" @click="handleCheck(item.id)">审核</el-button>-->
 		                    <el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" v-if="item.auditStatus == 5 || item.auditStatus == 15" @click="handleCheck(item.id,2)">审核</el-button>
                    			<el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" v-if="item.auditStatus == 10" @click="handleCheck(item.id,2)">反审核</el-button>
                     		<el-button type="text" class="text-color-success" icon="el-icon-lx-tag" v-if="item.shelfStatus == 5" @click="handleCheck(item.id,3)">上架</el-button>
@@ -88,7 +83,7 @@
             		<el-col :span="12"> 确定恢复吗？</el-col>
                </el-row>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="delVisible = false">取 消</el-button>
+                <el-button @click="enableDelVisible = false">取 消</el-button>
                 <el-button type="primary" @click="sureEnable" >确 定</el-button>
             </span>
         </el-dialog>
@@ -134,13 +129,15 @@
 			if(this.$route.path == "/testManage"){
 				this.getData();
 			}
-        	bus.$on('elParam', (data) => {
+        	bus.$on('elParam', (data) => { // 监听elementTable组件传过来的值
         		this.courseId = data.id;
         		if(data.studyCourses){
         			this.knowledgeId = data.parentId;
         		}else{
         			this.architectureId = data.parentId;
         		}
+        		this.cur_page = 1;
+	            this.getData();
 	      	})
          	// 获取审核状态数据
          	if(localStorage.getItem("auditStatus")){
@@ -150,7 +147,6 @@
 					if(res.status=="200" && res.data.code == '0000'){
 						this.auditStatusList = res.data.data;
 						localStorage.setItem("auditStatus",JSON.stringify(this.auditStatusList));
-						// console.log(this.auditStatusList)
 					}
 				})
          	}
@@ -197,14 +193,14 @@
 	                }
                 })
             },
-            search() {
+            search() {  // 搜索
             	this.cur_page = 1;
                 this.getData();
             },
-            add() {
+            add() { // 添加
             	this.$router.push('/testAdd')
             },
-            sureDel() {
+            sureDel() {// 确定删除
             	this.$axios.get("app/question/message/disable",{
                     params:{
 		    			"ids": this.del_list // ID
@@ -217,7 +213,7 @@
 	                }
                 })
             },
-            sureEnable() {
+            sureEnable() { // 确定恢复
             	this.$axios.get("app/question/message/enable",{
                     params:{
 		    			"ids": this.enable_list // ID
@@ -254,24 +250,23 @@
 			    	}
 		        });
             },
-            handleEdit(id) {
+            handleEdit(id) { // 编辑操作
                 this.$router.push('/testUpdate?id='+id);
             },
-            handleCheck(id,type) {
+            handleCheck(id,type) { // 查看操作
                 this.$router.push('/testDetails?id='+id+'&type='+type);
             },
-            handleDelete(val) {
+            handleDelete(val) { // 删除操作
 				this.delVisible = true;
 				this.del_list = val;
             },
-            handleEnable(val) {
+            handleEnable(val) { // 恢复操作
 				this.enableDelVisible = true;
 				this.enable_list = val;
             }
         },
        	watch:{
 	        knowledgeId(val, oldVal){//普通的watch监听
-//	            console.log("a: "+val, oldVal);
 	            this.cur_page = 1;
 	            this.getData();
 	        },

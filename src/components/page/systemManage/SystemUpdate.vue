@@ -67,7 +67,7 @@
 	        </span>
         </div>
         </div>
-        <!-- 编辑弹出框 -->
+        <!-- 选择知识元弹出框 -->
         <el-dialog title="选择知识元" :visible.sync="selectVisible" width="60%">
             <el-form ref="form" :model="form" label-width="120px">
             	<el-row :gutter="10">
@@ -154,7 +154,6 @@
 	            auditStatusName: "",
 	            creator: "",
 	            createTime: "",
-//	            knowledges: [],
 	            selectVisible: false
             }
        },
@@ -204,7 +203,6 @@
 			handleChange(value) { // 选择学科
 		        console.log(value);
 		        this.courseId = value[value.length-1];
-//		      	this.queryMaterial();
 		      	this.queryCoursesData();
 		   },
 		    queryCourse() {
@@ -216,7 +214,6 @@
 		    		}
 				}).then(res => {
 		          	if(res.status == 200 && res.data.code == '0000'){
-	//		          	this.courses = JSON.parse(JSON.stringify(res.data.data));
 			          	this.courses = res.data.data;
 			          	for(var i=0; i < this.courses.length; i++){
 			          		for(var j=0; j < this.courses[i].courses.length;j++){
@@ -241,12 +238,10 @@
 				}).then(res => {
 		          	if(res.status == 200 && res.data.code == '0000'){
 			          	this.data = res.data.data;
-	//		          	console.log(this.data);
 			          	let data = {
 			          		id:this.data[0].id,
 			          		parentId:this.data[0].parentId
 			          	}
-	//		          	console.log(this.data)
 		          	}
 		       	});
 		    },
@@ -270,7 +265,7 @@
 			    		})
 		    		}
 		    	}
-		    	console.log(this.form.knowledges)
+//		    	console.log(this.form.knowledges)
 		    },
         	// 保存编辑
             saveEdit() {

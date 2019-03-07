@@ -83,7 +83,7 @@
 	        </span>
         </div>
         </div>
-        <!-- 编辑弹出框 -->
+        <!-- 选择知识元弹出框 -->
         <el-dialog title="选择知识元" :visible.sync="selectVisible" width="60%">
         	<el-row :gutter="10">
         		<el-col :span="24">
@@ -166,8 +166,8 @@
 		        	value: 'id',
             		children: 'courses'
 		        },
-		        selectedOptions:[],
-		        selectedOptions2:[],
+		        selectedOptions:[], // 选择知识元中的 学段学科ID
+		        selectedOptions2:[], // 选中绑定的学段学科ID
 	            isDisable: true, // 防止重复提交
 	            auditStatusName: "",
 	            knowledges: [],

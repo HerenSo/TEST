@@ -8,11 +8,6 @@
 	                    <el-input v-model="form.name"></el-input>
 	                </el-form-item>
                	</el-col>
-        		<!--<el-col :span="12">
-                <el-form-item label="体系类型">
-                    <el-input v-model="form.address"></el-input>
-                </el-form-item>
-               	</el-col>-->
         		<el-col :span="12">
                 <el-form-item label="学科">
                     <el-input v-model="form.courseName" readonly></el-input>
@@ -28,26 +23,11 @@
 				    </el-select>
                 </el-form-item>
                	</el-col>
-        		<!--<el-col :span="12">
-                <el-form-item label="审核状态">
-                    <el-input v-model="form.address"></el-input>
-                </el-form-item>
-               	</el-col>-->
         		<el-col :span="12">
                 <el-form-item label="上架状态">
-                    <el-input v-model="auditStatusName" readonly></el-input>
+                    <el-input v-model="shelfStatusName" readonly></el-input>
                 </el-form-item>
                	</el-col>
-        		<!--<el-col :span="12">
-                <el-form-item label="创建人">
-                    <el-input v-model="form.address"></el-input>
-                </el-form-item>
-               	</el-col>-->
-        		<!--<el-col :span="12">
-                <el-form-item label="创建日期">
-                    <el-date-picker type="date" placeholder="选择日期" v-model="form.date" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
-                </el-form-item>
-               	</el-col>-->
         		<el-col :span="12">
                 <el-form-item label="排序">
                     <el-input v-model="form.seq"></el-input>
@@ -58,11 +38,6 @@
 				    <el-input type="textarea" v-model="form.remarks"></el-input>
 				</el-form-item>
 				</el-col>
-        		<!--<el-col :span="12">
-                <el-form-item label="审核日期">
-                    <el-date-picker type="date" placeholder="选择日期" v-model="form.date" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
-                </el-form-item>
-                </el-col>-->
             </el-row>
         </el-form>
         <div class="text-center">
@@ -98,13 +73,12 @@
 		            { required: true, message: '请输入知识元名称', trigger: 'blur' }
 		          ]
 	            },
-	            isDisable: true,
-	            auditStatusName: ""
+	            isDisable: true, // 防止重复提交
+	            shelfStatusName: "" // 上架状态
             }
         },
         created(){
         	this.form.id = this.$route.query.id;
-//       	console.log(this.form.id)
         },
         mounted() {
          	this.$axios.get("app/knowledgeTree/get",{
@@ -123,8 +97,7 @@
 	                this.form.seq = data.seq;
 	                this.form.shelfStatus = data.shelfStatus;
 	                this.form.remarks = data.remarks;
-	                this.auditStatusName = data.auditStatusName;
-	            	// console.log(this.form)
+	                this.shelfStatusName = data.shelfStatusName;
             	}
             })
         },

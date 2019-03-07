@@ -7,12 +7,7 @@
 	                <el-form-item label="知识元名称" required>
 	                    <el-input v-model="form.name"></el-input>
 	                </el-form-item>
-               	</el-col>
-        		<!--<el-col :span="12">
-                <el-form-item label="体系类型">
-                    <el-input v-model="form.address"></el-input>
-                </el-form-item>
-               	</el-col>-->
+               </el-col>
         		<el-col :span="12">
                 <el-form-item label="学科">
                     <el-input v-model="courseName" readonly></el-input>
@@ -27,29 +22,14 @@
 				      <el-option label="普理" value="普理"></el-option>
 				    </el-select>
                 </el-form-item>
-               	</el-col>
-        		<!--<el-col :span="12">
-                <el-form-item label="审核状态">
-                    <el-input v-model="form.address"></el-input>
-                </el-form-item>
-               	</el-col>-->
+               </el-col>
         		<el-col :span="12">
                 <el-form-item label="上架状态">
 					<el-select v-model="form.shelfStatus" placeholder="请选择上架状态">
 		                <el-option :key="item.id" :label="item.label" :value="item.acronym" v-for="item in shelfStatusList"></el-option>
 		           </el-select>
                 </el-form-item>
-               	</el-col>
-        		<!--<el-col :span="12">
-                <el-form-item label="创建人">
-                    <el-input v-model="form.address"></el-input>
-                </el-form-item>
-               	</el-col>-->
-        		<!--<el-col :span="12">
-                <el-form-item label="创建日期">
-                    <el-date-picker type="date" placeholder="选择日期" v-model="form.date" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
-                </el-form-item>
-               	</el-col>-->
+               </el-col>
         		<el-col :span="12">
                 <el-form-item label="排序">
                     <el-input v-model="form.seq"></el-input>
@@ -60,11 +40,6 @@
 				    <el-input type="textarea" v-model="form.remarks"></el-input>
 				</el-form-item>
 				</el-col>
-        		<!--<el-col :span="12">
-                <el-form-item label="审核日期">
-                    <el-date-picker type="date" placeholder="选择日期" v-model="form.date" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
-                </el-form-item>
-                </el-col>-->
             </el-row>
         </el-form>
         <div class="text-center">
@@ -106,7 +81,7 @@
             }
         },
         mounted() {
-        	// console.log(this.$route.query)
+        	// 获取父页面传递的参数
         	this.courseName = this.$route.query.courseName;
         	this.form.courseId = this.$route.query.courseId;
         	this.form.parentId = this.$route.query.parentId;

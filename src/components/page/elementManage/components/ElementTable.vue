@@ -1,14 +1,6 @@
 <template>
 	<div class="container">
 		<div class="handle-box">
-			<!--<div class="demo-input-suffix">
-				学科：
-				<el-input v-model="select_word" placeholder="" clearable class="handle-input-sm m-r-10"></el-input>
-			</div>
-			<div class="demo-input-suffix">
-				科类：
-				<el-input v-model="select_word" placeholder="" clearable class="handle-input-sm m-r-10"></el-input>
-			</div>-->
 			<div class="demo-input-suffix">
 				知识元名称：
 				<el-input v-model="name" placeholder="" clearable class="handle-input-md m-r-10"></el-input>
@@ -35,10 +27,9 @@
 	        <el-button type="primary" icon="search" @click="search" class="m-r-10">搜索</el-button>
 	        <el-button type="primary" icon="search" @click="add">新增</el-button>
         </div>
+        
+        <!-- table-data -->
         <el-table :data="data" border class="table" stripe ref="multipleTable" >
-            <!--<el-table-column type="selection" width="55" align="center"></el-table-column>-->
-            <!--<el-table-column prop="id" label="序号" width="50">
-            </el-table-column>-->
             <el-table-column prop="courseName" label="学科" >
             </el-table-column>
             <el-table-column prop="category" label="科类" >
@@ -66,6 +57,7 @@
             <el-pagination background @current-change="handleCurrentChange" :page-count="total" layout="prev, pager, next">
             </el-pagination>
         </div>
+        <!--table-data END-->
         
         <!-- 删除弹出框 -->
         <el-dialog title="删除" :visible.sync="delVisible" width="40%">
@@ -84,7 +76,7 @@
             		<el-col :span="12"> 确定恢复吗？</el-col>
                </el-row>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="delVisible = false">取 消</el-button>
+                <el-button @click="enableDelVisible = false">取 消</el-button>
                 <el-button type="primary" @click="sureEnable" >确 定</el-button>
             </span>
         </el-dialog>
@@ -97,39 +89,32 @@
 		name: "systemTable",
 		data() {
             return {
-                tableData: [],
-                cur_page: 1,
-                multipleSelection: [],
-                select_cate: '',
-                select_word: '',
-                del_list: [],
-                enable_list:[],
-                is_search: false,
-                delVisible: false,
-                enableDelVisible:false,
-                name: '',
-                date: '',
-                auditStatusList: [],
-                shelfStatusList: [],
-                auditStatus: '',
-                shelfStatus: '',
-                form: {
-                    name: '',
-                    address: ''
-                },
-                elId:null,
-                elParentId:null,
-                studyCourses:null,
-                idx: -1,
-                total: 1
+                data: [], // table数据
+                cur_page: 1, // 当前分页
+                multipleSelection: [], // 点击当前tr
+                del_list: [], // 当前点击的删除ID
+                enable_list:[], // 当前点击的恢复ID
+                delVisible: false, // 控制删除弹窗
+                enableDelVisible:false, // 控制恢复弹窗
+                name: '', // 知识元名称检索
+                date: '', // 日期检索
+                auditStatusList: [], // 审核状态列表
+                shelfStatusList: [], // 上架状态列表
+                auditStatus: '', // 审核状态检索
+                shelfStatus: '', // 上架状态检索
+                elId:null, // 知识元树传给table的ID
+                elParentId:null, // 知识元树传给table的父级ID
+                studyCourses:null, // 学段与学科名称拼接
+                total: 1 // 分页数
             }
         },
         mounted() {
-         	bus.$on('elParam', (data) => {
-	        	console.log(data)
+         	bus.$on('elParam', (data) => {  // 监听elementTable组件传过来的值
 	        	this.elId = data.id;
 	        	this.elParentId = data.parentId;
 	        	this.studyCourses = data.studyCourses;
+	        	this.cur_page = 1;
+	            this.getData();
 	      	})
          	// 获取审核状态数据
          	if(localStorage.getItem("auditStatus")){
@@ -139,7 +124,6 @@
 					if(res.status=="200" && res.data.code == '0000'){
 						this.auditStatusList = res.data.data;
 						localStorage.setItem("auditStatus",JSON.stringify(this.auditStatusList));
-						// console.log(this.auditStatusList)
 					}
 				})
          	}
@@ -155,28 +139,8 @@
 					}
 				})
          	}
-//          this.getData();
         },
-        computed: {
-            data() {
-                return this.tableData.filter((d) => {
-                    let is_del = false;
-                    for (let i = 0; i < this.del_list.length; i++) {
-                        if (d.name === this.del_list[i].name) {
-                            is_del = true;
-                            break;
-                        }
-                    }
-                    if (!is_del) {
-                        if (d.category.indexOf(this.select_cate) > -1 &&
-                            (d.name.indexOf(this.select_word) > -1 ||
-                                d.category.indexOf(this.select_word) > -1)
-                        ) {
-                            return d;
-                        }
-                    }
-                })
-            },
+        computed: { // 计算开始和结束日期
             beginTime: function () {
             	return this.date[0];
 		    },
@@ -213,22 +177,15 @@
                 }).then((res) => {
                 	if(res.status == 200 && res.data.code == '0000'){
 	                	this.total = res.data.data.total;
-//	                	console.log(this.total)
-	                    this.tableData = res.data.data.rows;
+	                    this.data = res.data.data.rows;
 	                }
                 })
-//              .catch(error => {
-//		          	this.$message({
-//			          message: error,
-//			          type: 'warning'
-//			        });
-//		        });
             },
-            search() {
+            search() { // 搜索
             	this.cur_page = 1;
                 this.getData();
             },
-            add() {
+            add() { // 新增
             	this.$router.push({
 	                path:'/elementAdd',
 	                name: 'elementAdd',
@@ -239,7 +196,7 @@
 	                }
 	            })
             },
-            sureDel() {
+            sureDel() { // 确定删除
             	this.$axios.get("app/knowledgeTree/disable",{
                     params:{
 		    			"ids": this.del_list // ID
@@ -252,7 +209,7 @@
 	                }
                 })
             },
-            sureEnable() {
+            sureEnable() { // 确定恢复
             	this.$axios.get("app/knowledgeTree/enable",{
                     params:{
 		    			"ids": this.enable_list // ID
@@ -265,33 +222,22 @@
 	                }
                 })
             },
-            handleEdit(id,courseId,parentId) {
+            handleEdit(id,courseId,parentId) { // 编辑操作
             	this.$router.push('/elementUpdate?id='+id);
             },
-            handleCheck(id,courseId,parentId) {
+            handleCheck(id,courseId,parentId) { // 查看操作
             	console.log(id);
                 this.$router.push('/elementDetails?id='+id);
             },
-            handleDelete(val) {
+            handleDelete(val) { // 删除操作
 				this.delVisible = true;
 				this.del_list = val;
             },
-            handleEnable(val) {
+            handleEnable(val) { // 恢复操作
 				this.enableDelVisible = true;
 				this.enable_list = val;
             }
-       	},
-       	watch:{
-	        elParentId(val, oldVal){//普通的watch监听
-//	            console.log("a: "+val, oldVal);
-	            this.cur_page = 1;
-	            this.getData();
-	        },
-	        elId(val, oldVal){ // 
-	        	this.cur_page = 1;
-	        	this.getData();
-	        }
-	    }
+       	}
 	}
 </script>
 

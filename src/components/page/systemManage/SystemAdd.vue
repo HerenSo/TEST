@@ -52,14 +52,7 @@
 				      <el-option label="普理" value="普理"></el-option>
 				    </el-select>
                 </el-form-item>
-               </el-col>
-        		<!--<el-col :span="12">
-                <el-form-item label="年级" required>
-                    <el-select v-model="form.gradeId" placeholder="请选择年级">
-				      <el-option :label="item.gradeName" :value="item.id" v-for="item in grade"></el-option>
-				    </el-select>
-                </el-form-item>
-               	</el-col>-->
+                </el-col>
         		<el-col :span="12">
                 <el-form-item label="归属人">
                 	<el-input v-model="form.owner"></el-input>
@@ -85,7 +78,7 @@
 	        </span>
         </div>
         </div>
-        <!-- 编辑弹出框 -->
+        <!-- 选择知识元弹出框 -->
         <el-dialog title="选择知识元" :visible.sync="selectVisible" width="60%">
         	<el-row :gutter="10">
         		<el-col :span="24">
@@ -169,17 +162,14 @@
 		        selectedOptions:[],
 	            isDisable: true, // 防止重复提交
 	            auditStatusName: "",
-//	            knowledges: [],
 	            selectVisible: false
             }
         },
         mounted() {
-//        	 console.log(this.$route.query)
         	this.courseName = this.$route.query.courseName;
         	this.form.courseId = this.$route.query.courseId;
         	this.form.parentId = this.$route.query.parentId;
         	this.form.materialId = this.$route.query.materialId;
-//      	this.form.gradeId = this.$route.query.gradeId;
         	this.auditStatus = JSON.parse(localStorage.getItem("auditStatus"));
         	this.selectedOptions = [this.form.gradeId,this.form.courseId];
         	this.queryArchitectureType();
@@ -197,7 +187,6 @@
 			handleChange(value) { // 选择学科
 		        console.log(value);
 		        this.courseId = value[value.length-1];
-//		      	this.queryMaterial();
 		      	this.queryCoursesData();
 		   },
 		    queryCourse() {
@@ -209,7 +198,6 @@
 		    		}
 				}).then(res => {
 		          	if(res.status == 200 && res.data.code == '0000'){
-	//		          	this.courses = JSON.parse(JSON.stringify(res.data.data));
 			          	this.courses = res.data.data;
 			          	for(var i=0; i < this.courses.length; i++){
 			          		for(var j=0; j < this.courses[i].courses.length;j++){
@@ -232,12 +220,10 @@
 				}).then(res => {
 		          	if(res.status == 200 && res.data.code == '0000'){
 			          	this.data = res.data.data;
-	//		          	console.log(this.data);
 			          	let data = {
 			          		id:this.data[0].id,
 			          		parentId:this.data[0].parentId
 			          	}
-	//		          	console.log(this.data)
 		          	}
 		       	});
 		    },
@@ -246,10 +232,7 @@
 		        this.$axios.get('app/combobox/architecture/type').then(res => {
 		        	console.log(res)
 		          	if(res.status == 200 && res.data.code == '0000'){
-		          		
 			          	this.architectureType = res.data.data;
-	//		          	console.log(this.data);
-	//		          	console.log(this.data)
 		          	}
 		       	});
 		    },
@@ -262,10 +245,7 @@
 		        }).then(res => {
 		        	console.log(res)
 		          	if(res.status == 200 && res.data.code == '0000'){
-		          		
 			          	this.grade = res.data.data;
-	//		          	console.log(this.data);
-	//		          	console.log(this.data)
 		          	}
 		       	});
 		    },
@@ -289,7 +269,6 @@
 			    		})
 		    		}
 		    	}
-		    	console.log(this.form.knowledges)
 		    },
         	// 保存编辑
             saveAdd() {

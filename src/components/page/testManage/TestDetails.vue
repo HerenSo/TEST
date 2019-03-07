@@ -158,8 +158,7 @@
 	                	knowledgesNamelist.push(this.form.knowledges[i].knowledgeName);
 	                }
 	                this.form.knowledgesName = knowledgesNamelist.join(",");
-	                console.log(this.form.knowledgesName);
-	                console.log("-------------知识元-----------")
+//	                console.log(this.form.knowledgesName);
 	                if(this.form.auditStatus == '10'){
 	                	this.ischeckpass = true;
 	                }else{
