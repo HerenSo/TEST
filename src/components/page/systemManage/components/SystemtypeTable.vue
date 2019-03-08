@@ -163,7 +163,7 @@
                     	"parentId": this.elParentId, // 父节点ID，顶级父节点传0
 	    				"courseId": this.elId,
 		        		"materialId": this.materialId,
-		        		"gradeId": this.gradeId,
+		        		"fasciclesId": this.fasciclesId,
 	    				"courseName": this.courseName
 	                }
 	            })

@@ -40,7 +40,7 @@
         	<el-row :gutter="20">
         		<el-col :span="12">
                 <el-form-item label="学科">
-                    <el-input v-model="courseName" readonly></el-input>
+                    <el-input v-model="form.courseName" readonly></el-input>
                     <el-input v-model="form.courseId" class="hidden"></el-input>
                     <el-input v-model="form.parentId" class="hidden"></el-input>
                 </el-form-item>
@@ -123,10 +123,10 @@
             	data: [],
                 form: {
                     "owner":"",		//		--归属人
-				    "gradeId":"",		//		--年级ID
+//				    "gradeId":"",		//		--年级ID
 				    "materialId":"",	//		--教材ID
 				    "type":"5",			//		--体系类型
-				    "category":"普文",	//		--学科类别
+				    "category":"普理",	//		--学科类别
 				    "courseId":"",		//		--学科ID
 				    "parentId":"",	//			--父节点ID
 				    "seq":"",	//				--排序
@@ -166,14 +166,14 @@
             }
         },
         mounted() {
-        	this.courseName = this.$route.query.courseName;
+        	this.form.courseName = this.$route.query.courseName;
         	this.form.courseId = this.$route.query.courseId;
         	this.form.parentId = this.$route.query.parentId;
         	this.form.materialId = this.$route.query.materialId;
+        	this.form.fasciclesId = this.$route.query.fasciclesId;
         	this.auditStatus = JSON.parse(localStorage.getItem("auditStatus"));
-        	this.selectedOptions = [this.form.gradeId,this.form.courseId];
         	this.queryArchitectureType();
-        	this.queryGrade();
+//      	this.queryGrade();
         },
         methods: {
         	handleClose(tag) { // 删除知识元
@@ -205,8 +205,10 @@
 			          		}
 			          	}
 			          	this.courseId = this.courses[0].courses[0].id;
+			          	this.studyId = this.courses[0].id;
 			          	this.studyPeriod = this.courses[0].studyPeriod;
 			          	this.courseName = this.courses[0].courses[0].courseName;
+			          	this.selectedOptions = [this.studyId,this.courseId];
 	    				this.queryCoursesData(); // 请求树
 		          	}
 		        });

@@ -116,7 +116,7 @@
                 form: {
                 	"id":null,			//	--ID
                 	"owner": null,    //-归属人
-                	"gradeId": null,   // 年级ID
+//              	"gradeId": null,   // 年级ID
                 	"materialId":null,	// --教材ID
                     "type": '', // 
                     "category":"",		//--学科类别
@@ -171,7 +171,7 @@
 	            	let data = res.data.data;
 	                this.form.id = data.id;
 	                this.form.owner = data.owner;
-	                this.form.gradeId = data.gradeId;
+//	                this.form.gradeId = data.gradeId;
 	                this.form.materialId = data.materialId;
 	                this.form.type = data.type;
 	                this.form.category = data.category;
