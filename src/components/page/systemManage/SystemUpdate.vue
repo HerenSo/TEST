@@ -85,7 +85,7 @@
 							<el-tree
 							  :data="data"
 							  show-checkbox
-							  default-expand-all
+							  check-on-click-node
 							  node-key="id"
 							  ref="tree"
 							  highlight-current
@@ -122,6 +122,7 @@
                     "category":"",		//--学科类别
                     "courseId":null,			//--学科ID
 				    "parentId":null,		//	--父节点ID
+				    "fascicleId":"",
 				    "seq":"",			//	--排序
 				    "remarks":"",	//		--备注
 				    "knowledges":[],			//--知识元数组
@@ -172,6 +173,7 @@
 	                this.form.id = data.id;
 	                this.form.owner = data.owner;
 //	                this.form.gradeId = data.gradeId;
+					this.form.fascicleId = data.fascicleId;
 	                this.form.materialId = data.materialId;
 	                this.form.type = data.type;
 	                this.form.category = data.category;

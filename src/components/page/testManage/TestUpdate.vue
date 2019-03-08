@@ -26,7 +26,8 @@
         		</el-col>
         		<el-col :span="12">
 	                <el-form-item label="区域">
-	                    <el-input v-model="form.region"></el-input>
+	                    <!--<el-input v-model="form.region"></el-input>-->
+	                    <v-distpicker class="el-input" :placeholders="{ province: ''}" @selected="onSelected" type="type" only-province></v-distpicker>
 	                </el-form-item>
                	</el-col>
         		<el-col :span="12">
@@ -100,7 +101,7 @@
 						<el-tree
 						  :data="data"
 						  show-checkbox
-						  default-expand-all
+						  check-on-click-node
 						  node-key="id"
 						  ref="tree"
 						  highlight-current
@@ -124,11 +125,12 @@
     import 'quill/dist/quill.snow.css';
     import 'quill/dist/quill.bubble.css';
     import { quillEditor } from 'vue-quill-editor';
+    import VDistpicker from 'v-distpicker'
 	import router from '@/router';
 	export default{
 		name: "testUpdate",
 		components: {
-            quillEditor
+            quillEditor,VDistpicker
         },
 		data() {
             return {
@@ -219,6 +221,9 @@
         	answerEditorChange({ editor, html, text }) {
                 this.form.answerHtml = html;
 //              console.log(html)
+            },
+            onSelected(data) { // 选择省
+            	this.form.region = data.province.value;
             },
         	handleClose(tag) { // 删除知识元
 		        this.form.knowledges.splice(this.form.knowledges.indexOf(tag), 1);

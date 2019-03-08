@@ -95,7 +95,7 @@
 						<el-tree
 						  :data="data"
 						  show-checkbox
-						  default-expand-all
+						  check-on-click-node
 						  node-key="id"
 						  ref="tree"
 						  highlight-current
@@ -129,6 +129,7 @@
 				    "category":"普理",	//		--学科类别
 				    "courseId":"",		//		--学科ID
 				    "parentId":"",	//			--父节点ID
+				    "fascicleId":"",
 				    "seq":"",	//				--排序
 				    "remarks":"",//				--备注
 				    "knowledges":[],//			--知识元数组
@@ -170,7 +171,7 @@
         	this.form.courseId = this.$route.query.courseId;
         	this.form.parentId = this.$route.query.parentId;
         	this.form.materialId = this.$route.query.materialId;
-        	this.form.fasciclesId = this.$route.query.fasciclesId;
+        	this.form.fascicleId = this.$route.query.fascicleId;
         	this.auditStatus = JSON.parse(localStorage.getItem("auditStatus"));
         	this.queryArchitectureType();
 //      	this.queryGrade();

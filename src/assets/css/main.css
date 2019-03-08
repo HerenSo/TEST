@@ -125,6 +125,18 @@ a {
 .el-form-item.is-success .el-input__inner{
 	border-color: #dcdfe6;
 }
+.el-form-item__content .distpicker-address-wrapper select{
+    height: 32px;
+    padding: 0 25px 0 15px;
+    font-size: 12px;
+    width: 203px;
+}
+.distpicker-address-wrapper select option:first-child{
+    display: none;
+}
+.el-form-item__content .el-date-editor.el-input{
+    width: 203px;
+}
 
 
 .form-box{

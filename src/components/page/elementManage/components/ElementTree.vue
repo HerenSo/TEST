@@ -17,8 +17,8 @@
 			  :data="data"
 			  :props="defaultProps"
 			  node-key="id"
-			  default-expand-all
 			  highlight-current
+			  expand-on-click-node
 			  ref="tree"
 			  @node-click="handleNodeClick">
 			</el-tree>
@@ -85,6 +85,7 @@
 		        	studyCourses: this.studyCourses
 		        }
 		        bus.$emit('elParam', elParam); // 传递参数给table
+		        localStorage.setItem("selectTree", data.id);
 		    },
 	      queryCoursesData() {
 	      	// 请求树
@@ -96,7 +97,7 @@
 	          	if(res.status == 200 && res.data.code == '0000'){
 		          	this.data = res.data.data;
 		          	this.handleNodeClick({id:0});// 初始传 0
-		          	
+		          	this.$refs.tree.setCurrentKey([1]);
 	          	}
 	       });
 	      }

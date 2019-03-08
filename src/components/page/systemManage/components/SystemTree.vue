@@ -32,7 +32,7 @@
 			  :props="defaultProps"
 		  	  node-key="id"
 			  accordion
-		      default-expand-all
+		      expand-on-click-node
 			  @node-click="handleNodeClick">
 			</el-tree>
 		</div>
@@ -52,7 +52,7 @@
 		        studyId: '',
 		        courseName:'', // 初始默认 学课
 		        courseId: null, // 初始默认 学课ID
-		        fasciclesId: null, // 分册ID
+		        fascicleId: null, // 分册ID
 		        materialId: null, // 教材ID
 		        materialName: '', // 教材名称
 		        fasciclesName: '', // 分册名称
@@ -116,7 +116,7 @@
 		        	parentId: data.id,
 		        	materialId: this.materialId,
 		        	gradeId: this.materialId,
-		        	fasciclesId:this.fasciclesId,
+		        	fascicleId:this.fascicleId,
 		        	courseName:this.courseName
 		        }
 		        bus.$emit('elParam', elParam); // 传递参数给table
@@ -133,7 +133,7 @@
 	          	this.fasciclesList[0].select = true; // 默认选中第一个
 	          	this.materialName = this.material[index].materialName;
 	          	this.fasciclesName = this.fasciclesList[0].fascicleName;
-	          	this.fasciclesId = this.fasciclesList[0].id;
+	          	this.fascicleId = this.fasciclesList[0].id;
 		        this.materialId = id;
 	    		this.queryCoursesData(); // 请求树
 	      	},
@@ -143,7 +143,7 @@
 	          }
 	          	this.fasciclesList[index].select = true; // 默认选中第一个
 	      		this.fasciclesName = this.fasciclesList[index].fascicleName;
-	          	this.fasciclesId = this.fasciclesList[index].id;
+	          	this.fascicleId = this.fasciclesList[index].id;
 	    		this.queryCoursesData(); // 请求树
 	      	},
 	      	queryCourse() {
@@ -208,22 +208,22 @@
 			          	if(this.fasciclesList.length > 0){
 			          		this.fasciclesList[0].select = true; // 默认选中第一个
 				          	this.fasciclesName = this.fasciclesList[0].fascicleName;
-				          	this.fasciclesId = this.fasciclesList[0].id;
+				          	this.fascicleId = this.fasciclesList[0].id;
 			          	}else{
 			          		this.fasciclesName = "暂无";
-			          		this.fasciclesId = null;
+			          		this.fascicleId = null;
 			          	}
-			          	console.log("this.fasciclesId="+this.fasciclesId)
+			          	console.log("this.fascicleId="+this.fascicleId)
 			    		this.queryCoursesData(); // 请求树
 			    	}
 		        });
 	     	},
 	     	queryCoursesData() {
 		      	// 请求树
-		      	if(this.fasciclesId){
+		      	if(this.fascicleId){
 			        this.$axios.get('app/architectureTree/tree',{
 			    		params:{
-			    			"gradeId": this.fasciclesId,
+			    			"fascicleId": this.fascicleId,
 			    			"materialId": this.materialId,
 			    			"courseId": this.courseId
 			    		}
