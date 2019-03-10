@@ -42,7 +42,7 @@
         </el-form>
         <div class="text-center">
 	        <span slot="footer" class="dialog-footer">
-	            <router-link to='elementManage?localStorage=0'class="m-r-10"><el-button >取 消</el-button></router-link>
+	            <router-link to='elementManage' class="m-r-10"><el-button >取 消</el-button></router-link>
 	            <el-button type="primary" @click="saveEdit" >确 定</el-button>
 	        </span>
         </div>
@@ -114,7 +114,7 @@
 					          message: "提交成功",
 					          type: 'success',
 					          onClose:function(){
-					          	router.push('/elementManage?localStorage=0');
+					          	router.push('/elementManage');
 					          }
 					        });
 				        }else{

@@ -30,9 +30,13 @@
 			<el-tree
 			  :data="data"
 			  :props="defaultProps"
-		  	  node-key="id"
+			  highlight-current
+			  :default-expanded-keys="currentKey"
+			  auto-expand-parent
+			  node-key="id"
+			  expand-on-click-node
 			  accordion
-		      expand-on-click-node
+			  ref="tree"
 			  @node-click="handleNodeClick">
 			</el-tree>
 		</div>
@@ -67,7 +71,7 @@
             		children: 'courses'
 		        },
 		        selectedOptions:[], // 学段学科选择绑定的ID
-		        local:"" // 是否缓存学科
+		        currentKey:[] // 当前选中的树节点
 		    };
 	    },
 	    created (){
@@ -78,7 +82,6 @@
 //			this.$route.meta.isBack=false
 		},
 	    mounted: function () {
-	    	this.local = this.$route.query.localStorage; // 从子页面传过来，用于判断是否使用缓存
 			this.queryCourse(); // 请求学科
 	    },
 	    computed: {
@@ -101,26 +104,8 @@
 						}
 					}
 				}
-				let selecteCourse = {
-          			studyPeriod: this.studyPeriod,
-          			courseName: this.courseName,
-          			studyId: value[0],
-          			courseId:value[1]
-          		}
-		        localStorage.setItem("selectedOptions",JSON.stringify(selecteCourse)); // 缓存学科选择状态
 	      		this.queryMaterial(); // 请求教材
 		    },
-	      	handleNodeClick(data) { // 树点击
-		        let elParam = {
-		        	id: this.courseId,
-		        	parentId: data.id,
-		        	materialId: this.materialId,
-		        	gradeId: this.materialId,
-		        	fascicleId:this.fascicleId,
-		        	courseName:this.courseName
-		        }
-		        bus.$emit('elParam', elParam); // 传递参数给table
-	      	},
 	      	selectMaterial(id,index){ // 选择教材
 	          	this.fasciclesList = this.material[index].fascicles;
 	          	for(let i = 0; i <this.material.length; i++){
@@ -146,6 +131,17 @@
 	          	this.fascicleId = this.fasciclesList[index].id;
 	    		this.queryCoursesData(); // 请求树
 	      	},
+	      	handleNodeClick(data) { // 树点击
+		        let elParam = {
+		        	id: this.courseId,
+		        	parentId: data.id,
+		        	materialId: this.materialId,
+		        	gradeId: this.materialId,
+		        	fascicleId:this.fascicleId,
+		        	courseName:this.courseName
+		        }
+		        bus.$emit('elParam', elParam); // 传递参数给table
+	      	},
 	      	queryCourse() {
 	      		// 请求学科
 				this.$axios.get('app/study/period/tree',{
@@ -161,27 +157,18 @@
 			          			this.courses[i].courses[j].studyPeriod = this.courses[i].courses[j].courseName;
 			          		}
 			          	}
-			          	if(this.local != 0){ // 判断是否使用缓存
-				          	this.courseId = this.courses[0].courses[0].id;
-				          	this.studyPeriod = this.courses[0].studyPeriod;
-				          	this.studyId = this.courses[0].id;
-				          	this.courseName = this.courses[0].courses[0].courseName;
-				          	this.selectedOptions = [this.studyId,this.courseId];
-				          	let selecteCourse = {
-			          			studyPeriod: this.studyPeriod,
-			          			courseName: this.courseName,
-			          			studyId: this.studyId,
-			          			courseId:this.courseId
-			          		}
-			          		localStorage.setItem("selectedOptions",JSON.stringify(selecteCourse));
-				        }else{
-			          		let selecteCourse = JSON.parse(localStorage.getItem("selectedOptions"));
-			          		this.courseId = selecteCourse.courseId;
-				          	this.studyPeriod = selecteCourse.studyPeriod;
-				          	this.studyId = selecteCourse.studyId;
-				          	this.courseName = selecteCourse.courseName;
-				          	this.selectedOptions = [this.studyId,this.courseId];
-			          	}
+			          	this.courseId = this.courses[0].courses[0].id;
+			          	this.studyPeriod = this.courses[0].studyPeriod;
+			          	this.studyId = this.courses[0].id;
+			          	this.courseName = this.courses[0].courses[0].courseName;
+			          	this.selectedOptions = [this.studyId,this.courseId];
+//			          	let selecteCourse = {
+//		          			studyPeriod: this.studyPeriod,
+//		          			courseName: this.courseName,
+//		          			studyId: this.studyId,
+//		          			courseId:this.courseId
+//		          		}
+//		          		localStorage.setItem("selectedOptions",JSON.stringify(selecteCourse));
 				        this.queryMaterial(); // 请求教材
 		          	}
 		        });
@@ -214,7 +201,7 @@
 			          		this.fascicleId = null;
 			          	}
 			          	console.log("this.fascicleId="+this.fascicleId)
-			    		this.queryCoursesData(); // 请求树
+				    	this.queryCoursesData(); // 请求树
 			    	}
 		        });
 	     	},

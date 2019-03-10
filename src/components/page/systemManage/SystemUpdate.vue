@@ -62,7 +62,7 @@
         </el-form>
         <div class="text-center">
 	        <span slot="footer" class="dialog-footer">
-	            <router-link to='elementManage'class="m-r-10"><el-button >取 消</el-button></router-link>
+	            <router-link to='systemManage' class="m-r-10"><el-button >取 消</el-button></router-link>
 	            <el-button type="primary" @click="saveEdit" >确 定</el-button>
 	        </span>
         </div>

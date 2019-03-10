@@ -79,7 +79,7 @@
         </el-form>
         <div class="text-center">
 	        <span slot="footer" class="dialog-footer">
-	            <router-link :to='topath'class="m-r-10"><el-button >取 消</el-button></router-link>
+	            <router-link :to='topath' class="m-r-10"><el-button >取 消</el-button></router-link>
 	            <el-button type="primary" @click="saveAdd">确 定</el-button>
 	        </span>
         </div>
@@ -181,13 +181,10 @@
 	            topath: "" // 返回路径
             }
         },
-        beforeRouteEnter (to, from, next) {
-//		    console.log(from.path);
-		    localStorage.setItem("backpath",from.path+"?localStorage=0");
-		    next();
+		created() {
+        	this.topath = this.$route.query.path; // 获取返回路径
 		},
         mounted() {
-        	this.topath = localStorage.getItem("backpath"); // 获取返回路径
         	this.queryQuestionType();//获取题型列表
         	this.queryQuestionDifficulty();//获取难度系数
         	// 学科
@@ -329,12 +326,22 @@
 		           ).then((res) => {
 		           		if(res){
 			            	if(res.status == 200 && res.data.code == '0000'){
-				            	this.$message({
-						          message: "提交成功",
-						          type: 'success',
-						          onClose:function(){
-						          	router.push(this.topath);
-						          }
+		            			let topath = this.topath;
+//				            	this.$message({
+//						          message: "提交成功",
+//						          type: 'success',
+//						          onClose:function(){
+//						          }
+//						        });
+						        this.$confirm('提交成功, 是否继续添加?', '是否继续', {
+						          confirmButtonText: '继续',
+						          cancelButtonText: '取消',
+						          type: 'success'
+						        }).then(() => {
+						          router.go(0);
+						        }).catch(() => {
+						          router.go(0);
+						          router.push(topath);          
 						        });
 					        }
 		           		}else{

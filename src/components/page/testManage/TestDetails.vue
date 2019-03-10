@@ -128,15 +128,9 @@
                 isDisable: true,
                 topath:""
             }
-        },
-        beforeRouteEnter (to, from, next) {
-//		    console.log(from.path);
-		    localStorage.setItem("backpath",from.path+"?localStorage=0");
-		    next();
-		},
+      },
         created(){
         	this.form.id = this.$route.query.id;
-        	this.topath = localStorage.getItem("backpath"); // 获取返回路径
         	if(this.$route.query.type == 2){
         		this.ischeck = true;
         	}
@@ -146,6 +140,7 @@
 //       	console.log(this.form.id)
         },
         mounted() {
+        	this.topath = this.$route.query.path; // 获取返回路径
          	this.$axios.get("app/question/message/get",{
                 params:{
 	    			"id": this.form.id
@@ -188,11 +183,12 @@
 		            		if(res.data.data.shelfStatus == 5){
 		            			this.msg = "下架成功！";
 		            		}
+		            		let topath = this.topath;
 							this.$message({
 					          message: this.msg,
 					          type: 'success',
 					          onClose:function(){
-					          	router.push(this.backpath);
+					          	router.push(topath);
 					          }
 					        });
 		            	}else{
@@ -215,13 +211,14 @@
 		            		if(res.data.data.auditStatus == 15){
 		            			this.msg = "成功取消审核通过！";
 		            		}
+		            		let topath = this.topath;
 							this.$message({
 					          message: this.msg,
 					          type: 'success',
 					          onClose:function(){
-					          	router.push('/testManage?localStorage=0');
+					          	router.push(topath);
 					          }
-					        });
+					       });
 		            	}else{
 		            		this.isDisable = true;
 		            	}

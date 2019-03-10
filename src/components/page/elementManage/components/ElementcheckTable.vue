@@ -13,18 +13,25 @@
 			      range-separator="至"
 			      start-placeholder="开始日期"
 			      end-placeholder="结束日期"
-			      value-format="yyyy-MM-dd">
+			      value-format="yyyy-MM-dd"
+			      @change="search">
 			    </el-date-picker>
 			</div>
-			<el-select v-model="auditStatus" placeholder="审核状态" class="handle-select m-r-10">
-                <el-option key="0" label="全部" value="" ></el-option>
-                <el-option :key="item.id" :label="item.label" :value="item.acronym" v-for="item in auditStatusList"></el-option>
-            </el-select>
-			<el-select v-model="shelfStatus" placeholder="上架状态" class="handle-select m-r-10">
-                <el-option key="0" label="全部" value="" ></el-option>
-                <el-option :key="item.id" :label="item.label" :value="item.acronym" v-for="item in shelfStatusList"></el-option>
-            </el-select>
-	        <el-button type="primary" icon="search" @click="search">搜索</el-button>
+			<div class="demo-input-suffix">
+				审核状态：
+				<el-select v-model="auditStatus" placeholder="审核状态" class="handle-select m-r-10" @change="search">
+	                <el-option label="全部" value="" ></el-option>
+	                <el-option :key="item.id" :label="item.label" :value="item.acronym" v-for="item in auditStatusList"></el-option>
+	            </el-select>
+            </div>
+            <div class="demo-input-suffix">
+				上架状态：
+				<el-select v-model="shelfStatus" placeholder="上架状态" class="handle-select m-r-10" @change="search">
+	                <el-option label="全部" value=""></el-option>
+	                <el-option :key="item.id" :label="item.label" :value="item.acronym" v-for="item in shelfStatusList"></el-option>
+	            </el-select>
+		        <el-button type="primary" icon="search" @click="search">搜索</el-button>
+		    </div>
         </div>
         <!--table-data-->
         <el-table :data="data" border class="table" stripe ref="multipleTable" @selection-change="handleSelectionChange">

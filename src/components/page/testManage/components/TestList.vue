@@ -1,21 +1,28 @@
 <template>
 	<div class="container">
 		<div class="handle-box">
-			<el-select  v-model="questionType" placeholder="题型" class="handle-select m-r-10">
-                <el-option key="0" label="全部" value=" " ></el-option>
-                <el-option :key="item.id" :label="item.questionType" :value="item.id" v-for="item in questionTypeList"></el-option>
-            </el-select>
-			<el-select  v-model="questionDifficulty" placeholder="难度" class="handle-select m-r-10">
-                <el-option key="0" label="全部" value=" " ></el-option>
-                <el-option :key="item.id" :label="item.difficultyName" :value="item.id" v-for="item in questionDifficultyList"></el-option>
-            </el-select>
+			<div class="demo-input-suffix">
+				题型：
+				<el-select  v-model="questionType" placeholder="题型" class="handle-select m-r-10" @change="search">
+	                <el-option key="0" label="全部" value="" ></el-option>
+	                <el-option :key="item.id" :label="item.questionType" :value="item.id" v-for="item in questionTypeList"></el-option>
+	            </el-select>
+            </div>
+			<div class="demo-input-suffix">
+				难度：
+				<el-select  v-model="questionDifficulty" placeholder="难度" class="handle-select m-r-10" @change="search">
+	                <el-option key="0" label="全部" value="" ></el-option>
+	                <el-option :key="item.id" :label="item.difficultyName" :value="item.difficultyName" v-for="item in questionDifficultyList"></el-option>
+	            </el-select>	
+           </div>
 			<div class="demo-input-suffix m-r-10">
 				年份：
 				<el-date-picker
 			      v-model="year"
 			      type="year"
 				  value-format="yyyy"
-			      placeholder="选择年">
+			      placeholder="选择年"
+			      @change="search">
 			    </el-date-picker>
 			</div>
 			<div class="demo-input-suffix">
@@ -26,13 +33,17 @@
 			      range-separator="至"
 			      start-placeholder="开始日期"
 			      end-placeholder="结束日期"
-			      value-format="yyyy-MM-dd">
+			      value-format="yyyy-MM-dd"
+			      @change="search">
 			    </el-date-picker>
 			</div>
-			<el-select v-model="auditStatus" placeholder="审核状态" class="handle-select m-r-10">
-                <el-option key="0" label="全部" value=" " ></el-option>
-                <el-option :key="item.id" :label="item.label" :value="item.acronym" v-for="item in auditStatusList"></el-option>
-            </el-select>
+			<div class="demo-input-suffix">
+				审核状态：
+				<el-select v-model="auditStatus" placeholder="审核状态" class="handle-select m-r-10" @change="search">
+                	<el-option key="0" label="全部" value="" ></el-option>
+                	<el-option :key="item.id" :label="item.label" :value="item.acronym" v-for="item in auditStatusList"></el-option>
+            	</el-select>
+            </div>
 	        <el-button type="primary" icon="search" @click="search">搜索</el-button>
 	        <el-button type="primary" icon="search" @click="add">新增</el-button>
         </div>
@@ -198,7 +209,7 @@
                 this.getData();
             },
             add() { // 添加
-            	this.$router.push('/testAdd')
+            	this.$router.push('/testAdd?path='+this.$route.path)
             },
             sureDel() {// 确定删除
             	this.$axios.get("app/question/message/disable",{
@@ -251,10 +262,10 @@
 		        });
             },
             handleEdit(id) { // 编辑操作
-                this.$router.push('/testUpdate?id='+id);
+                this.$router.push('/testUpdate?id='+id+'&path='+this.$route.path);
             },
             handleCheck(id,type) { // 查看操作
-                this.$router.push('/testDetails?id='+id+'&type='+type);
+                this.$router.push('/testDetails?id='+id+'&type='+type+'&path='+this.$route.path);
             },
             handleDelete(val) { // 删除操作
 				this.delVisible = true;

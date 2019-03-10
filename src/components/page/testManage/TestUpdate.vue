@@ -27,7 +27,12 @@
         		<el-col :span="12">
 	                <el-form-item label="区域">
 	                    <!--<el-input v-model="form.region"></el-input>-->
-	                    <v-distpicker class="el-input" :placeholders="{ province: ''}" @selected="onSelected" type="type" only-province></v-distpicker>
+	                    <v-distpicker 
+	                    	class="el-input" 
+	                    	:province="form.region" 
+	                    	@selected="onSelected" 
+	                    	only-province>
+	                    </v-distpicker>
 	                </el-form-item>
                	</el-col>
         		<el-col :span="12">
@@ -79,7 +84,7 @@
         </el-form>
         <div class="text-center">
 	        <span slot="footer" class="dialog-footer">
-	            <router-link :to='topath'class="m-r-10"><el-button >取 消</el-button></router-link>
+	            <router-link :to='topath' class="m-r-10"><el-button >取 消</el-button></router-link>
 	            <el-button type="primary" @click="saveAdd">确 定</el-button>
 	        </span>
         </div>
@@ -176,14 +181,11 @@
 	            selectVisible: false,
 	            topath: "" // 返回路径
             }
-        },
-        beforeRouteEnter (to, from, next) {
-//		    console.log(from.path);
-		    localStorage.setItem("backpath",from.path+"?localStorage=0");
-		    next();
+       },
+		created() {
+        	this.topath = this.$route.query.path; // 获取返回路径
 		},
         mounted() {
-        	this.topath = localStorage.getItem("backpath"); // 获取返回路径
         	this.form.id = this.$route.query.id;
         	this.getDate(); // 获取详情
         	this.queryQuestionType();//获取题型列表
@@ -362,11 +364,12 @@
 		           ).then((res) => {
 		           		if(res){
 			            	if(res.status == 200 && res.data.code == '0000'){
+		            			let topath = this.topath;
 				            	this.$message({
 						          message: "提交成功",
 						          type: 'success',
 						          onClose:function(){
-						          	router.push(this.topath);
+						          	router.push(topath);
 						          }
 						        });
 					        }

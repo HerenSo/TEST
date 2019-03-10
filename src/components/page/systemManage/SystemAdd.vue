@@ -73,7 +73,7 @@
         </el-form>
         <div class="text-center">
 	        <span slot="footer" class="dialog-footer">
-	            <router-link to='systemType?localStorage=0'class="m-r-10"><el-button >取 消</el-button></router-link>
+	            <router-link to='systemType' class="m-r-10"><el-button >取 消</el-button></router-link>
 	            <el-button type="primary" @click="saveAdd">确 定</el-button>
 	        </span>
         </div>
@@ -282,12 +282,22 @@
 		           ).then((res) => {
 		           		if(res){
 			            	if(res.status == 200 && res.data.code == '0000'){
-				            	this.$message({
-						          message: "提交成功",
-						          type: 'success',
-						          onClose:function(){
-						          	router.push('/systemType?localStorage=0');
-						          }
+//				            	this.$message({
+//						          message: "提交成功",
+//						          type: 'success',
+//						          onClose:function(){
+//						          	router.push('/systemType');
+//						          }
+//						        });
+						        this.$confirm('提交成功, 是否继续添加?', '是否继续', {
+						          confirmButtonText: '继续',
+						          cancelButtonText: '取消',
+						          type: 'success'
+						        }).then(() => {
+						          router.go(0);
+						        }).catch(() => {
+						          router.go(0);
+						          router.push('/systemType');          
 						        });
 					        }
 		           		}else{
