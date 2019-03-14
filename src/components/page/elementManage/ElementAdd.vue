@@ -110,8 +110,8 @@
 					        }).then(() => {
 					          router.go(0);
 					        }).catch(() => {
-					          router.go(0);
-					          router.push("/elementManage");          
+//					          router.go(0);
+					          router.push("/elementManage?localStorage=0");          
 					        });
 				        }else{
 				        	this.isDisable = true;

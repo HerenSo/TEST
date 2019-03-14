@@ -12,17 +12,19 @@
 			</el-cascader>
 		</div>
 		<!--知识元树-->
+		<!--:default-expanded-keys="currentKey"-->
 		<div class="container">
 			<el-tree
+			  ref="tree"
 			  :data="data"
 			  :props="defaultProps"
 			  highlight-current
-			  :default-expanded-keys="currentKey"
 			  auto-expand-parent
 			  node-key="id"
+			  :default-expanded-keys="treeExpandedKeys"
 			  expand-on-click-node
 			  accordion
-			  ref="tree"
+			  @node-expand="treeExpand"
 			  @node-click="handleNodeClick">
 			</el-tree>
 		</div>
@@ -51,7 +53,8 @@
             		children: 'courses'
 		        },
 		        selectedOptions:[], // 学段学科选择绑定的ID
-		        currentKey:[] // 当前选中的树节点
+		        currentKey:'', // 当前选中的树节点
+		        treeExpandedKeys: [] // 当前展开的树节点
 		    };
 	    },
 	    computed: {
@@ -75,6 +78,7 @@
 		      	this.queryCoursesData(); // 请求树
 		    },
 	        handleNodeClick(data) { // 树点击
+	        	this.currentKey = data.id;
 		        let elParam = {
 		        	id: this.courseId,
 		        	parentId: data.id,
@@ -82,19 +86,32 @@
 		        }
 		        bus.$emit('elParam', elParam); // 传递参数给table
 		    },
-	      queryCoursesData() {
-	      	// 请求树
-	        this.$axios.get('app/knowledgeTree/tree',{
-	    		params:{
-	    			"courseId": this.courseId
-	    		}
-			}).then(res => {
-	          	if(res.status == 200 && res.data.code == '0000'){
-		          	this.data = res.data.data;
-		          	this.handleNodeClick({id:0});// 初始传 0
-	          	}
-	       });
-	      }
+	      	queryCoursesData() {
+		      	// 请求树
+		        this.$axios.get('app/knowledgeTree/tree',{
+		    		params:{
+		    			"courseId": this.courseId
+		    		}
+				}).then(res => {
+		          	if(res.status == 200 && res.data.code == '0000'){
+			          	this.data = res.data.data;
+			          	this.handleNodeClick({id:0});// 初始传 0
+		          	}
+		       });
+		    },
+		    setCurrentKey(key){
+                const store = this.$refs.tree.store;
+                const node = store.getNode(key);
+                store.setCurrentNode(node);
+                this.$refs.tree.currentNode = node;
+                store.setCurrentNodeKey(key);
+                store.currentNodeKey = key;
+//  			data.unfold = true;
+                this.$refs.tree.$emit("node-click", node.data, node, this.$refs.tree);
+            },
+            treeExpand(data, node, self) {
+                this.treeExpandedKeys.push(data.id);
+            }
 	    },
 	    mounted: function () {
 	    	// 请求学科
@@ -128,7 +145,22 @@
 	          	}
 	        });
 	        
-	    }
+	    },
+       	watch: {
+			$route: {
+				handler: function(val, oldVal){
+	        		console.log(this.currentKey)
+	        		let currentKey = this.currentKey;
+			      	if( val.fullPath == "/elementManage?localStorage=0"){
+						this.queryCoursesData(); // 请求树
+						this.setCurrentKey(currentKey);
+						this.handleNodeClick({id:currentKey})
+					}
+			    },
+			    // 深度观察监听
+			    deep: true
+			} 
+        }
 	}
 </script>
 

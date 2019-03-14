@@ -28,15 +28,16 @@
 		        </el-dropdown-menu>
 		   </el-dropdown>
 			<el-tree
+			  ref="tree"
 			  :data="data"
 			  :props="defaultProps"
 			  highlight-current
-			  :default-expanded-keys="currentKey"
 			  auto-expand-parent
 			  node-key="id"
+			  :default-expanded-keys="treeExpandedKeys"
 			  expand-on-click-node
 			  accordion
-			  ref="tree"
+			  @node-expand="treeExpand"
 			  @node-click="handleNodeClick">
 			</el-tree>
 		</div>
@@ -71,7 +72,8 @@
             		children: 'courses'
 		        },
 		        selectedOptions:[], // 学段学科选择绑定的ID
-		        currentKey:[] // 当前选中的树节点
+		        currentKey:'', // 当前选中的树节点
+		        treeExpandedKeys: [] // 当前展开的树节点
 		    };
 	    },
 	    created (){
@@ -132,6 +134,7 @@
 	    		this.queryCoursesData(); // 请求树
 	      	},
 	      	handleNodeClick(data) { // 树点击
+	      		this.currentKey = data.id;
 		        let elParam = {
 		        	id: this.courseId,
 		        	parentId: data.id,
@@ -142,6 +145,19 @@
 		        }
 		        bus.$emit('elParam', elParam); // 传递参数给table
 	      	},
+	      	setCurrentKey(key){
+                const store = this.$refs.tree.store;
+                const node = store.getNode(key);
+                store.setCurrentNode(node);
+                this.$refs.tree.currentNode = node;
+                store.setCurrentNodeKey(key);
+                store.currentNodeKey = key;
+//  			data.unfold = true;
+                this.$refs.tree.$emit("node-click", node.data, node, this.$refs.tree);
+            },
+            treeExpand(data, node, self) {
+                this.treeExpandedKeys.push(data.id);
+            },
 	      	queryCourse() {
 	      		// 请求学科
 				this.$axios.get('app/study/period/tree',{
@@ -226,7 +242,22 @@
 			       	});
 		       	}
 	     	}
-	    }
+	    },
+       	watch: {
+			$route: {
+				handler: function(val, oldVal){
+	        		console.log(this.currentKey)
+	        		let currentKey = this.currentKey;
+			      	if( val.fullPath == "/systemType?localStorage=0"){
+						this.queryCoursesData(); // 请求树
+						this.setCurrentKey(currentKey);
+						this.handleNodeClick({id:currentKey})
+					}
+			    },
+			    // 深度观察监听
+			    deep: true
+			} 
+        }
 	}
 </script>
 

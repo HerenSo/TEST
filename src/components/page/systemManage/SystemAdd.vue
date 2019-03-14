@@ -296,8 +296,8 @@
 						        }).then(() => {
 						          router.go(0);
 						        }).catch(() => {
-						          router.go(0);
-						          router.push('/systemType');          
+//						          router.go(0);
+						          router.push('/systemType?localStorage=0');          
 						        });
 					        }
 		           		}else{
