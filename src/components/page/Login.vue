@@ -2,24 +2,24 @@
     <div class="login-wrap">
         <div class="ms-login">
             <!--<div class="ms-title">后台管理系统</div>-->
-            <div class="ms-title">侍禾试题库后台管理系统</div>
+            <div class="ms-title"><img src="../../assets/img/logo.jpg" />侍禾试题库后台管理</div>
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="0px" class="ms-content">
                 <el-form-item prop="username">
-                    <el-input type="text" v-model="ruleForm.loginId" placeholder="username">
+                    <el-input type="text" v-model="ruleForm.loginId" placeholder="请输入用户名">
                         <el-button slot="prepend" icon="el-icon-lx-people"></el-button>
                     </el-input>
                 </el-form-item>
                 <el-form-item prop="pass">
-                    <el-input type="password" placeholder="password" v-model="ruleForm.loginPass">
+                    <el-input type="password" placeholder="请输入密码" v-model="ruleForm.loginPass">
                         <el-button slot="prepend" icon="el-icon-lx-lock"></el-button>
                     </el-input>
                 </el-form-item>
                 <el-form-item prop="code">
                 	<el-col :span="16">
-	                    <el-input type="text" placeholder="code" v-model="ruleForm.code" >
+	                    <el-input type="text" placeholder="请输入验证码" v-model="ruleForm.code" >
 	                    </el-input>
                    	</el-col>
-                   	<el-col :span="8" class="code">
+                   	<el-col :span="7" class="code">
                     	<img :src="codeUrl" @click.prevent="codeRefresh()" />
                     </el-col>
                 </el-form-item>
@@ -101,12 +101,22 @@
         background-size: 100%;
     }
     .ms-title{
+    	background: #fff;
         width:100%;
         line-height: 50px;
         text-align: center;
-        font-size:20px;
-        color: #fff;
+        font-size: 28px;
+    	color: #f7fafd;
         border-bottom: 1px solid #ddd;
+        text-shadow: -2px 2px 3px #032d58;;
+	    font-weight: bold;
+	    /* letter-spacing: 1px; */
+	    font-family: KaiTi;
+    }
+    .ms-title img{
+    	width: 50px;
+    	vertical-align: -25px;
+    	padding: 10px 0;
     }
     .ms-login{
         position: absolute;
@@ -116,6 +126,7 @@
         margin:-190px 0 0 -175px;
         border-radius: 5px;
         background: rgba(255,255,255, 0.3);
+        background: #fff;
         overflow: hidden;
     }
     .ms-content{
@@ -141,8 +152,10 @@
     	border-radius: 4px;
     	border: 1px solid #dcdfe6;
     	line-height: 31px;
+    	float: right;
     }
     .code img{
+    	width: 100%;
     	vertical-align: middle;
     }
 </style>

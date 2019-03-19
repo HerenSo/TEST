@@ -114,6 +114,8 @@
                 delVisible: false, // 控制删除弹窗
                 enableDelVisible:false,  // 控制恢复弹窗
                 courseId: "",
+                selectedOptions: [],  // 学段学科选择绑定的ID
+                studyCourses: '',
                 knowledgeId: "", // 知识元Id
                 architectureId: "", // 体系ID
                 examType:"", // 考试类型
@@ -140,13 +142,14 @@
 			if(this.$route.path == "/testManage"){
 				this.getData();
 			}
-        	bus.$on('elParam', (data) => { // 监听elementTable组件传过来的值
+        	bus.$on('elParam', (data) => { // 监听tree组件传过来的值
         		this.courseId = data.id;
         		if(data.studyCourses){
         			this.knowledgeId = data.parentId;
         		}else{
         			this.architectureId = data.parentId;
         		}
+        		this.selectedOptions = data.selectedOptions;
         		this.cur_page = 1;
 	            this.getData();
 	      	})
@@ -209,7 +212,13 @@
                 this.getData();
             },
             add() { // 添加
-            	this.$router.push('/testAdd?path='+this.$route.path)
+            	this.$router.push({
+            		path: '/testAdd',
+            		query: { 
+            			"path":this.$route.path,
+	    				"selectedOptions": this.selectedOptions
+	                }
+            	})
             },
             sureDel() {// 确定删除
             	this.$axios.get("app/question/message/disable",{

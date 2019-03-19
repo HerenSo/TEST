@@ -88,17 +88,19 @@
                 gradeId: null,
                 courseName: null,
                 studyCourses:null,
+                selectedOptions: [],
                 total: 1 // 分页数
             }
         },
         mounted() {
-        	bus.$on('elParam', (data) => { // 监听elementTable组件传过来的值
+        	bus.$on('elParam', (data) => { // 监听systemTree组件传过来的值
 	        	this.elId = data.id;
 	        	this.elParentId = data.parentId;
 	        	this.materialId = data.materialId;
-		        this.fasciclesId = data.fasciclesId;
-		       	this.gradeId = data.gradeId;
+		        this.fasciclesId = data.fascicleId;
+//		       	this.gradeId = data.gradeId;
 		       	this.courseName = data.courseName;
+		       	this.selectedOptions = data.selectedOptions;
 		       	this.cur_page = 1;
            		this.getData();
 	      	})
@@ -160,6 +162,14 @@
                 this.getData();
             },
             add() { // 新增
+            	if(!this.fasciclesId){
+            		this.$message({
+			          message: "请选择分册！",
+			          type: 'error'
+			        });
+			        return;
+            	}
+           		console.log(this.fasciclesId)
             	this.$router.push({
 	                path:'/systemAdd',
 	                name: 'systemAdd',
@@ -168,7 +178,8 @@
 	    				"courseId": this.elId,
 		        		"materialId": this.materialId,
 		        		"fasciclesId": this.fasciclesId,
-	    				"courseName": this.courseName
+	    				"courseName": this.courseName,
+	    				"selectedOptions": this.selectedOptions
 	                }
 	            })
             },

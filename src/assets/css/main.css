@@ -126,9 +126,9 @@ a {
 	border-color: #dcdfe6;
 }
 .el-form-item__content .distpicker-address-wrapper select{
-    height: 32px;
+    height: 33px;
     padding: 0 25px 0 15px;
-    font-size: 12px;
+    font-size: 14px;
     width: 203px;
 }
 .distpicker-address-wrapper select option:first-child{

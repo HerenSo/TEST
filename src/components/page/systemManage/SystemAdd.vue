@@ -171,8 +171,9 @@
         	this.form.courseId = this.$route.query.courseId;
         	this.form.parentId = this.$route.query.parentId;
         	this.form.materialId = this.$route.query.materialId;
-        	this.form.fascicleId = this.$route.query.fascicleId;
+        	this.form.fascicleId = this.$route.query.fasciclesId;
         	this.auditStatus = JSON.parse(localStorage.getItem("auditStatus"));
+        	this.selectedOptions = this.$route.query.selectedOptions;
         	this.queryArchitectureType();
 //      	this.queryGrade();
         },
@@ -182,6 +183,7 @@
 		        console.log(this.form.knowledges);
 		    },
 		    handleSelect() { // 点击选择知识元
+				this.data = [];
 		    	this.queryCourse(); // 请求学科
 		    	this.selectVisible = true; // 控制弹窗显示隐藏
 		    },
@@ -205,11 +207,9 @@
 			          			this.courses[i].courses[j].studyPeriod = this.courses[i].courses[j].courseName;
 			          		}
 			          	}
-			          	this.courseId = this.courses[0].courses[0].id;
-			          	this.studyId = this.courses[0].id;
-			          	this.studyPeriod = this.courses[0].studyPeriod;
-			          	this.courseName = this.courses[0].courses[0].courseName;
-			          	this.selectedOptions = [this.studyId,this.courseId];
+			          	this.courseId = this.selectedOptions[1];
+			          	this.studyId = this.selectedOptions[0];
+//			          	this.selectedOptions = [this.studyId,this.courseId];
 	    				this.queryCoursesData(); // 请求树
 		          	}
 		        });

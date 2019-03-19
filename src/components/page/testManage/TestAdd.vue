@@ -183,6 +183,8 @@
         },
 		created() {
         	this.topath = this.$route.query.path; // 获取返回路径
+        	this.selectedOptions2 = this.$route.query.selectedOptions;
+        	this.selectedOptions = this.$route.query.selectedOptions;
 		},
         mounted() {
         	this.queryQuestionType();//获取题型列表
@@ -202,12 +204,6 @@
 		          			this.courses[i].courses[j].studyPeriod = this.courses[i].courses[j].courseName;
 		          		}
 		          	}
-		          	this.courseId = this.courses[0].courses[0].id;
-		          	this.studyPeriod = this.courses[0].studyPeriod;
-		          	this.studyId = this.courses[0].id;
-		          	this.courseName = this.courses[0].courses[0].courseName;
-		          	this.selectedOptions = [this.studyId,this.courseId];
-//		          	this.selectedOptions2 = [this.studyId,this.courseId];
 	          	}
 	        });
         	this.auditStatus = JSON.parse(localStorage.getItem("auditStatus"));
@@ -227,6 +223,7 @@
 		        console.log(this.form.knowledges);
 		    },
 		    handleSelect() { // 点击选择知识元
+				this.data = [];
 		    	this.queryCourse(); // 请求学科
 		    	this.selectVisible = true; // 控制弹窗显示隐藏
 		    },
@@ -268,9 +265,7 @@
 			          			this.courses[i].courses[j].studyPeriod = this.courses[i].courses[j].courseName;
 			          		}
 			          	}
-			          	this.courseId = this.courses[0].courses[0].id;
-			          	this.studyPeriod = this.courses[0].studyPeriod;
-			          	this.courseName = this.courses[0].courses[0].courseName;
+			          	this.courseId = this.selectedOptions[1];
 	    				this.queryCoursesData(); // 请求树
 		          	}
 		        });
@@ -340,7 +335,7 @@
 						        }).then(() => {
 						          router.go(0);
 						        }).catch(() => {
-						          router.go(0);
+//						          router.go(0);
 						          router.push(topath);          
 						        });
 					        }

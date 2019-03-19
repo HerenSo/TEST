@@ -96,6 +96,7 @@
 		},
 	    methods: {
 	    	handleChange(value) { // 选学科
+	    		this.selectedOptions = value;
 		        this.courseId = value[value.length-1];
 				for(var i=0;i < this.courses.length;i++){
 					for(var j=0;j<this.courses[i].courses.length;j++){
@@ -127,7 +128,7 @@
 	      	selectFascicle(id,index) { // 选择分册
 	      		for(let i = 0; i <this.fasciclesList.length; i++){
 	          		this.fasciclesList[i].select = false;
-	          }
+	            }
 	          	this.fasciclesList[index].select = true; // 默认选中第一个
 	      		this.fasciclesName = this.fasciclesList[index].fascicleName;
 	          	this.fascicleId = this.fasciclesList[index].id;
@@ -139,13 +140,14 @@
 		        	id: this.courseId,
 		        	parentId: data.id,
 		        	materialId: this.materialId,
-		        	gradeId: this.materialId,
+//		        	gradeId: this.materialId,
 		        	fascicleId:this.fascicleId,
-		        	courseName:this.courseName
+		        	courseName:this.studyCourses,
+		        	selectedOptions:this.selectedOptions
 		        }
 		        bus.$emit('elParam', elParam); // 传递参数给table
 	      	},
-	      	setCurrentKey(key){
+	      	setCurrentKey(key){ // 处理树选中
                 const store = this.$refs.tree.store;
                 const node = store.getNode(key);
                 store.setCurrentNode(node);
@@ -155,7 +157,7 @@
 //  			data.unfold = true;
                 this.$refs.tree.$emit("node-click", node.data, node, this.$refs.tree);
             },
-            treeExpand(data, node, self) {
+            treeExpand(data, node, self) { // 树默认展开
                 this.treeExpandedKeys.push(data.id);
             },
 	      	queryCourse() {
@@ -207,6 +209,9 @@
 			          	}else{
 			          		this.materialName = "暂无";
 			          		this.fasciclesList = [];
+			          		this.fascicleId = null;
+			          		this.data = [];
+			          		this.handleNodeClick({id:0});
 			          	}
 			          	if(this.fasciclesList.length > 0){
 			          		this.fasciclesList[0].select = true; // 默认选中第一个
@@ -215,6 +220,8 @@
 			          	}else{
 			          		this.fasciclesName = "暂无";
 			          		this.fascicleId = null;
+			          		this.data = [];
+			          		this.handleNodeClick({id:0});
 			          	}
 			          	console.log("this.fascicleId="+this.fascicleId)
 				    	this.queryCoursesData(); // 请求树
@@ -248,7 +255,7 @@
 				handler: function(val, oldVal){
 	        		console.log(this.currentKey)
 	        		let currentKey = this.currentKey;
-			      	if( val.fullPath == "/systemType?localStorage=0"){
+			      	if( val.fullPath == "/systemType?localStorage=0" || val.fullPath == "/testSystem?localStorage=0"){
 						this.queryCoursesData(); // 请求树
 						this.setCurrentKey(currentKey);
 						this.handleNodeClick({id:currentKey})

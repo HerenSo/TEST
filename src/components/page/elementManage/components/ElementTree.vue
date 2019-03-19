@@ -82,7 +82,8 @@
 		        let elParam = {
 		        	id: this.courseId,
 		        	parentId: data.id,
-		        	studyCourses: this.studyCourses
+		        	studyCourses: this.studyCourses,
+		        	selectedOptions: this.selectedOptions
 		        }
 		        bus.$emit('elParam', elParam); // 传递参数给table
 		    },
@@ -151,7 +152,7 @@
 				handler: function(val, oldVal){
 	        		console.log(this.currentKey)
 	        		let currentKey = this.currentKey;
-			      	if( val.fullPath == "/elementManage?localStorage=0"){
+			      	if( val.fullPath == "/elementManage?localStorage=0" || val.fullPath == "/testElement?localStorage=0"){
 						this.queryCoursesData(); // 请求树
 						this.setCurrentKey(currentKey);
 						this.handleNodeClick({id:currentKey})
