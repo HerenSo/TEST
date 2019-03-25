@@ -109,6 +109,26 @@ export default new Router({
                     component: resolve => require(['../components/page/testManage/TestAdd.vue'], resolve),
                     meta: { title: '试题新增', keepAlive: false, isBack:false }
                 },
+                {
+                    path: '/userInfo',
+                    component: resolve => require(['../components/page/basicInfo/UserInfo.vue'], resolve),
+                    meta: { title: '用户信息', keepAlive: false, isBack:false }
+                },
+                {
+                    path: '/studyPeriodInfo',
+                    component: resolve => require(['../components/page/basicInfo/StudyPeriodInfo.vue'], resolve),
+                    meta: { title: '学段信息', keepAlive: false, isBack:false }
+                },
+                {
+                    path: '/courseInfo',
+                    component: resolve => require(['../components/page/basicInfo/CourseInfo.vue'], resolve),
+                    meta: { title: '学科信息', keepAlive: false, isBack:false }
+                },
+                {
+                    path: '/materialInfo',
+                    component: resolve => require(['../components/page/basicInfo/MaterialInfo.vue'], resolve),
+                    meta: { title: '学科信息', keepAlive: false, isBack:false }
+                },
 //              {
 //                  path: '/table',
 //                  component: resolve => require(['../components/page/BaseTable.vue'], resolve),

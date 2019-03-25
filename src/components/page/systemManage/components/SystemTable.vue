@@ -111,8 +111,6 @@
 	        	this.elParentId = data.parentId;
 	        	this.materialId = data.materialId;
 		        this.fasciclesId = data.fasciclesId;
-		        this.cur_page = 1;
-           		this.getData();
 	      	})
         	// 获取审核状态数据
          	if(localStorage.getItem("auditStatus")){
@@ -211,21 +209,21 @@
 				this.enableDelVisible = true;
 				this.enable_list = val;
             }
-        }
-//     	watch:{
-//	        elParentId(val, oldVal){//普通的watch监听
-//	            // console.log("a: "+val, oldVal);
-//	            this.getData();
-//	        },
-//	        elId(val, oldVal){ // 
-//	        	this.cur_page = 1;
-//	        	this.getData();
-//	        },
-//	        fasciclesId(val, oldVal){ // 
-//              this.cur_page = val;
-//	        	this.getData();
-//	        }
-//	    }
+        },
+       	watch:{
+	        elParentId(val, oldVal){//普通的watch监听
+	            // console.log("a: "+val, oldVal);
+	            this.getData();
+	        },
+	        elId(val, oldVal){ // 
+	        	this.cur_page = 1;
+	        	this.getData();
+	        },
+	        fasciclesId(val, oldVal){ // 
+                this.cur_page = val;
+	        	this.getData();
+	        }
+	    }
 	}
 </script>
 

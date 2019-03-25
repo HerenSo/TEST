@@ -185,6 +185,7 @@
         	this.topath = this.$route.query.path; // 获取返回路径
         	this.selectedOptions2 = this.$route.query.selectedOptions;
         	this.selectedOptions = this.$route.query.selectedOptions;
+        	this.form.courseId = this.selectedOptions2[this.selectedOptions2.length-1];
 		},
         mounted() {
         	this.queryQuestionType();//获取题型列表
@@ -227,11 +228,11 @@
 		    	this.queryCourse(); // 请求学科
 		    	this.selectVisible = true; // 控制弹窗显示隐藏
 		    },
-			handleChange(value) { // 选择学科
+			handleChange(value) { // 选知识元选择学科
 		        this.courseId = value[value.length-1];
 		      	this.queryCoursesData();
 		    },
-			handleChange2(value) { // 选择学科
+			handleChange2(value) { // 新增时选择学科
 		        this.form.courseId = value[value.length-1];
 		    },
 		    queryQuestionType() {

@@ -39,8 +39,8 @@
                 collapse: false,
                 items: [
                     {
-                        icon: 'el-icon-lx-calendar',
-                        index: '1',
+                        icon: 'el-icon-lx-copy',
+                        index: 'element',
                         title: '知识元管理',
                         subs: [
                             {
@@ -86,30 +86,30 @@
                                 title: '体系结构选题'
                             }
                         ]
+                    },
+                    {
+                        icon: 'el-icon-lx-cascades',
+                        index: '4',
+                        title: '基础信息',
+                        subs: [
+                            {
+                                index: 'userInfo',
+                                title: '用户信息'
+                            },
+                            {
+                                index: 'studyPeriodInfo',
+                                title: '学段信息'
+                            },
+                            {
+                                index: 'courseInfo',
+                                title: '学科信息'
+                            },
+                            {
+                                index: 'materialInfo',
+                                title: '教材信息'
+                            }
+                        ]
                     }
-//                  {
-//                      icon: 'el-icon-lx-home',
-//                      index: '4',
-//                      title: '系统管理',
-//                      subs: [
-//                          {
-//                              index: 'dashboard',
-//                              title: '角色管理'
-//                          },
-//                          {
-//                              index: 'icon',
-//                              title: '用户管理'
-//                          },
-//                          {
-//                              index: 'editor',
-//                              title: '菜单管理'
-//                          },
-//                          {
-//                              index: 'markdown',
-//                              title: '日志管理'
-//                          }
-//                      ]
-//                  },
 //                  {
 //                      icon: 'el-icon-lx-cascades',
 //                      index: 'table',

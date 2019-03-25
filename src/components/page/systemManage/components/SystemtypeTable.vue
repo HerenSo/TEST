@@ -101,8 +101,6 @@
 //		       	this.gradeId = data.gradeId;
 		       	this.courseName = data.courseName;
 		       	this.selectedOptions = data.selectedOptions;
-		       	this.cur_page = 1;
-           		this.getData();
 	      	})
         	// 获取审核状态数据
          	if(localStorage.getItem("auditStatus")){
@@ -189,21 +187,21 @@
             handleEdit(id,courseId,parentId) { // 编辑操作
             	this.$router.push('/systemUpdate?id='+id);
             }
-        }
-//     	watch:{
-//	        elParentId(val, oldVal){//普通的watch监听
-//              this.cur_page = val;
-//	            this.getData();
-//	        },
-//	        elId(val, oldVal){ // 
-//              this.cur_page = val;
-//	        	this.getData();
-//	        },
-//	        fasciclesId(val, oldVal){ // 
-//              this.cur_page = val;
-//	        	this.getData();
-//	        }
-//	    }
+        },
+       	watch:{
+	        elParentId(val, oldVal){//普通的watch监听
+                this.cur_page = val;
+	            this.getData();
+	        },
+	        elId(val, oldVal){ // 
+                this.cur_page = val;
+	        	this.getData();
+	        },
+	        fasciclesId(val, oldVal){ // 
+                this.cur_page = val;
+	        	this.getData();
+	        }
+	    }
 	}
 </script>
 

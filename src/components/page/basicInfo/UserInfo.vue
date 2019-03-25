@@ -2,33 +2,21 @@
 	<div class="container">
 		<div class="handle-box">
 			<div class="demo-input-suffix">
-				知识元名称：
-				<el-input v-model="name" placeholder="" clearable class="handle-input-md m-r-10"></el-input>
+				用户名称：
+				<el-input v-model="userName" placeholder="" clearable class="handle-input-md m-r-10"></el-input>
 			</div>
 			<div class="demo-input-suffix">
-				<el-date-picker
-				  class="data_range m-r-10"
-			      v-model="date"
-			      type="daterange"
-			      range-separator="至"
-			      start-placeholder="开始日期"
-			      end-placeholder="结束日期"
-			      value-format="yyyy-MM-dd"
-			      @change="search">
-			    </el-date-picker>
-			</div>
-			<div class="demo-input-suffix">
-				审核状态：
-				<el-select v-model="auditStatus" placeholder="审核状态" class="handle-select m-r-10" @change="search">
-	                <el-option key="0" label="全部" value="" ></el-option>
-	                <el-option :key="item.id" :label="item.label" :value="item.acronym" v-for="item in auditStatusList"></el-option>
+				数据状态：
+				<el-select v-model="dataStatus" placeholder="数据状态" class="handle-select m-r-10" @change="search">
+	                <el-option key="1" label="启用" value="1" ></el-option>
+	                <el-option key="0" label="停用" value="0" ></el-option>
 	            </el-select>
 			</div>
 			<div class="demo-input-suffix">
-				上架状态：
-				<el-select v-model="shelfStatus" placeholder="上架状态" class="handle-select m-r-10" @change="search">
+				角色：
+				<el-select v-model="roleId" placeholder="角色" class="handle-select m-r-10" @change="search">
 	                <el-option key="0" label="全部" value="" ></el-option>
-	                <el-option :key="item.id" :label="item.label" :value="item.acronym" v-for="item in shelfStatusList"></el-option>
+	                <el-option :key="item.id" :label="item.label" :value="item.acronym" v-for="item in roleList"></el-option>
 	            </el-select>
 	        </div>
 	        <el-button type="primary" icon="search" @click="search" class="m-r-10">搜索</el-button>
@@ -37,23 +25,20 @@
         
         <!-- table-data -->
         <el-table :data="data" border class="table" stripe ref="multipleTable" >
-            <el-table-column prop="courseName" label="学科" >
+            <el-table-column prop="userName" label="用户名称" >
             </el-table-column>
-            <el-table-column prop="category" label="科类" >
+            <el-table-column prop="roleName" label="角色" width="180">
             </el-table-column>
-            <el-table-column prop="name" label="名称" width="180">
+            <el-table-column prop="loginId" label="登录账号" >
             </el-table-column>
-            <el-table-column prop="creator" label="创建人" >
+            <el-table-column prop="loginTime" label="最后登录时间" width="180">
             </el-table-column>
-            <el-table-column prop="createTime" label="创建时间" width="180">
+            <el-table-column prop="dataStatusName" label="数据状态" >
             </el-table-column>
-            <el-table-column prop="auditStatusName" label="审核状态" >
-            </el-table-column>
-            <el-table-column prop="shelfStatusName" label="上架状态" >
+            <el-table-column prop="remark" label="备注" >
             </el-table-column>
             <el-table-column fixed="right" label="操作" width="180" align="center">
                 <template slot-scope="scope">
-                    <el-button type="text" icon="el-icon-lx-attention" @click="handleCheck(data[scope.$index].id)">查看</el-button>
                     <el-button type="text" icon="el-icon-edit" @click="handleEdit(data[scope.$index].id,data[scope.$index].courseId,data[scope.$index].parentId)">编辑</el-button>
                     <el-button type="text" class="red" v-if="data[scope.$index].dataStatus == 1" icon="el-icon-delete" @click="handleDelete(data[scope.$index].id)">删除</el-button>
                     <el-button type="text" class="red" v-if="data[scope.$index].dataStatus == 0" icon="el-icon-refresh" @click="handleEnable(data[scope.$index].id)">恢复</el-button>
@@ -91,59 +76,26 @@
 </template>
 
 <script>
-    import bus from '../../../common/bus';
 	export default{
-		name: "systemTable",
+		name: "userInfo",
 		data() {
             return {
                 data: [], // table数据
                 cur_page: 1, // 当前分页
-                multipleSelection: [], // 点击当前tr
                 del_list: [], // 当前点击的删除ID
                 enable_list:[], // 当前点击的恢复ID
                 delVisible: false, // 控制删除弹窗
                 enableDelVisible:false, // 控制恢复弹窗
-                name: '', // 知识元名称检索
+                roleId: '', // 角色
+                roleList:'', // 角色列表
+		    	dataStatus: '1', // 数据状态， 默认搜索启用
+		    	userName: '', // 用户名称
                 date: '', // 日期检索
-                auditStatusList: [], // 审核状态列表
-                shelfStatusList: [], // 上架状态列表
-                auditStatus: '', // 审核状态检索
-                shelfStatus: '', // 上架状态检索
-                elId:null, // 知识元树传给table的ID
-                elParentId:null, // 知识元树传给table的父级ID
-                studyCourses:null, // 学段与学科名称拼接
                 total: 1 // 分页数
             }
         },
         mounted() {
-         	bus.$on('elParam', (data) => {  // 监听elementTable组件传过来的值
-	        	this.elId = data.id;
-	        	this.elParentId = data.parentId;
-	        	this.studyCourses = data.studyCourses;
-	      	})
-         	// 获取审核状态数据
-         	if(localStorage.getItem("auditStatus")){
-         		this.auditStatusList = JSON.parse(localStorage.getItem("auditStatus"));
-         	}else{
-         		this.$axios.get("app/combobox/auditStatus/list").then((res) => {
-					if(res.status=="200" && res.data.code == '0000'){
-						this.auditStatusList = res.data.data;
-						localStorage.setItem("auditStatus",JSON.stringify(this.auditStatusList));
-					}
-				})
-         	}
-         	
-         	// 获取上架状态数据
-         	if(localStorage.getItem("shelfStatus")){
-         		this.shelfStatusList = JSON.parse(localStorage.getItem("shelfStatus"));
-         	}else{
-         		this.$axios.get("app/combobox/shelfStatus/list").then((res) => {
-					if(res.status=="200" && res.data.code == '0000'){
-						this.shelfStatusList = res.data.data;
-						localStorage.setItem("shelfStatus",JSON.stringify(this.shelfStatusList));
-					}
-				})
-         	}
+         	this.getData();
         },
         computed: { // 计算开始和结束日期
             beginTime: function () {
@@ -161,26 +113,17 @@
             },
             // 获取 list数据
             getData() {
-            	console.log(this.elParentId)
-            	if(this.elParentId == null){
-            		this.tableData = [];
-            		return;
-            	}
-                this.$axios.get("app/knowledgeTree/list",{
+                this.$axios.get("app/user/list",{
                     params:{
-		    			"courseId": this.elId, // 学科ID
-		    			"parentId": this.elParentId, // 父节点ID，顶级父节点传0
-		    			"beginTime": this.beginTime, // 开始日期，没有则传空字符串或不传
-		    			"endTime": this.endTime, // 结束日期，没有则传空字符串或不传
-		    			"name": this.name, // 知识元名称，没有则传空字符串或不传
-		    			"category": "", // 学科类型，没有则传空字符串或不传
-		    			"auditStatus": this.auditStatus, // 审核状态，没有则传空字符串或不传
-		    			"shelfStatus": this.shelfStatus, // 上架状态，没有则传空字符串或不传
+		    			"roleId": this.roleId, // 角色
+		    			"dataStatus": this.dataStatus, // 数据状态
+		    			"userName": this.userName, // 用户名称
 		    			"rows": 10, // 每页记录数，默认为25
 						"page": this.cur_page // 当前页码
 		    		}
                 }).then((res) => {
                 	if(res.status == 200 && res.data.code == '0000'){
+                		console.log(res)
 	                	this.total = res.data.data.total;
 	                    this.data = res.data.data.rows;
 	                }
@@ -202,7 +145,7 @@
 	            })
             },
             sureDel() { // 确定删除
-            	this.$axios.get("app/knowledgeTree/disable",{
+            	this.$axios.get("app/user/disable",{
                     params:{
 		    			"ids": this.del_list // ID
 		    		}
@@ -215,7 +158,7 @@
                 })
             },
             sureEnable() { // 确定恢复
-            	this.$axios.get("app/knowledgeTree/enable",{
+            	this.$axios.get("app/user/enable",{
                     params:{
 		    			"ids": this.enable_list // ID
 		    		}
@@ -242,17 +185,7 @@
 				this.enableDelVisible = true;
 				this.enable_list = val;
             }
-       	},
-        watch:{
-	        elParentId(val, oldVal){//普通的watch监听
-                this.cur_page = val;
-	            this.getData();
-	        },
-	        elId(val, oldVal){ // 
-                this.cur_page = val;
-	        	this.getData();
-	        }
-	    }
+       	}
 	}
 </script>
 

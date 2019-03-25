@@ -150,8 +150,6 @@
         			this.architectureId = data.parentId;
         		}
         		this.selectedOptions = data.selectedOptions;
-        		this.cur_page = 1;
-	            this.getData();
 	      	})
          	// 获取审核状态数据
          	if(localStorage.getItem("auditStatus")){

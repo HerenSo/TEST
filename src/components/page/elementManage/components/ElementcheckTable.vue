@@ -93,8 +93,6 @@
 	        	this.elId = data.id;
 	        	this.elParentId = data.parentId;
 	        	this.studyCourses = data.studyCourses;
-	        	this.cur_page = 1;
-	            this.getData();
 	      	})
          	// 获取审核状态数据
          	if(localStorage.getItem("auditStatus")){
@@ -171,7 +169,17 @@
             handleSelectionChange(val) {
                 this.multipleSelection = val;
             }
-        }
+        },
+        watch:{
+	        elParentId(val, oldVal){//普通的watch监听
+                this.cur_page = val;
+	            this.getData();
+	        },
+	        elId(val, oldVal){ // 
+                this.cur_page = val;
+	        	this.getData();
+	        }
+	    }
 	}
 </script>
 
