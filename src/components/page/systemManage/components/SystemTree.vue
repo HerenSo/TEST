@@ -27,6 +27,8 @@
 			        </div>
 		        </el-dropdown-menu>
 		   </el-dropdown>
+			  <!--:default-expanded-keys="treeExpandedKeys"
+			  @node-expand="treeExpand"-->
 			<el-tree
 			  ref="tree"
 			  :data="data"
@@ -34,10 +36,8 @@
 			  highlight-current
 			  auto-expand-parent
 			  node-key="id"
-			  :default-expanded-keys="treeExpandedKeys"
 			  expand-on-click-node
 			  accordion
-			  @node-expand="treeExpand"
 			  @node-click="handleNodeClick">
 			</el-tree>
 		</div>

@@ -41,7 +41,7 @@
         <!--table-data END-->
         
         <!-- 新增编辑 -->
-        <el-dialog title="删除" :visible.sync="visible" width="40%">
+        <el-dialog :title="title" :visible.sync="visible" width="40%">
         	<el-row :gutter="20">
         		<el-col :span="22">
 					<el-form ref="form" :model="form" label-width="80px">
@@ -61,7 +61,7 @@
         </el-dialog>
         
         <!-- 删除弹出框 -->
-        <el-dialog title="删除" :visible.sync="delVisible" width="40%">
+        <el-dialog  title="删除" :visible.sync="delVisible" width="40%">
             	<el-row :gutter="20">
             		<el-col :span="12"> 确定删除吗？</el-col>
                </el-row>
@@ -103,6 +103,7 @@
                 enableDelVisible:false, // 控制恢复弹窗
 		    	dataStatus: '1', // 数据状态
 		    	studyPeriod: '', // 学段名称
+		    	title:'', // 弹框标题
                 date: '', // 日期检索
                 total: 1 // 分页数
             }
@@ -198,8 +199,10 @@
             	console.log(val)
 				if(val == 'add'){ // 如果ID值存在跳编辑
 					this.visible = true;
+					this.title = '新增';
 				}else{
 					this.form.id = val;
+					this.title = '编辑';
 					this.getDetails(); // 获取详情
 				}
             },

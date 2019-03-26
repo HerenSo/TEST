@@ -213,6 +213,7 @@
        	watch:{
 	        elParentId(val, oldVal){//普通的watch监听
 	            // console.log("a: "+val, oldVal);
+	            this.cur_page = 1;
 	            this.getData();
 	        },
 	        elId(val, oldVal){ // 
@@ -220,7 +221,7 @@
 	        	this.getData();
 	        },
 	        fasciclesId(val, oldVal){ // 
-                this.cur_page = val;
+                this.cur_page = 1;
 	        	this.getData();
 	        }
 	    }

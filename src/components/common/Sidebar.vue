@@ -97,6 +97,10 @@
                                 title: '用户信息'
                             },
                             {
+                                index: 'roleInfo',
+                                title: '角色信息'
+                            },
+                            {
                                 index: 'studyPeriodInfo',
                                 title: '学段信息'
                             },
@@ -105,8 +109,16 @@
                                 title: '学科信息'
                             },
                             {
+                                index: 'gradeInfo',
+                                title: '年级信息'
+                            },
+                            {
                                 index: 'materialInfo',
                                 title: '教材信息'
+                            },
+                            {
+                                index: 'questionTypeInfo',
+                                title: '题型信息'
                             }
                         ]
                     }

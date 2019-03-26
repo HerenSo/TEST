@@ -115,6 +115,11 @@ export default new Router({
                     meta: { title: '用户信息', keepAlive: false, isBack:false }
                 },
                 {
+                    path: '/roleInfo',
+                    component: resolve => require(['../components/page/basicInfo/RoleInfo.vue'], resolve),
+                    meta: { title: '角色信息', keepAlive: false, isBack:false }
+                },
+                {
                     path: '/studyPeriodInfo',
                     component: resolve => require(['../components/page/basicInfo/StudyPeriodInfo.vue'], resolve),
                     meta: { title: '学段信息', keepAlive: false, isBack:false }
@@ -125,9 +130,19 @@ export default new Router({
                     meta: { title: '学科信息', keepAlive: false, isBack:false }
                 },
                 {
+                    path: '/gradeInfo',
+                    component: resolve => require(['../components/page/basicInfo/GradeInfo.vue'], resolve),
+                    meta: { title: '年级信息', keepAlive: false, isBack:false }
+                },
+                {
                     path: '/materialInfo',
                     component: resolve => require(['../components/page/basicInfo/MaterialInfo.vue'], resolve),
-                    meta: { title: '学科信息', keepAlive: false, isBack:false }
+                    meta: { title: '教材信息', keepAlive: false, isBack:false }
+                },
+                {
+                    path: '/questionTypeInfo',
+                    component: resolve => require(['../components/page/basicInfo/QuestionTypeInfo.vue'], resolve),
+                    meta: { title: '教材信息', keepAlive: false, isBack:false }
                 },
 //              {
 //                  path: '/table',

@@ -1,17 +1,15 @@
 <template>
 	<div class="container">
 		<div class="handle-box">
-			<div class="demo-input-suffix">
+			<div class="demo-input-suffix m-r-10">
 				学科：
-				<el-select v-model="periodId" placeholder="请选择学科" class="handle-select m-r-10" @change="search">
-	                <el-cascader
-					    expand-trigger="hover"
-					    :options="coursesList"
-					    v-model="selectedOptions"
-					    :props="props"
-					    @change="handleSelect">
-					</el-cascader>
-	            </el-select>
+                <el-cascader
+				    expand-trigger="hover"
+				    :options="coursesList"
+				    v-model="selectedOptions"
+				    :props="props"
+				    @change="handleSelect">
+				</el-cascader>
 	        </div>
 			<div class="demo-input-suffix">
 				教材名称：
@@ -30,11 +28,13 @@
         
         <!-- table-data -->
         <el-table :data="data" border class="table" stripe ref="multipleTable" >
-            <el-table-column prop="id" label="学科id" align="center" width="120">
+            <el-table-column prop="id" label="教材id" align="center" width="260">
             </el-table-column>
-            <el-table-column prop="courseName" label="学科名称" >
+            <el-table-column prop="materialName" label="教材名称" align="center">
             </el-table-column>
-            <el-table-column prop="periodName" label="学段名称" >
+            <el-table-column prop="courseName" label="学科名称" align="center">
+            </el-table-column>
+            <el-table-column prop="periodName" label="学段名称" align="center">
             </el-table-column>
             <el-table-column prop="dataStatusName" label="数据状态" width="180" align="center">
             </el-table-column>
@@ -53,17 +53,20 @@
         <!--table-data END-->
         
         <!-- 新增编辑 -->
-        <el-dialog title="删除" :visible.sync="visible" width="40%">
+        <el-dialog :title="title" :visible.sync="visible" width="40%">
         	<el-row :gutter="20">
         		<el-col :span="22">
 					<el-form ref="form" :model="form" label-width="80px">
-					  <el-form-item label="学段:">
-					    <el-select v-model="form.periodId" placeholder="请选择学段" class="handle-select m-r-10" @change="search">
-			                <el-option :key="item.id" :label="item.studyPeriod" :value="item.id" v-for="item in periodList"></el-option>
-			            </el-select>
+					  <el-form-item label="学科:">
+					    <el-cascader
+						    expand-trigger="hover"
+						    :options="coursesList"
+						    v-model="selectedOptions2"
+						    :props="props">
+						</el-cascader>
 					  </el-form-item>
-					  <el-form-item label="学段名称:">
-					    <el-input v-model="form.courseName"></el-input>
+					  <el-form-item label="教材名称:">
+					    <el-input v-model="form.materialName"></el-input>
 					  </el-form-item>
 					  <el-form-item label="排序:">
 					    <el-input v-model="form.seq"></el-input>
@@ -112,15 +115,15 @@
                 enable_list:[], // 当前点击的恢复ID
                 form:{
                 	id:'',
-                	periodId:'',
-                	courseName:'',
+                	courseId:'',
+                	materialName:'',
                 	seq:''
                 }, // 新增编辑表单
                 visible: false, // 控制新增编辑弹窗
                 delVisible: false, // 控制删除弹窗
                 enableDelVisible:false, // 控制恢复弹窗
                 courseId: '', // 学科
-                coursesList:'', // 学科列表
+                coursesList:[], // 学科列表
 		    	dataStatus: '1', // 数据状态， 默认搜索启用
 		    	materialName: '', // 学科名称
 		    	props:{ // 学科数据配置
@@ -128,22 +131,15 @@
 		        	value: 'id',
             		children: 'courses'
 		        },
+		        title:'', // 弹框标题
 		        selectedOptions:[], // 学段学科选择绑定的ID
+		        selectedOptions2:[], // 新增 修改时 学段学科选择绑定的ID
                 date: '', // 日期检索
                 total: 1 // 分页数
             }
         },
         mounted() {
-         	this.getData();
          	this.getPeriod();
-        },
-        computed: { // 计算开始和结束日期
-            beginTime: function () {
-            	return this.date[0];
-		    },
-            endTime: function () {
-            	return this.date[1];
-		    }
         },
         methods: {
             // 分页导航
@@ -153,7 +149,7 @@
             },
             // 获取 list数据
             getData() {
-                this.$axios.get("app/study/course/list",{
+                this.$axios.get("app/study/course/material/list",{
                     params:{
 		    			"courseId": this.courseId, // 学科
 		    			"dataStatus": this.dataStatus, // 数据状态
@@ -186,7 +182,7 @@
 			          	}
 			          	this.courseId = this.coursesList[0].courses[0].id;
 		          		this.selectedOptions = [this.coursesList[0].id,this.courseId];
-		          		
+         				this.getData();
 		          	}
 		        });
             },
@@ -195,7 +191,7 @@
                 this.getData();
             },
             getDetails() { // 获取详情
-            	this.$axios.get("app/study/course/get",{
+            	this.$axios.get("app/study/course/material/get",{
                     params:{
 		    			"id": this.form.id // ID
 		    		}
@@ -203,8 +199,8 @@
                 	if(res.status == 200 && res.data.code == '0000'){
 	                	this.visible = true;
 	                	this.form.id = res.data.data.id;
-	                	this.form.periodId = res.data.data.periodId;
-	                	this.form.courseName = res.data.data.courseName;
+	                	this.form.materialName = res.data.data.materialName;
+	                	this.form.courseId = res.data.data.courseId;
 	                	this.form.seq = res.data.data.seq;
 	                }
                 })
@@ -212,22 +208,25 @@
             sure() { // 新增编辑确定
             	let _url = '';
             	if(this.form.id){
-            		_url = "app/study/course/update"; // 编辑
+            		_url = "app/study/course/material/update"; // 编辑
             	}else{
-            		_url = "app/study/course/add"; // 新增
+            		_url = "app/study/course/material/add"; // 新增
             	}
+            	this.form.courseId = this.selectedOptions2[this.selectedOptions2.length-1];
             	this.$axios.post(_url,
                     this.form
                 ).then((res) => {
                 	if(res.status == 200 && res.data.code == '0000'){
 	                	this.visible = false;
+	                	this.selectedOptions = this.selectedOptions2;
+	                	this.courseId = this.selectedOptions2[this.selectedOptions2.length-1];
 	                	this.getData();
 	                	this.$message.success(res.data.msg);
 	                }
                 })
             },
             sureDel() { // 确定删除
-            	this.$axios.get("app/study/course/disable",{
+            	this.$axios.get("app/study/course/material/disable",{
                     params:{
 		    			"ids": this.del_list // ID
 		    		}
@@ -240,7 +239,7 @@
                 })
             },
             sureEnable() { // 确定恢复
-            	this.$axios.get("app/study/course/enable",{
+            	this.$axios.get("app/study/course/material/enable",{
                     params:{
 		    			"ids": this.enable_list // ID
 		    		}
@@ -257,11 +256,14 @@
 		      	this.getData(); // 请求列表
 		    },
             handleChange(val) { // 新增编辑操作
-            	this.form.periodId = this.periodId;
+            	this.form.courseId = this.courseId;
+		        this.selectedOptions2 = this.selectedOptions;
 				if(val == 'add'){ // 如果ID值存在跳编辑
 					this.visible = true;
+					this.title = '新增';
 				}else{
 					this.form.id = val;
+					this.title = '编辑';
 					this.getDetails(); // 获取详情
 				}
             },

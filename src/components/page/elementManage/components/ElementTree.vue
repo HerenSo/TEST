@@ -12,19 +12,17 @@
 			</el-cascader>
 		</div>
 		<!--知识元树-->
-		<!--:default-expanded-keys="currentKey"-->
+		<!--:default-expanded-keys="treeExpandedKeys"-->
+			  <!--@node-expand="treeExpand"-->
 		<div class="container">
 			<el-tree
 			  ref="tree"
 			  :data="data"
 			  :props="defaultProps"
 			  highlight-current
-			  auto-expand-parent
 			  node-key="id"
-			  :default-expanded-keys="treeExpandedKeys"
 			  expand-on-click-node
 			  accordion
-			  @node-expand="treeExpand"
 			  @node-click="handleNodeClick">
 			</el-tree>
 		</div>

@@ -48,7 +48,7 @@
         <!--table-data END-->
         
         <!-- 新增编辑 -->
-        <el-dialog title="删除" :visible.sync="visible" width="40%">
+        <el-dialog :title="title" :visible.sync="visible" width="40%">
         	<el-row :gutter="20">
         		<el-col :span="22">
 					<el-form ref="form" :model="form" label-width="80px">
@@ -57,7 +57,7 @@
 			                <el-option :key="item.id" :label="item.studyPeriod" :value="item.id" v-for="item in periodList"></el-option>
 			            </el-select>
 					  </el-form-item>
-					  <el-form-item label="学段名称:">
+					  <el-form-item label="学科名称:">
 					    <el-input v-model="form.courseName"></el-input>
 					  </el-form-item>
 					  <el-form-item label="排序:">
@@ -118,21 +118,13 @@
                 periodList:'', // 学段列表
 		    	dataStatus: '1', // 数据状态， 默认搜索启用
 		    	courseName: '', // 学科名称
-                date: '', // 日期检索
+		    	title:'', // 弹框标题
                 total: 1 // 分页数
             }
         },
         mounted() {
          	this.getData();
          	this.getPeriod();
-        },
-        computed: { // 计算开始和结束日期
-            beginTime: function () {
-            	return this.date[0];
-		    },
-            endTime: function () {
-            	return this.date[1];
-		    }
         },
         methods: {
             // 分页导航
@@ -236,8 +228,10 @@
             	this.form.periodId = this.periodId;
 				if(val == 'add'){ // 如果ID值存在跳编辑
 					this.visible = true;
+					this.title = '新增';
 				}else{
 					this.form.id = val;
+					this.title = '编辑';
 					this.getDetails(); // 获取详情
 				}
             },

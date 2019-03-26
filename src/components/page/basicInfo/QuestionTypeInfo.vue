@@ -2,8 +2,8 @@
 	<div class="container">
 		<div class="handle-box">
 			<div class="demo-input-suffix">
-				用户名称：
-				<el-input v-model="userName" placeholder="" clearable class="handle-input-md m-r-10"></el-input>
+				题型名称：
+				<el-input v-model="questionType" placeholder="" clearable class="handle-input-md m-r-10"></el-input>
 			</div>
 			<div class="demo-input-suffix">
 				数据状态：
@@ -12,30 +12,17 @@
 	                <el-option key="0" label="停用" value="0" ></el-option>
 	            </el-select>
 			</div>
-			<div class="demo-input-suffix">
-				角色：
-				<el-select v-model="roleId" placeholder="角色" class="handle-select m-r-10" @change="search">
-	                <el-option key="0" label="全部" value="" ></el-option>
-	                <el-option :key="item.id" :label="item.roleName" :value="item.id" v-for="item in roleList"></el-option>
-	            </el-select>
-	        </div>
 	        <el-button type="primary" icon="search" @click="search" class="m-r-10">搜索</el-button>
 	        <el-button type="primary" icon="search" @click="handleChange('add')">新增</el-button>
         </div>
         
         <!-- table-data -->
         <el-table :data="data" border class="table" stripe ref="multipleTable" >
-            <el-table-column prop="userName" label="用户名称" >
+            <el-table-column prop="id" label="题型id" align="center" width="160">
             </el-table-column>
-            <el-table-column prop="roleName" label="角色" width="180">
+            <el-table-column prop="questionType" label="题型名称"  align="center">
             </el-table-column>
-            <el-table-column prop="loginId" label="登录账号" >
-            </el-table-column>
-            <el-table-column prop="loginTime" label="最后登录时间" width="180">
-            </el-table-column>
-            <el-table-column prop="dataStatusName" label="数据状态" >
-            </el-table-column>
-            <el-table-column prop="remark" label="备注" >
+            <el-table-column prop="dataStatusName" label="数据状态" width="180" align="center">
             </el-table-column>
             <el-table-column fixed="right" label="操作" width="180" align="center">
                 <template slot-scope="scope">
@@ -55,26 +42,12 @@
         <el-dialog :title="title" :visible.sync="visible" width="40%">
         	<el-row :gutter="20">
         		<el-col :span="22">
-					<el-form ref="form" :model="form" label-width="120px" :rules="rules"  class="demo-ruleForm">
-					  <el-form-item label="用户名称:">
-					    <el-input v-model="form.userName"></el-input>
+					<el-form ref="form" :model="form" label-width="80px">
+					  <el-form-item label="题型名称:">
+					    <el-input v-model="form.questionType"></el-input>
 					  </el-form-item>
-					  <el-form-item label="登录账号:" v-if="isAdd">
-					    <el-input v-model="form.loginId"></el-input>
-					  </el-form-item>
-					  <el-form-item label="登录密码:" v-if="isAdd">
-					    <el-input type="password" v-model="form.loginPass" ></el-input>
-					  </el-form-item>
-					  <el-form-item label="确认登录密码:" prop="checkPass" v-if="isAdd">
-					    <el-input type="password" v-model="agPass" autocomplete="off"></el-input>
-					  </el-form-item>
-					  <el-form-item label="角色:">
-					    <el-select v-model="form.roleId" placeholder="请选择角色" class="handle-select m-r-10" @change="search">
-			                <el-option :key="item.id" :label="item.roleName" :value="item.id" v-for="item in roleList"></el-option>
-			            </el-select>
-					  </el-form-item>
-					  <el-form-item label="备注:">
-					    <el-input v-model="form.remark"></el-input>
+					  <el-form-item label="排序:">
+					    <el-input  v-model="form.seq"></el-input>
 					  </el-form-item>
 					</el-form>  
 				</el-col>
@@ -111,52 +84,27 @@
 
 <script>
 	export default{
-		name: "userInfo",
+		name: "questionTypeInfo",
 		data() {
-			let validatePass = (rule, value, callback) => {
-		        if (this.agPass === '') {
-		          callback(new Error('请再次输入密码'));
-		        	console.log(1)
-		        } else if (this.agPass !== this.form.loginPass) {
-		          callback(new Error('两次输入密码不一致!'));
-		        	console.log(this.agPass)
-		        } else {
-		        	console.log(123)
-		          callback();
-		        }
-		    };
             return {
                 data: [], // table数据
                 cur_page: 1, // 当前分页
                 del_list: [], // 当前点击的删除ID
                 enable_list:[], // 当前点击的恢复ID
                 form:{
-                	loginId: '',
-                	loginPass: '',
-                	roleId:'',
-                	userName:'',
-                	remark:''
+                	questionType:'',
+                	seq:''
                 }, // 新增编辑表单
-                agPass:'', // 确认密码
                 visible: false, // 控制新增编辑弹窗
                 delVisible: false, // 控制删除弹窗
                 enableDelVisible:false, // 控制恢复弹窗
-                roleId: '', // 角色
-                roleList:'', // 角色列表
 		    	dataStatus: '1', // 数据状态， 默认搜索启用
-		    	userName: '', // 用户名称
-		    	rules: {
-		          checkPass: [
-		            { validator: validatePass, trigger: 'blur' }
-		          ]
-		        },
+		    	questionType: '', // 题型名称
 		    	title:'', // 弹框标题
-		    	isAdd: false, // 判断是否是新增弹窗
                 total: 1 // 分页数
             }
         },
         mounted() {
-        	this.getRole(); //
          	this.getData();
         },
         methods: {
@@ -167,32 +115,17 @@
             },
             // 获取 list数据
             getData() {
-                this.$axios.get("app/user/list",{
+                this.$axios.get("app/question/type/list",{
                     params:{
-		    			"roleId": this.roleId, // 角色
 		    			"dataStatus": this.dataStatus, // 数据状态
-		    			"userName": this.userName, // 用户名称
+		    			"questionType": this.questionType, // 题型名称
 		    			"rows": 10, // 每页记录数，默认为25
 						"page": this.cur_page // 当前页码
 		    		}
                 }).then((res) => {
                 	if(res.status == 200 && res.data.code == '0000'){
-                		console.log(res)
 	                	this.total = res.data.data.total;
 	                    this.data = res.data.data.rows;
-	                }
-                })
-            },
-            // 角色请求
-            getRole(){
-            	this.$axios.get("app/role/list",{
-                    params:{
-		    			"dataStatus": '1', // 数据状态
-		    			"roleName": ""
-		    		}
-                }).then((res) => {
-                	if(res.status == 200 && res.data.code == '0000'){
-	                    this.roleList = res.data.data.rows;
 	                }
                 })
             },
@@ -201,7 +134,7 @@
                 this.getData();
             },
             getDetails() { // 获取详情
-            	this.$axios.get("app/user/get",{
+            	this.$axios.get("app/question/type/get",{
                     params:{
 		    			"id": this.form.id // ID
 		    		}
@@ -209,18 +142,17 @@
                 	if(res.status == 200 && res.data.code == '0000'){
 	                	this.visible = true;
 	                	this.form.id = res.data.data.id;
-	                	this.form.roleId = res.data.data.roleId;
-	                	this.form.userName = res.data.data.userName;
-	                	this.form.remark = res.data.data.remark;
+	                	this.form.questionType = res.data.data.questionType;
+	                	this.form.seq = res.data.data.seq;
 	                }
                 })
             },
             sure() { // 新增编辑确定
             	let _url = '';
             	if(this.form.id){
-            		_url = "app/user/update"; // 编辑
+            		_url = "app/question/type/update"; // 编辑
             	}else{
-            		_url = "app/user/add"; // 新增
+            		_url = "app/question/type/add"; // 新增
             	}
             	this.$axios.post(_url,
                     this.form
@@ -233,7 +165,7 @@
                 })
             },
             sureDel() { // 确定删除
-            	this.$axios.get("app/user/disable",{
+            	this.$axios.get("app/question/type/disable",{
                     params:{
 		    			"ids": this.del_list // ID
 		    		}
@@ -246,7 +178,7 @@
                 })
             },
             sureEnable() { // 确定恢复
-            	this.$axios.get("app/user/enable",{
+            	this.$axios.get("app/question/type/enable",{
                     params:{
 		    			"ids": this.enable_list // ID
 		    		}
@@ -259,15 +191,13 @@
                 })
             },
             handleChange(val) { // 新增编辑操作
-            	this.form.roleId = this.roleId;
+            	this.form.periodId = this.periodId;
 				if(val == 'add'){ // 如果ID值存在跳编辑
 					this.visible = true;
 					this.title = '新增';
-					this.isAdd = true;
 				}else{
 					this.form.id = val;
 					this.title = '编辑';
-					this.isAdd = false;
 					this.getDetails(); // 获取详情
 				}
             },
