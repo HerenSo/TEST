@@ -123,6 +123,10 @@
                             {
                                 index: 'questionTypeInfo',
                                 title: '题型信息'
+                            },
+                            {
+                                index: 'difficultyInfo',
+                                title: '难度系数'
                             }
                         ]
                     }

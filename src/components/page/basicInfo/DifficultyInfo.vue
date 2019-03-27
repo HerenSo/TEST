@@ -2,8 +2,8 @@
 	<div class="container">
 		<div class="handle-box">
 			<div class="demo-input-suffix">
-				角色名称：
-				<el-input v-model="roleName" placeholder="" clearable class="handle-input-md m-r-10"></el-input>
+				难度名称：
+				<el-input v-model="difficultyName" placeholder="" clearable class="handle-input-md m-r-10"></el-input>
 			</div>
 			<div class="demo-input-suffix">
 				数据状态：
@@ -18,13 +18,15 @@
         
         <!-- table-data -->
         <el-table :data="data" border class="table" stripe ref="multipleTable" >
-            <el-table-column prop="id" label="角色id" align="center" width="160">
+            <el-table-column prop="id" label="难度id" align="center" width="160">
             </el-table-column>
-            <el-table-column prop="roleName" label="角色名称"  align="center">
+            <el-table-column prop="difficultyName" label="难度名称"  align="center">
+            </el-table-column>
+            <el-table-column prop="minValue" label="最小值"  align="center">
+            </el-table-column>
+            <el-table-column prop="maxValue" label="最大值"  align="center">
             </el-table-column>
             <el-table-column prop="dataStatusName" label="数据状态" width="180" align="center">
-            </el-table-column>
-            <el-table-column prop="remark" label="备注"  align="">
             </el-table-column>
             <el-table-column fixed="right" label="操作" width="180" align="center">
                 <template slot-scope="scope">
@@ -45,11 +47,21 @@
         	<el-row :gutter="20">
         		<el-col :span="22">
 					<el-form ref="form" :model="form" label-width="80px">
-					  <el-form-item label="角色名称:">
-					    <el-input v-model="form.roleName"></el-input>
+					  <el-form-item label="难度名称:">
+					    <el-input v-model="form.difficultyName"></el-input>
 					  </el-form-item>
-					  <el-form-item label="备注:">
-					    <el-input type="textarea" v-model="form.remark"></el-input>
+					  <el-form-item label="最小值:">
+						<template>
+						  <el-input-number v-model="form.minValue" :min="0" step="0.1" :max="1" label=""></el-input-number>
+						</template>
+					  </el-form-item>
+					  <el-form-item label="最大值:">
+						<template>
+						  <el-input-number v-model="form.maxValue" :min="0" step="0.1" :max="1" label=""></el-input-number>
+						</template>
+					  </el-form-item>
+					  <el-form-item label="排序:">
+					    <el-input  v-model="form.seq"></el-input>
 					  </el-form-item>
 					</el-form>  
 				</el-col>
@@ -86,7 +98,7 @@
 
 <script>
 	export default{
-		name: "roleInfo",
+		name: "difficultyInfo",
 		data() {
             return {
                 data: [], // table数据
@@ -94,14 +106,16 @@
                 del_list: [], // 当前点击的删除ID
                 enable_list:[], // 当前点击的恢复ID
                 form:{
-                	roleName:'',
-                	remark:''
+	                difficultyName:'',
+	                minValue:'',
+	                maxValue:'',
+                	seq:''
                 }, // 新增编辑表单
                 visible: false, // 控制新增编辑弹窗
                 delVisible: false, // 控制删除弹窗
                 enableDelVisible:false, // 控制恢复弹窗
 		    	dataStatus: '1', // 数据状态， 默认搜索启用
-		    	roleName: '', // 角色名称
+		    	difficultyName: '', // 难度系数
 		    	title:'', // 弹框标题
                 total: 1 // 分页数
             }
@@ -117,10 +131,10 @@
             },
             // 获取 list数据
             getData() {
-                this.$axios.get("app/role/list",{
+                this.$axios.get("app/question/difficulty/list",{
                     params:{
 		    			"dataStatus": this.dataStatus, // 数据状态
-		    			"roleName": this.roleName, // 角色名称
+		    			"difficultyName": this.difficultyName, // 题型名称
 		    			"rows": 10, // 每页记录数，默认为25
 						"page": this.cur_page // 当前页码
 		    		}
@@ -136,7 +150,7 @@
                 this.getData();
             },
             getDetails() { // 获取详情
-            	this.$axios.get("app/role/get",{
+            	this.$axios.get("app/question/difficulty/get",{
                     params:{
 		    			"id": this.form.id // ID
 		    		}
@@ -144,17 +158,23 @@
                 	if(res.status == 200 && res.data.code == '0000'){
 	                	this.visible = true;
 	                	this.form.id = res.data.data.id;
-	                	this.form.roleName = res.data.data.roleName;
-	                	this.form.remark = res.data.data.remark;
+	                	this.form.difficultyName = res.data.data.difficultyName;
+	                	this.form.minValue = res.data.data.minValue;
+	                	this.form.maxValue = res.data.data.maxValue;
+	                	this.form.seq = res.data.data.seq;
 	                }
                 })
             },
             sure() { // 新增编辑确定
             	let _url = '';
+            	if(this.form.minValue >= this.form.maxValue){
+            		this.$message.warning('最大值需大于最小值！');
+            		return;
+            	}
             	if(this.form.id){
-            		_url = "app/role/update"; // 编辑
+            		_url = "app/question/difficulty/update"; // 编辑
             	}else{
-            		_url = "app/role/add"; // 新增
+            		_url = "app/question/difficulty/add"; // 新增
             	}
             	this.$axios.post(_url,
                     this.form
@@ -167,7 +187,7 @@
                 })
             },
             sureDel() { // 确定删除
-            	this.$axios.get("app/role/disable",{
+            	this.$axios.get("app/question/difficulty/disable",{
                     params:{
 		    			"ids": this.del_list // ID
 		    		}
@@ -180,7 +200,7 @@
                 })
             },
             sureEnable() { // 确定恢复
-            	this.$axios.get("app/role/enable",{
+            	this.$axios.get("app/question/difficulty/enable",{
                     params:{
 		    			"ids": this.enable_list // ID
 		    		}
@@ -215,6 +235,8 @@
 	        visible(val, oldVal){//监听编辑弹窗隐藏，清除编辑的id
 	        	if(!val){
 	        		this.form = {};
+                	this.form.minValue = 0;
+                	this.form.maxValue = 0;
 	        	}
 	        }
 	    }

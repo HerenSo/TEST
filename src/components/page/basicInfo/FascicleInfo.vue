@@ -52,11 +52,17 @@
 			        
 			        <!-- table-data -->
 			        <el-table :data="data" border class="table" stripe ref="multipleTable" >
-			            <el-table-column prop="id" label="角色id" align="center" width="160">
+			            <el-table-column prop="id" label="角色id" align="center" width="260">
 			            </el-table-column>
 			            <el-table-column prop="fascicleName" label="分册名称"  align="center">
 			            </el-table-column>
-			            <el-table-column prop="dataStatusName" label="数据状态" width="180" align="center">
+			            <el-table-column prop="materialName" label="教材名称"  align="center">
+			            </el-table-column>
+			            <el-table-column prop="courseName" label="学科名称"  align="center">
+			            </el-table-column>
+			            <el-table-column prop="periodName" label="学段名称"  align="center">
+			            </el-table-column>
+			            <el-table-column prop="dataStatusName" label="数据状态"  align="center">
 			            </el-table-column>
 			            <el-table-column fixed="right" label="操作" width="180" align="center">
 			                <template slot-scope="scope">
@@ -89,8 +95,8 @@
 							</el-cascader>
 					  	</el-form-item>
 					  	<el-form-item label="教材:">
-					  		<el-select v-model="materialName" placeholder="请选择教材" class="handle-select m-r-10" @change="search">
-				                 <el-option :key="item.id" :label="item.materialName" :value="item.id" v-for="item in material"></el-option>
+					  		<el-select v-model="materialName" placeholder="请选择教材" class="handle-select m-r-10" @change="selectMaterial">
+				                 <el-option :key="item.id" :label="item.materialName" :value="item.id" v-for="item in material2"></el-option>
 				            </el-select>
 				        </el-form-item>
 					  	<el-form-item label="分册名称:">
@@ -143,6 +149,7 @@
 		        material: [], // 教材列表
 		        material2: [], // 教材列表
 		        courseId: null, // 初始默认 学课ID
+		        courseId2: null,
 		        materialId: null, // 教材ID
 		        materialName:'',
 		        currentKey: null,
@@ -184,9 +191,9 @@
 		        this.courseId = value[value.length-1];
 	      		this.queryMaterial(); // 请求教材
 		    },
-        	handleSelect2(value) { // 选学科
-        		this.courseId = value[value.length-1];
-	      		this.queryMaterial(); // 请求教材
+        	handleSelect2(value) { // 新增编辑部分 选学科
+        		this.courseId2 = value[value.length-1];
+	      		this.queryMaterial2(); // 请求教材
 		    },
             // 分页导航
             handleCurrentChange(val) {
@@ -196,8 +203,12 @@
             handleNodeClick(data) { // 树点击
             	console.log(data)
 	      		this.materialId = data.id;
+	      		this.form.materialId = data.id;
 	      		this.materialName = data.materialName;
 	      		this.getData();
+	      	},
+	      	selectMaterial(val) {
+	      		this.form.materialId = val;
 	      	},
             search() { // 搜索
             	this.cur_page = 1;
@@ -220,6 +231,7 @@
 			          	}
 			          	this.courseId = this.coursesList[0].courses[0].id;
 		          		this.selectedOptions = [this.coursesList[0].id,this.courseId];
+		          		this.selectedOptions2 = [this.coursesList[0].id,this.courseId];
 //       				this.getData();
 						this.queryMaterial();
 		          	}
@@ -235,18 +247,48 @@
 				}).then(res => {
 					if(res.status == 200 && res.data.code == '0000'){
 			          	this.material = res.data.data;
+			          	this.material2 = res.data.data;
 			          	if(this.material.length > 0){
 				        	this.materialId = this.material[0].id;
+				        	this.form.materialId = this.material[0].id;
 				        	this.materialName = this.material[0].materialName;
+				        	this.getData(); // 请求树
 			          	}else{
 			          		this.materialId = '';
+			          		this.materialName = '';
+			          		this.form.materialId = '';
+			          		this.data = [];
 			          	}
-				    	this.getData(); // 请求树
+				    	
+			    	}
+		        });
+	     	},
+            queryMaterial2() {
+		     	// 新增部分 请求教材
+		     	this.$axios.get('app/study/course/material/tree',{
+		    		params:{
+		    			"courseId": this.courseId2,
+		    			"haveFascicle": "1"
+		    		}
+				}).then(res => {
+					if(res.status == 200 && res.data.code == '0000'){
+			          	this.material2 = res.data.data;
+			          	if(this.material2.length > 0){
+				        	this.form.materialId = this.material2[0].id;
+				        	this.materialName = this.material2[0].materialName;
+			          	}else{
+			          		this.form.materialId = '';
+			          		this.materialName = '';
+			          	}
 			    	}
 		        });
 	     	},
             // 获取 list数据
             getData() {
+            	if(this.materialId == ''){
+            		this.data = [];
+            		return;
+            	}
                 this.$axios.get("app/study/course/material/fascicle/list",{
                     params:{
 		    			"dataStatus": this.dataStatus, // 数据状态
@@ -272,16 +314,22 @@
 	                	this.visible = true;
 	                	this.form.id = res.data.data.id;
 	                	this.form.materialId = res.data.data.materialId;
+	                	this.form.fascicleName = res.data.data.fascicleName;
+//	                	this.materialName = res.data.data.materialName;
 	                	this.form.seq = res.data.data.seq;
 	                }
                 })
             },
             sure() { // 新增编辑确定
             	let _url = '';
+            	if(!this.form.materialId){
+            		this.$message.warning('教材不能为空！');
+            		return;
+            	}
             	if(this.form.id){
-            		_url = "app/study/course/material/fascicle/add"; // 编辑
+            		_url = "app/study/course/material/fascicle/update"; // 编辑
             	}else{
-            		_url = "app/study/course/material/fascicle/update"; // 新增
+            		_url = "app/study/course/material/fascicle/add"; // 新增
             	}
             	this.$axios.post(_url,
                     this.form
@@ -320,7 +368,6 @@
                 })
             },
             handleChange(val) { // 新增编辑操作
-            	this.form.periodId = this.periodId;
 				if(val == 'add'){ // 如果ID值存在跳编辑
 					this.visible = true;
 					this.title = '新增';

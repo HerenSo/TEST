@@ -149,6 +149,11 @@ export default new Router({
                     component: resolve => require(['../components/page/basicInfo/QuestionTypeInfo.vue'], resolve),
                     meta: { title: '题型信息', keepAlive: false, isBack:false }
                 },
+                {
+                    path: '/difficultyInfo',
+                    component: resolve => require(['../components/page/basicInfo/DifficultyInfo.vue'], resolve),
+                    meta: { title: '难度系数', keepAlive: false, isBack:false }
+                },
 //              {
 //                  path: '/table',
 //                  component: resolve => require(['../components/page/BaseTable.vue'], resolve),

@@ -191,7 +191,6 @@
                 })
             },
             handleChange(val) { // 新增编辑操作
-            	this.form.periodId = this.periodId;
 				if(val == 'add'){ // 如果ID值存在跳编辑
 					this.visible = true;
 					this.title = '新增';
