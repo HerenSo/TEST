@@ -139,7 +139,7 @@
             }
         },
         mounted() {
-         	this.getPeriod();
+         	this.getCourse();
         },
         methods: {
             // 分页导航
@@ -165,7 +165,7 @@
                 })
             },
             // 学段请求
-            getPeriod(){
+            getCourse(){
             	// 请求学科
 				this.$axios.get('app/study/period/tree',{
 		    		params:{

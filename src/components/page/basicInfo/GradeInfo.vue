@@ -98,7 +98,7 @@
 
 <script>
 	export default{
-		name: "gradeInfo",
+		name: "FascicleInfo",
 		data() {
             return {
                 data: [], // table数据
@@ -151,14 +151,9 @@
             },
             // 学段请求
             getPeriod(){
-            	this.$axios.get("app/study/period/list",{
-                    params:{
-		    			"dataStatus": '1', // 数据状态
-		    			"studyPeriod": ""
-		    		}
-                }).then((res) => {
+            	this.$axios.get("app/study/period/tree").then((res) => {
                 	if(res.status == 200 && res.data.code == '0000'){
-	                    this.periodList = res.data.data.rows;
+	                    this.periodList = res.data.data;
 	                }
                 })
             },

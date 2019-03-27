@@ -117,6 +117,10 @@
                                 title: '教材信息'
                             },
                             {
+                                index: 'fascicleInfo',
+                                title: '分册信息'
+                            },
+                            {
                                 index: 'questionTypeInfo',
                                 title: '题型信息'
                             }

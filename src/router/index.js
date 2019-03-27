@@ -140,9 +140,14 @@ export default new Router({
                     meta: { title: '教材信息', keepAlive: false, isBack:false }
                 },
                 {
+                    path: '/fascicleInfo',
+                    component: resolve => require(['../components/page/basicInfo/FascicleInfo.vue'], resolve),
+                    meta: { title: '分册信息', keepAlive: false, isBack:false }
+                },
+                {
                     path: '/questionTypeInfo',
                     component: resolve => require(['../components/page/basicInfo/QuestionTypeInfo.vue'], resolve),
-                    meta: { title: '教材信息', keepAlive: false, isBack:false }
+                    meta: { title: '题型信息', keepAlive: false, isBack:false }
                 },
 //              {
 //                  path: '/table',
