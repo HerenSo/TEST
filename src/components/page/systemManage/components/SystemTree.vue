@@ -255,7 +255,7 @@
 				handler: function(val, oldVal){
 	        		console.log(this.currentKey)
 	        		let currentKey = this.currentKey;
-			      	if( val.fullPath == "/systemType?localStorage=0" || val.fullPath == "/testSystem?localStorage=0"){
+			      	if( val.fullPath == "/systemManage?localStorage=0" || val.fullPath == "/testSystem?localStorage=0"){
 						this.queryCoursesData(); // 请求树
 						this.setCurrentKey(currentKey);
 						this.handleNodeClick({id:currentKey})

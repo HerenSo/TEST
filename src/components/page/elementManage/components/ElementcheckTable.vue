@@ -51,11 +51,11 @@
             </el-table-column>
             <el-table-column fixed="right" label="操作" width="190" align="center">
                 <template slot-scope="scope">
-                    <el-button type="text" icon="el-icon-lx-attention" @click="handleCheck(data[scope.$index].id,1)">查看</el-button>
-                    <el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" v-if="data[scope.$index].auditStatus == 5 || data[scope.$index].auditStatus == 15" @click="handleCheck(data[scope.$index].id,2)">审核</el-button>
-                    <el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" v-if="data[scope.$index].auditStatus == 10" @click="handleCheck(data[scope.$index].id,2)">反审核</el-button>
-                    <el-button type="text" class="text-color-success" icon="el-icon-lx-tag" v-if="data[scope.$index].shelfStatus == 5" @click="handleCheck(data[scope.$index].id,3)">上架</el-button>
-                    <el-button type="text" class="text-color-success" icon="el-icon-lx-tag" v-if="data[scope.$index].shelfStatus == 10" @click="handleCheck(data[scope.$index].id,3)">下架</el-button>
+                    <el-button type="text" icon="el-icon-lx-attention" @click="handleCheck(data[scope.$index].id,1)" v-if="right_view">查看</el-button>
+                    <el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" v-if="(data[scope.$index].auditStatus == 5 || data[scope.$index].auditStatus == 15) && right_update" @click="handleCheck(data[scope.$index].id,2)">审核</el-button>
+                    <el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" v-if="data[scope.$index].auditStatus == 10 && right_update" @click="handleCheck(data[scope.$index].id,2)">反审核</el-button>
+                    <el-button type="text" class="text-color-success" icon="el-icon-lx-tag" v-if="data[scope.$index].shelfStatus == 5 && right_shelf" @click="handleCheck(data[scope.$index].id,3)">上架</el-button>
+                    <el-button type="text" class="text-color-success" icon="el-icon-lx-tag" v-if="data[scope.$index].shelfStatus == 10 && right_shelf" @click="handleCheck(data[scope.$index].id,3)">下架</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -85,6 +85,9 @@
                 elId:null, // 知识元树传给table的ID
                 elParentId:null, // 知识元树传给table的父级ID
                 studyCourses:null, // 学段与学科名称拼接
+                right_update: false, // 修改权限
+                right_view: false, // 查看权限
+                right_shelf: false, // 上架权限
                 total: 1 // 分页数
             }
        },
@@ -94,6 +97,25 @@
 	        	this.elParentId = data.parentId;
 	        	this.studyCourses = data.studyCourses;
 	      	})
+         	
+         	// 权限
+         	let rights = JSON.parse(localStorage.getItem("ms_rights"));
+         	let curRights = rights.filter(function(item){
+         		return item.rightId.split(":")[0] == 'knowledgeAudit';
+         	})
+         	let that = this;
+         	curRights.forEach(function(item){
+         		switch(item.rightId.split(":")[1]){
+         			case "update":that.right_update = true;
+         			break;
+         			case "view":that.right_view = true;
+         			break;
+         			case "shelf":that.right_shelf = true;
+         			break;
+         			default:break;
+         		}
+         	})
+         	
          	// 获取审核状态数据
          	if(localStorage.getItem("auditStatus")){
          		this.auditStatusList = JSON.parse(localStorage.getItem("auditStatus"));

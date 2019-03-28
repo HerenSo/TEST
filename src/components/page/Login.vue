@@ -71,6 +71,7 @@
 				          this.userName = res.data.data.userName;
 				          localStorage.setItem("userToken",this.userToken);
 				          localStorage.setItem("ms_username",this.userName);
+				          localStorage.setItem("ms_rights",JSON.stringify(res.data.data.rights));
 //				          // 将用户token保存到vuex中
 //				          _this.changeLogin({ Authorization: _this.userToken });
 				          _this.$router.push('/elementManage');

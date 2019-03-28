@@ -297,7 +297,7 @@
 						          router.go(0);
 						        }).catch(() => {
 //						          router.go(0);
-						          router.push('/systemType?localStorage=0');          
+						          router.push('/systemManage?localStorage=0');          
 						        });
 					        }
 		           		}else{

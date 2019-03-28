@@ -25,7 +25,6 @@
 	            </el-select>
            </div>
 	        <el-button type="primary" icon="search" @click="search">搜索</el-button>
-	        <el-button type="primary" icon="search" @click="add">新增</el-button>
         </div>
         <!--table-data-->
         <el-table :data="data" border class="table" tooltip-effect="light" stripe ref="multipleTable" @selection-change="">
@@ -49,9 +48,9 @@
             </el-table-column>
             <el-table-column fixed="right" label="操作" width="160" align="center">
                 <template slot-scope="scope">
-                    <el-button type="text" icon="el-icon-lx-attention" @click="handleCheck(data[scope.$index].id,1)">查看</el-button>
-                    <el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" v-if="data[scope.$index].auditStatus == 5 || data[scope.$index].auditStatus == 15" @click="handleCheck(data[scope.$index].id,2)">审核</el-button>
-                    <el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" v-if="data[scope.$index].auditStatus == 10" @click="handleCheck(data[scope.$index].id,2)">反审核</el-button>
+                    <el-button type="text" icon="el-icon-lx-attention" @click="handleCheck(data[scope.$index].id,1)" v-if="right_view">查看</el-button>
+                    <el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" v-if="(data[scope.$index].auditStatus == 5 || data[scope.$index].auditStatus == 15) && right_update" @click="handleCheck(data[scope.$index].id,2)">审核</el-button>
+                    <el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" v-if="data[scope.$index].auditStatus == 10 && right_update" @click="handleCheck(data[scope.$index].id,2)">反审核</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -89,6 +88,8 @@
                 courseName: null,
                 studyCourses:null,
                 selectedOptions: [],
+                right_update: false, // 修改权限
+                right_view: false, // 查看权限
                 total: 1 // 分页数
             }
         },
@@ -102,6 +103,23 @@
 		       	this.courseName = data.courseName;
 		       	this.selectedOptions = data.selectedOptions;
 	      	})
+        	
+        	// 权限
+         	let rights = JSON.parse(localStorage.getItem("ms_rights"));
+         	let curRights = rights.filter(function(item){
+         		return item.rightId.split(":")[0] == 'knowledgeAudit';
+         	})
+         	let that = this;
+         	curRights.forEach(function(item){
+         		switch(item.rightId.split(":")[1]){
+         			case "update":that.right_update = true;
+         			break;
+         			case "view":that.right_view = true;
+         			break;
+         			default:break;
+         		}
+         	})
+         	
         	// 获取审核状态数据
          	if(localStorage.getItem("auditStatus")){
          		this.auditStatusList = JSON.parse(localStorage.getItem("auditStatus"));
