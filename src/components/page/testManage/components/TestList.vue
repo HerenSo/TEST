@@ -45,7 +45,7 @@
             	</el-select>
             </div>
 	        <el-button type="primary" icon="search" @click="search">搜索</el-button>
-	        <el-button type="primary" icon="search" @click="add">新增</el-button>
+	        <el-button type="primary" icon="search" @click="add" v-if="right_add">新增</el-button>
         </div>
         <div class="test_list">
         	<ul>
@@ -58,14 +58,14 @@
         			<div class="test_info">
         				<span>难度系数:{{item.diffculty}}</span><span>使用次数:{{item.dataStatus}}</span><span>题型:{{item.questionTypeName}}</span><span>更新:{{item.updateTime}}</span>
         				<div class="handle">
-        					<el-button type="text" icon="el-icon-lx-attention" @click="handleCheck(item.id,1)">查看</el-button>
-                   			<el-button type="text" icon="el-icon-edit" @click="handleEdit(item.id)">编辑</el-button>
-		                    <el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" v-if="item.auditStatus == 5 || item.auditStatus == 15" @click="handleCheck(item.id,2)">审核</el-button>
-                   			<el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" v-if="item.auditStatus == 10" @click="handleCheck(item.id,2)">反审核</el-button>
-                    		<el-button type="text" class="text-color-success" icon="el-icon-lx-tag" v-if="item.shelfStatus == 5" @click="handleCheck(item.id,3)">上架</el-button>
-                    		<el-button type="text" class="text-color-success" icon="el-icon-lx-tag" v-if="item.shelfStatus == 10" @click="handleCheck(item.id,3)">下架</el-button>
-                    		<el-button type="text" class="text-color-danger" icon="el-icon-lx-delete" v-if="item.dataStatus == 1" @click="handleDelete(item.id)">删除</el-button>
-                    		<el-button type="text" class="text-color-danger" icon="el-icon-lx-refresh" v-if="item.dataStatus == 0" @click="handleEnable(item.id)">恢复</el-button>
+        					<el-button type="text" icon="el-icon-lx-attention" @click="handleCheck(item.id,1)" v-if="right_view">查看</el-button>
+                   			<el-button type="text" icon="el-icon-edit" @click="handleEdit(item.id)" v-if="right_update">编辑</el-button>
+		                    <el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" v-if="(item.auditStatus == 5 || item.auditStatus == 15) && right_audit" @click="handleCheck(item.id,2)">审核</el-button>
+                   			<el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" v-if="item.auditStatus == 10 && right_audit" @click="handleCheck(item.id,2)">反审核</el-button>
+                    		<el-button type="text" class="text-color-success" icon="el-icon-lx-tag" v-if="item.shelfStatus == 5 && right_shelf" @click="handleCheck(item.id,3)">上架</el-button>
+                    		<el-button type="text" class="text-color-success" icon="el-icon-lx-tag" v-if="item.shelfStatus == 10 && right_shelf" @click="handleCheck(item.id,3)">下架</el-button>
+                    		<el-button type="text" class="text-color-danger" icon="el-icon-lx-delete" v-if="item.dataStatus == 1 && right_delete" @click="handleDelete(item.id)">删除</el-button>
+                    		<el-button type="text" class="text-color-danger" icon="el-icon-lx-refresh" v-if="item.dataStatus == 0 && right_delete" @click="handleEnable(item.id)">恢复</el-button>
         				</div>
         			</div>
         		</li>
@@ -129,6 +129,12 @@
                 year:"",
                 date:"",
                 idx: -1,
+                right_add: false, // 新增权限
+                right_update: false, // 修改权限
+                right_delete: false, // 删权限
+                right_view: false, // 查看权限
+                right_shelf: false,
+                right_audit: false,
                 total: 1
             }
         },
@@ -139,9 +145,19 @@
         	this.queryQuestionType();//获取题型列表
         	this.queryQuestionDifficulty();//获取难度系数
 //      	this.getData();
+
+			let rightName = ''; // 判断权限归属名称
 			if(this.$route.path == "/testManage"){
-				this.getData();
+				this.getData(); // 如果是试题管理页 直接加载数据
+				rightName = 'question';
 			}
+			if(this.$route.path == "/testSystem"){
+				rightName = 'questionArchitecture';
+			}
+			if(this.$route.path == "/testElement"){
+				rightName = 'questionKnowledge';
+			}
+			
         	bus.$on('elParam', (data) => { // 监听tree组件传过来的值
         		this.courseId = data.id;
         		if(data.studyCourses){
@@ -151,6 +167,31 @@
         		}
         		this.selectedOptions = data.selectedOptions;
 	      	})
+        	
+        	// 权限
+         	let rights = JSON.parse(localStorage.getItem("ms_rights"));
+         	let curRights = rights.filter(function(item){
+         		return item.rightId.split(":")[0] == rightName;
+         	})
+         	let that = this;
+         	curRights.forEach(function(item){
+         		switch(item.rightId.split(":")[1]){
+         			case "add":that.right_add = true;
+         			break;
+         			case "update":that.right_update = true;
+         			break;
+         			case "delete":that.right_delete = true;
+         			break;
+         			case "view":that.right_view = true;
+         			break;
+         			case "shelf":that.right_shelf = true;
+         			break;
+         			case "audit":that.right_audit = true;
+         			break;
+         			default:break;
+         		}
+         	})
+         	
          	// 获取审核状态数据
          	if(localStorage.getItem("auditStatus")){
          		this.auditStatusList = JSON.parse(localStorage.getItem("auditStatus"));

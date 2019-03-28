@@ -65,7 +65,7 @@
                     if (valid) {
                     	this.$axios.post('app/login',this.ruleForm
 				        ).then(res => {
-				          console.log(res.data);
+//				          console.log(res.data);
 //				          alert('登陆成功');
 				          this.userToken = res.data.data.tokenId;
 				          this.userName = res.data.data.userName;

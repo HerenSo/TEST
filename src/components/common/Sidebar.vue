@@ -156,15 +156,33 @@
             bus.$on('collapse', msg => {
                 this.collapse = msg;
             })
-        	this.$axios.get("app/role/menus").then((res) => {
-            	if(res.status == 200 && res.data.code == '0000'){
-                    this.data = res.data.data;
-//	                    localStorage.setItem("menus",JSON.stringify(this.data));
-                }
-           	})
         },
         mounted() {
-        	
+//      	console.log(123)
+			this.getMenu();
+        },
+        methods: {
+        	getMenu() {
+        		this.$axios.get("app/role/menus").then((res) => {
+	            	if(res.status == 200 && res.data.code == '0000'){
+	                    this.data = res.data.data;
+	//                  console.log(this.data)
+	                }
+           		})
+        	}
+        },
+        watch: {
+			$route: {
+				handler: function(val, oldVal){
+			      	if( oldVal.fullPath == "/login"){
+			      		console.log(oldVal)
+			      		this.getMenu();
+//			      		this.$router.go(0);
+					}
+			    },
+			    // 深度观察监听
+			    deep: true
+			} 
         }
     }
 </script>
@@ -197,5 +215,11 @@
     }*/
     .el-menu-item i,.el-submenu__title i{
     	/*color: #dcd9d9;*/
+    }
+    .el-submenu .el-menu{
+    	background-color: #f5f7fa !important;
+    }
+    .el-submenu .el-menu-item{
+    	background-color: #f5f7fa !important;
     }
 </style>

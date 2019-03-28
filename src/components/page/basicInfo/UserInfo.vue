@@ -20,7 +20,7 @@
 	            </el-select>
 	        </div>
 	        <el-button type="primary" icon="search" @click="search" class="m-r-10">搜索</el-button>
-	        <el-button type="primary" icon="search" @click="handleChange('add')">新增</el-button>
+	        <el-button type="primary" icon="search" @click="handleChange('add')" v-if="right_add">新增</el-button>
         </div>
         
         <!-- table-data -->
@@ -39,9 +39,9 @@
             </el-table-column>
             <el-table-column fixed="right" label="操作" width="180" align="center">
                 <template slot-scope="scope">
-                    <el-button type="text" icon="el-icon-edit" @click="handleChange(data[scope.$index].id)">编辑</el-button>
-                    <el-button type="text" class="red" v-if="data[scope.$index].dataStatus == 1" icon="el-icon-delete" @click="handleDelete(data[scope.$index].id)">删除</el-button>
-                    <el-button type="text" class="red" v-if="data[scope.$index].dataStatus == 0" icon="el-icon-refresh" @click="handleEnable(data[scope.$index].id)">恢复</el-button>
+                    <el-button type="text" icon="el-icon-edit" @click="handleChange(data[scope.$index].id)" v-if="right_update">编辑</el-button>
+                    <el-button type="text" class="red" v-if="data[scope.$index].dataStatus == 1 && right_delete" icon="el-icon-delete" @click="handleDelete(data[scope.$index].id)">删除</el-button>
+                    <el-button type="text" class="red" v-if="data[scope.$index].dataStatus == 0 && right_delete" icon="el-icon-refresh" @click="handleEnable(data[scope.$index].id)">恢复</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -152,12 +152,36 @@
 		        },
 		    	title:'', // 弹框标题
 		    	isAdd: false, // 判断是否是新增弹窗
+                right_add: false, // 新增权限
+                right_update: false, // 修改权限
+                right_delete: false, // 删权限
+                right_view: false, // 查看权限
                 total: 1 // 分页数
             }
         },
         mounted() {
         	this.getRole(); //
          	this.getData();
+         	
+         	// 权限
+         	let rights = JSON.parse(localStorage.getItem("ms_rights"));
+         	let curRights = rights.filter(function(item){
+         		return item.rightId.split(":")[0] == 'user';
+         	})
+         	let that = this;
+         	curRights.forEach(function(item){
+         		switch(item.rightId.split(":")[1]){
+         			case "add":that.right_add = true;
+         			break;
+         			case "update":that.right_update = true;
+         			break;
+         			case "delete":that.right_delete = true;
+         			break;
+         			case "view":that.right_view = true;
+         			break;
+         			default:break;
+         		}
+         	})
         },
         methods: {
             // 分页导航

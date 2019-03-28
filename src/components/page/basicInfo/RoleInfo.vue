@@ -13,7 +13,7 @@
 	            </el-select>
 			</div>
 	        <el-button type="primary" icon="search" @click="search" class="m-r-10">搜索</el-button>
-	        <el-button type="primary" icon="search" @click="handleChange('add')">新增</el-button>
+	        <el-button type="primary" icon="search" @click="handleChange('add')"  v-if="right_add">新增</el-button>
         </div>
         
         <!-- table-data -->
@@ -28,10 +28,10 @@
             </el-table-column>
             <el-table-column fixed="right" label="操作" width="180" align="center">
                 <template slot-scope="scope">
-                    <el-button type="text" icon="el-icon-edit" @click="handleChange(data[scope.$index].id)">编辑</el-button>
-                    <el-button type="text" icon="el-icon-lx-settings" @click="handleAllot(data[scope.$index].id)">分配</el-button>
-                    <el-button type="text" class="red" v-if="data[scope.$index].dataStatus == 1" icon="el-icon-delete" @click="handleDelete(data[scope.$index].id)">删除</el-button>
-                    <el-button type="text" class="red" v-if="data[scope.$index].dataStatus == 0" icon="el-icon-refresh" @click="handleEnable(data[scope.$index].id)">恢复</el-button>
+                    <el-button type="text" icon="el-icon-edit" @click="handleChange(data[scope.$index].id)" v-if="right_update">编辑</el-button>
+                    <el-button type="text" icon="el-icon-lx-settings" @click="handleAllot(data[scope.$index].id)" v-if="right_rights">分配</el-button>
+                    <el-button type="text" class="red" v-if="data[scope.$index].dataStatus == 1 && right_delete" icon="el-icon-delete" @click="handleDelete(data[scope.$index].id)">删除</el-button>
+                    <el-button type="text" class="red" v-if="data[scope.$index].dataStatus == 0 && right_delete" icon="el-icon-refresh" @click="handleEnable(data[scope.$index].id)">恢复</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -64,7 +64,8 @@
         <!-- 分配弹出框 -->
         <el-dialog title="分配" :visible.sync="allotVisible" width="40%">
         	<el-row :gutter="20">
-        		<el-col :span="24">
+        		<el-col :span="2">&nbsp;</el-col>
+        		<el-col :span="20">
 					<el-tree
 					  :data="rightTree"
 					  show-checkbox
@@ -137,11 +138,35 @@
 		    	dataStatus: '1', // 数据状态， 默认搜索启用
 		    	roleName: '', // 角色名称
 		    	title:'', // 弹框标题
+                right_add: false, // 新增权限
+                right_update: false, // 修改权限
+                right_delete: false, // 删权限
+                right_rights: false, // 分配权限
                 total: 1 // 分页数
             }
         },
         mounted() {
          	this.getData();
+         	
+         	// 权限
+         	let rights = JSON.parse(localStorage.getItem("ms_rights"));
+         	let curRights = rights.filter(function(item){
+         		return item.rightId.split(":")[0] == 'role';
+         	})
+         	let that = this;
+         	curRights.forEach(function(item){
+         		switch(item.rightId.split(":")[1]){
+         			case "add":that.right_add = true;
+         			break;
+         			case "update":that.right_update = true;
+         			break;
+         			case "delete":that.right_delete = true;
+         			break;
+         			case "rights":that.right_rights = true;
+         			break;
+         			default:break;
+         		}
+         	})
         },
         methods: {
             // 分页导航
@@ -204,7 +229,7 @@
 	                	}
 	                	recursion(this.rightTree);
 	                	this.defaultChecked = defaultChecked;
-	                	console.log(defaultChecked);
+//	                	console.log(defaultChecked);
 	                }
                 })
             },
@@ -242,6 +267,7 @@
 	                	this.allotVisible = false;
 	                	this.getData();
 	                	this.$message.success(res.data.msg);
+//						this.$router.go(0);
 	                }
                 })
             },
@@ -307,5 +333,7 @@
 </script>
 
 <style>
-	
+	.el-tree-node__content{
+		height: 21px;
+	}
 </style>
