@@ -29,6 +29,7 @@
             <el-table-column fixed="right" label="操作" width="180" align="center">
                 <template slot-scope="scope">
                     <el-button type="text" icon="el-icon-edit" @click="handleChange(data[scope.$index].id)">编辑</el-button>
+                    <el-button type="text" icon="el-icon-lx-settings" @click="handleAllot(data[scope.$index].id)">分配</el-button>
                     <el-button type="text" class="red" v-if="data[scope.$index].dataStatus == 1" icon="el-icon-delete" @click="handleDelete(data[scope.$index].id)">删除</el-button>
                     <el-button type="text" class="red" v-if="data[scope.$index].dataStatus == 0" icon="el-icon-refresh" @click="handleEnable(data[scope.$index].id)">恢复</el-button>
                 </template>
@@ -57,6 +58,31 @@
             <span slot="footer" class="dialog-footer">
                 <el-button @click="visible = false">取 消</el-button>
                 <el-button type="primary" @click="sure" >确 定</el-button>
+            </span>
+        </el-dialog>
+        
+        <!-- 分配弹出框 -->
+        <el-dialog title="分配" :visible.sync="allotVisible" width="40%">
+        	<el-row :gutter="20">
+        		<el-col :span="24">
+					<el-tree
+					  :data="rightTree"
+					  show-checkbox
+					  node-key="id"
+					  check-on-click-node
+					  ref="tree"
+					  highlight-current
+					  default-expand-all
+					  :default-checked-keys="defaultChecked"
+					  :props="defaultProps"
+					  accordion
+					  @node-click="">
+					</el-tree>
+				</el-col>
+			</el-row>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="allotVisible = false">取 消</el-button>
+                <el-button type="primary" @click="allotSure" >确 定</el-button>
             </span>
         </el-dialog>
         
@@ -90,14 +116,22 @@
 		data() {
             return {
                 data: [], // table数据
+                rightTree:[], // 权限树
                 cur_page: 1, // 当前分页
+                allot_list: '', // 当前点击的分配ID
                 del_list: [], // 当前点击的删除ID
                 enable_list:[], // 当前点击的恢复ID
                 form:{
                 	roleName:'',
                 	remark:''
                 }, // 新增编辑表单
+                defaultProps: {
+		          children: 'children',
+		          label: 'title'
+		        },
+		        defaultChecked: [], // 默认选中
                 visible: false, // 控制新增编辑弹窗
+                allotVisible: false, // 控制分配弹窗
                 delVisible: false, // 控制删除弹窗
                 enableDelVisible:false, // 控制恢复弹窗
 		    	dataStatus: '1', // 数据状态， 默认搜索启用
@@ -149,6 +183,31 @@
 	                }
                 })
             },
+            getRightTree() { // 请求权限树
+            	this.$axios.get("app/role/rightTree",{
+                    params:{
+		    			"roleId": this.allot_list // ID
+		    		}
+                }).then((res) => {
+                	if(res.status == 200 && res.data.code == '0000'){
+	                	this.rightTree = res.data.data;
+	                	let defaultChecked = [];
+	                	var recursion = (data) => {
+	                		if(data.length > 0){
+	                			data.forEach(function(item){
+	                				if(item.auth == true){
+	                					defaultChecked.push(item.id);
+	                				}
+						            recursion(item.children);
+						        });
+	                		}
+	                	}
+	                	recursion(this.rightTree);
+	                	this.defaultChecked = defaultChecked;
+	                	console.log(defaultChecked);
+	                }
+                })
+            },
             sure() { // 新增编辑确定
             	let _url = '';
             	if(this.form.id){
@@ -161,6 +220,26 @@
                 ).then((res) => {
                 	if(res.status == 200 && res.data.code == '0000'){
 	                	this.visible = false;
+	                	this.getData();
+	                	this.$message.success(res.data.msg);
+	                }
+                })
+            },
+            allotSure() { // 分配确定
+            	let rights = this.$refs.tree.getCheckedKeys().filter(function(i){
+            		return i.indexOf(":") > 0;
+            	});
+            	rights = rights.map(function(item){
+            		return {"rightId":item};
+            	})
+            	this.$axios.post('app/role/right/save',
+                    {
+                    	"id":this.allot_list,	// --角色ID
+   						"rights": rights
+                    }
+                ).then((res) => {
+                	if(res.status == 200 && res.data.code == '0000'){
+	                	this.allotVisible = false;
 	                	this.getData();
 	                	this.$message.success(res.data.msg);
 	                }
@@ -201,6 +280,12 @@
 					this.title = '编辑';
 					this.getDetails(); // 获取详情
 				}
+            },
+            handleAllot(val) { // 分配
+            	this.allotVisible = true;
+				this.allot_list = val;
+	        	this.rightTree = [];
+				this.getRightTree();
             },
             handleDelete(val) { // 删除操作
 				this.delVisible = true;

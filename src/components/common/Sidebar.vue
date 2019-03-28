@@ -2,7 +2,7 @@
     <div class="sidebar">
         <el-menu class="sidebar-el-menu" :default-active="onRoutes" :collapse="collapse" background-color="#fff"
             text-color="#333" active-text-color="#20a0ff" unique-opened router>
-            <template v-for="item in items">
+            <template v-for="item in data">
                 <template v-if="item.subs">
                     <el-submenu :index="item.index" :key="item.index">
                         <template slot="title">
@@ -37,7 +37,8 @@
         data() {
             return {
                 collapse: false,
-                items: [
+                data: [],
+                items: [ // 静态菜单
                     {
                         icon: 'el-icon-lx-copy',
                         index: 'element',
@@ -148,11 +149,22 @@
                 return this.$route.path.replace('/','');
             }
         },
+        beforeCreate() {
+        },
         created(){
             // 通过 Event Bus 进行组件间通信，来折叠侧边栏
             bus.$on('collapse', msg => {
                 this.collapse = msg;
             })
+        	this.$axios.get("app/role/menus").then((res) => {
+            	if(res.status == 200 && res.data.code == '0000'){
+                    this.data = res.data.data;
+//	                    localStorage.setItem("menus",JSON.stringify(this.data));
+                }
+           	})
+        },
+        mounted() {
+        	
         }
     }
 </script>
