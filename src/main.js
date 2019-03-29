@@ -11,6 +11,9 @@ import './assets/css/main.css';
 import './components/common/directives';
 import "babel-polyfill";
 //import MyPligin  from './untils/index'; // 全局
+//import $ from './untils/jquery-2.1.1';
+//import fileSaver from './untils/FileSaver';
+//import wordexport from './untils/jquery.wordexport';
 import http from './untils/http';
 
 Vue.config.productionTip = false;

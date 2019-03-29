@@ -52,7 +52,7 @@
         		<li v-for="item in tableData">
         			<div class="test_content">
         				<!--<div>{{item.name}}</div>-->
-        				<div class="test_html" v-html="item.questionHtml"></div>
+        				<div class="test_html" v-html="item.questionHtml" ref="item.id"></div>
 		          		<!--<div class="form">来源：市级联考</div>-->
         			</div>
         			<div class="test_info">
@@ -60,6 +60,7 @@
         				<div class="handle">
         					<el-button type="text" icon="el-icon-lx-attention" @click="handleCheck(item.id,1)" v-if="right_view">查看</el-button>
                    			<el-button type="text" icon="el-icon-edit" @click="handleEdit(item.id)" v-if="right_update">编辑</el-button>
+                   			<el-button type="text" icon="el-icon-lx-exit" @click="handleExport(item.id)" v-if="right_update">导出</el-button>
 		                    <el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" v-if="(item.auditStatus == 5 || item.auditStatus == 15) && right_audit" @click="handleCheck(item.id,2)">审核</el-button>
                    			<el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" v-if="item.auditStatus == 10 && right_audit" @click="handleCheck(item.id,2)">反审核</el-button>
                     		<el-button type="text" class="text-color-success" icon="el-icon-lx-tag" v-if="item.shelfStatus == 5 && right_shelf" @click="handleCheck(item.id,3)">上架</el-button>
@@ -100,9 +101,14 @@
         </el-dialog>
 	</div>
 </template>
-
+<!--<script type="text/javascript" src="../../../../untils/jquery-2.1.1.js"></script>
+<script type="text/javascript" src="../../../../untils/FileSaver.js"></script>
+<script type="text/javascript" src="../../../../untils/jquery.wordexport.js"></script>-->
 <script>
     import bus from '../../../common/bus';
+    import {jquery} from '../../../../untils/jquery-2.1.1';
+    import {saveAs} from '../../../../untils/FileSaver';
+    import {wordExport} from '../../../../untils/jquery.wordexport';
 	export default{
 		name: "testList",
 		data() {
@@ -308,6 +314,13 @@
 			          	this.questionDifficultyList = res.data.data;
 			    	}
 		        });
+            },
+            handleExport(id) {
+            	let question = this.tableData.filter(function(i){
+            		return i.id == id;
+            	})
+            	console.log(question[0]);
+//          	$("[ref='"+id+"']").wordExport(question[0].questionHtml,question[0].questionHtml);
             },
             handleEdit(id) { // 编辑操作
                 this.$router.push('/testUpdate?id='+id+'&path='+this.$route.path);
