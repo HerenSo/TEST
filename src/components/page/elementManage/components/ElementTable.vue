@@ -270,11 +270,19 @@
         watch:{
 	        elParentId(val, oldVal){//普通的watch监听
                 this.cur_page = "1";
-	            this.getData();
+	            if(this.elParentId){
+                	this.getData();
+                }else{
+                	this.data = [];
+                }
 	        },
 	        elId(val, oldVal){ // 
                 this.cur_page = "1";
-	        	this.getData();
+	        	if(this.elParentId){
+                	this.getData();
+                }else{
+                	this.data = [];
+                }
 	        }
 	    }
 	}

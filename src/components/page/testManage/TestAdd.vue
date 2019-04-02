@@ -183,9 +183,13 @@
         },
 		created() {
         	this.topath = this.$route.query.path; // 获取返回路径
-        	this.selectedOptions2 = this.$route.query.selectedOptions;
-        	this.selectedOptions = this.$route.query.selectedOptions;
-        	this.form.courseId = this.selectedOptions2[this.selectedOptions2.length-1];
+        	let selectedOptions = this.$route.query.selectedOptions;
+        	console.log(typeof selectedOptions);
+        	if(selectedOptions){
+        		this.selectedOptions2 = this.$route.query.selectedOptions;
+	        	this.selectedOptions = this.$route.query.selectedOptions;
+	        	this.form.courseId = this.selectedOptions2[this.selectedOptions2.length-1];
+        	}
 		},
         mounted() {
         	this.queryQuestionType();//获取题型列表
@@ -266,7 +270,8 @@
 			          			this.courses[i].courses[j].studyPeriod = this.courses[i].courses[j].courseName;
 			          		}
 			          	}
-			          	this.courseId = this.selectedOptions[1];
+			          	this.courseId = this.courses[0].courses[0].id;
+			          	this.selectedOptions = [this.courses[0].id,this.courseId];
 	    				this.queryCoursesData(); // 请求树
 		          	}
 		        });
@@ -339,10 +344,10 @@
 //						          router.go(0);
 						          router.push(topath);          
 						        });
+					        }else{
+					        	this.isDisable = true;
 					        }
-		           		}else{
-				        	this.isDisable = true;
-				        }
+		           		}
 		            })
 		        }
             }

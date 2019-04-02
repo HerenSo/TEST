@@ -297,6 +297,7 @@
 			          	this.courseId = this.courses[0].courses[0].id;
 			          	this.studyPeriod = this.courses[0].studyPeriod;
 			          	this.courseName = this.courses[0].courses[0].courseName;
+//			          	this.selectedOptions = [this.courses[0].id,this.courseId];
 	    				this.queryCoursesData(); // 请求树
 		          	}
 		        });
@@ -333,17 +334,17 @@
 		    			}
 		    		}
 		    		if(flat){
+//		    			this.form.knowledges.push({
+//			    			"knowledgeId":selectVal[i].id
+////			    			knowledgeName:selectVal[i].label
+//			    		})
 		    			this.form.knowledges.push({
-			    			"knowledgeId":selectVal[i].id
-//			    			knowledgeName:selectVal[i].label
-			    		})
-		    			this.knowledges.push({
-			    			knowledgeId:selectVal[i].id,
-			    			knowledgeName:selectVal[i].label
+			    			'knowledgeId':selectVal[i].id,
+			    			'knowledgeName':selectVal[i].label
 			    		})
 		    		}
 		    	}
-		    	console.log(this.form.knowledges)
+		    	console.log(this.knowledges)
 		    },
         	// 保存编辑
             saveAdd() {
@@ -359,7 +360,7 @@
 						    "questionType":this.form.questionType,		//--题型
 						    "questionHtml":this.form.questionHtml,		//--题干
 						    "answerHtml":this.form.answerHtml,		//--答案
-						    "Knowledges":this.form.Knowledges
+						    "knowledges":this.form.knowledges
 		                }
 		           ).then((res) => {
 		           		if(res){
@@ -369,6 +370,7 @@
 						          message: "提交成功",
 						          type: 'success',
 						          onClose:function(){
+//						            router.go(0);
 						          	router.push(topath);
 						          }
 						        });

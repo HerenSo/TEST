@@ -14,8 +14,11 @@ if (typeof jQuery !== "undefined" && typeof saveAs !== "undefined") {
                 maxWidth: 624
             };
             // Clone selected element before manipulating it
-//          var markup = $(this).clone();
-            var markup = $(this).clone();
+    
+        	$("#ex").html(questionHtml);
+            var markup = $("#ex").clone();
+            console.log($("#ex").clone())
+//          var markup = '<div class="test_html" ref="">'+questionHtml+'</div>';
 			
             // Remove hidden elements from the output
             markup.each(function() {
@@ -69,7 +72,7 @@ if (typeof jQuery !== "undefined" && typeof saveAs !== "undefined") {
             var styles="";
 
             // Aggregate parts of the file together
-            var fileContent = statics.mhtml.top.replace("_html_", statics.mhtml.head.replace("_styles_", styles) + statics.mhtml.body.replace("_body_", questionHtml)) + mhtmlBottom;
+            var fileContent = statics.mhtml.top.replace("_html_", statics.mhtml.head.replace("_styles_", styles) + statics.mhtml.body.replace("_body_", markup.html())) + mhtmlBottom;
 
             // Create a Blob with the file contents
             var blob = new Blob([fileContent], {
