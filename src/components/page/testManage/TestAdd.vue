@@ -5,12 +5,14 @@
         	<el-row :gutter="20">
         		<el-col :span="24">
         			<el-form-item label="试题题干" required>
-	                	<quill-editor ref="questionHtml" v-model="form.questionHtml" :options="editorOption" @change="onEditorChange($event)"></quill-editor>
+        				<mavon-editor v-model="form.questionHtml" ref="questionHtml" @imgAdd="$imgAdd" @change="onEditorChange" style="min-height: 600px"/>
+	                	<!--<quill-editor ref="questionHtml" v-model="form.questionHtml" :options="editorOption" @change="onEditorChange($event)"></quill-editor>-->
 	                </el-form-item>
                	</el-col>
         		<el-col :span="24">
         			<el-form-item label="答案" required>
-	                	<quill-editor ref="answerHtml" v-model="form.answerHtml" :options="editorOption" @change="answerEditorChange($event)"></quill-editor>
+        				<mavon-editor v-model="form.answerHtml" ref="answerHtml" @imgAdd="$imgAdd" @change="answerEditorChange" style="min-height: 600px"/>
+	                	<!--<quill-editor ref="answerHtml" v-model="form.answerHtml" :options="editorOption" @change="answerEditorChange($event)"></quill-editor>-->
 	                </el-form-item>
                	</el-col>
         		<el-col :span="12">
@@ -121,16 +123,20 @@
 </template>
 
 <script>
-	import 'quill/dist/quill.core.css';
-    import 'quill/dist/quill.snow.css';
-    import 'quill/dist/quill.bubble.css';
-    import { quillEditor } from 'vue-quill-editor';
+//	import 'quill/dist/quill.core.css';
+//  import 'quill/dist/quill.snow.css';
+//  import 'quill/dist/quill.bubble.css';
+//  import { quillEditor } from 'vue-quill-editor';
+    import { mavonEditor } from 'mavon-editor'
+    import 'mavon-editor/dist/css/index.css'
     import VDistpicker from 'v-distpicker'
 	import router from '@/router';
 	export default{
 		name: "testAdd",
 		components: {
-            quillEditor,VDistpicker
+//          quillEditor,
+			mavonEditor,
+            VDistpicker
         },
 		data() {
             return {
@@ -214,11 +220,33 @@
         	this.auditStatus = JSON.parse(localStorage.getItem("auditStatus"));
         },
         methods: {
-        	onEditorChange({ editor, html, text }) { 
-                this.form.questionHtml = html; // 获取题干HTML
+//      	onEditorChange({ editor, html, text }) { 
+//              this.form.questionHtml = html; // 获取题干HTML
+//          },
+//      	answerEditorChange({ editor, html, text }) { 
+//              this.form.answerHtml = html; // 获取答案HTML
+//          },
+			// 将图片上传到服务器，返回地址替换到md中
+            $imgAdd(pos, $file){
+                var formdata = new FormData();
+                formdata.append('file', $file);
+                // 这里没有服务器供大家尝试，可将下面上传接口替换为你自己的服务器接口
+                this.$axios({
+                    url: '/common/upload',
+                    method: 'post',
+                    data: formdata,
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                }).then((url) => {
+                    this.$refs.md.$img2Url(pos, url);
+                })
             },
-        	answerEditorChange({ editor, html, text }) { 
-                this.form.answerHtml = html; // 获取答案HTML
+        	onEditorChange(value, render) { 
+        		// render 为 markdown 解析后的结果
+                this.form.questionHtml = render; // 获取题干HTML
+        		console.log(this.form.questionHtml);
+            },
+        	answerEditorChange(value, render) { 
+                this.form.answerHtml = render; // 获取答案HTML
             },
             onSelected(data) { // 选择省
             	this.form.region = data.province.value;
