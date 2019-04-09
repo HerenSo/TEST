@@ -232,12 +232,12 @@
                 formdata.append('file', $file);
                 // 这里没有服务器供大家尝试，可将下面上传接口替换为你自己的服务器接口
                 this.$axios({
-                    url: '/common/upload',
+                    url: 'http://120.77.241.210:6181/appstore-web/api/uploadFile',
                     method: 'post',
-                    data: formdata,
-                    headers: { 'Content-Type': 'multipart/form-data' },
-                }).then((url) => {
-                    this.$refs.md.$img2Url(pos, url);
+                    data: formdata
+                }).then((data) => {
+                	console.log(data);
+                    this.$refs.questionHtml.$img2Url(pos, data.downloadPath);
                 })
             },
         	onEditorChange(value, render) { 
