@@ -474,6 +474,9 @@ a {
 .test_html{
     padding:0 0 10px 0;
 }
+.test_html img{
+    max-width: 100%;
+}
 .test_dethtml{
     /*border-radius: 4px;
     border: 1px solid #dcdfe6;*/
