@@ -1,7 +1,7 @@
 import {saveAs} from './FileSaver';
 if (typeof jQuery !== "undefined" && typeof saveAs !== "undefined") {
     (function($) {
-        $.fn.wordExport = function(fileName,questionHtml) {
+        $.fn.wordExport = function(fileName,questionHtml,answerHtml) {
             fileName = typeof fileName !== 'undefined' ? fileName : "jQuery-Word-Export";
             var statics = {
                 mhtml: {
@@ -15,7 +15,7 @@ if (typeof jQuery !== "undefined" && typeof saveAs !== "undefined") {
             };
             // Clone selected element before manipulating it
     
-        	$("#ex").html(questionHtml);
+        	$("#ex").html(questionHtml+"答案："+answerHtml);
             var markup = $("#ex").clone();
 //          console.log($("#ex").clone())
 //          var markup = '<div class="test_html" ref="">'+questionHtml+'</div>';

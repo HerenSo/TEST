@@ -71,10 +71,6 @@
                    			<el-button type="text" icon="el-icon-edit" @click="handleEdit(item.id)" v-if="right_update">编辑</el-button>
                    			<el-button type="text" class="text-color-warning" icon="el-icon-lx-link" @click="handleBind(item.id)" v-if="right_bind">绑定</el-button>
                    			<el-button type="text" class="text-color-success" icon="el-icon-lx-exit" @click="handleExport(item.id)">导出</el-button>
-		                    <!--<el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" v-if="(item.auditStatus == 5 || item.auditStatus == 15) && right_audit" @click="handleCheck(item.id,2)">审核</el-button>
-                   			<el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" v-if="item.auditStatus == 10 && right_audit" @click="handleCheck(item.id,2)">反审核</el-button>
-                    		<el-button type="text" class="text-color-success" icon="el-icon-lx-tag" v-if="item.shelfStatus == 5 && right_shelf" @click="handleCheck(item.id,3)">上架</el-button>
-                    		<el-button type="text" class="text-color-success" icon="el-icon-lx-tag" v-if="item.shelfStatus == 10 && right_shelf" @click="handleCheck(item.id,3)">下架</el-button>-->
                     		<el-button type="text" class="text-color-danger" icon="el-icon-lx-delete" v-if="item.dataStatus == 1 && right_delete" @click="handleDelete(item.id)">删除</el-button>
                     		<el-button type="text" class="text-color-danger" icon="el-icon-lx-refresh" v-if="item.dataStatus == 0 && right_delete" @click="handleEnable(item.id)">恢复</el-button>
         				</div>
@@ -366,8 +362,8 @@
             	})
 //          	$("#ex").html(question[0].questionHtml);
 //          	$("#ex").wordExport(question[0].courseName+"-"+question[0].questionTypeName+"-"+id);
-//          	console.log(question[0]);
-            	$("#"+id).wordExport(question[0].courseName+"-"+question[0].questionTypeName+"-"+id,question[0].questionHtml);
+            	console.log(question[0]);
+            	$("#"+id).wordExport(question[0].courseName+"-"+question[0].questionTypeName+"-"+id,question[0].questionHtml,question[0].answerHtml);
             },
             handleEdit(id) { // 编辑操作
                 this.$router.push('/testUpdate?id='+id+'&path='+this.$route.path);
