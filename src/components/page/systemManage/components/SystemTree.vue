@@ -269,4 +269,11 @@
 </script>
 
 <style>
+	.el-tree{
+		overflow-x: scroll;
+		min-height: 178px;
+	}
+	.el-tree-node>.el-tree-node__children{
+		overflow:inherit;
+	}
 </style>

@@ -14,7 +14,7 @@
 		<!--知识元树-->
 		<!--:default-expanded-keys="treeExpandedKeys"-->
 			  <!--@node-expand="treeExpand"-->
-		<div class="container">
+		<div class="container p-lr-10">
 			<el-tree
 			  ref="tree"
 			  :data="data"
@@ -164,4 +164,11 @@
 </script>
 
 <style>
+	.el-tree{
+		overflow-x: scroll;
+		min-height: 178px;
+	}
+	.el-tree-node>.el-tree-node__children{
+		overflow:inherit;
+	}
 </style>

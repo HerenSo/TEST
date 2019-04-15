@@ -17,7 +17,7 @@ if (typeof jQuery !== "undefined" && typeof saveAs !== "undefined") {
     
         	$("#ex").html(questionHtml);
             var markup = $("#ex").clone();
-            console.log($("#ex").clone())
+//          console.log($("#ex").clone())
 //          var markup = '<div class="test_html" ref="">'+questionHtml+'</div>';
 			
             // Remove hidden elements from the output

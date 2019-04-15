@@ -96,6 +96,7 @@ export default new Router({
                 },
                 {
                     path: '/testDetails',
+                    name: 'testDetails',
                     component: resolve => require(['../components/page/testManage/TestDetails.vue'], resolve),
                     meta: { title: '试题详情', keepAlive: false, isBack:false }
                 },
@@ -103,6 +104,11 @@ export default new Router({
                     path: '/testUpdate',
                     component: resolve => require(['../components/page/testManage/TestUpdate.vue'], resolve),
                     meta: { title: '试题修改', keepAlive: false, isBack:false }
+                },
+                {
+                    path: '/testBind',
+                    component: resolve => require(['../components/page/testManage/TestBind.vue'], resolve),
+                    meta: { title: '试题绑定知识元', keepAlive: false, isBack:false }
                 },
                 {
                     path: '/testAdd',

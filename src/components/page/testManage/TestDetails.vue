@@ -87,23 +87,22 @@
 	                    <el-input v-model="form.updateTime" readonly></el-input>
 	                </el-form-item>
 	                </el-col>
+	        		<el-col :span="12" class="remarks">
+	                <el-form-item label="备注">
+	                    <el-input type="textarea" v-model="form.remarks" readonly></el-input>
+	                </el-form-item>
+	                </el-col>
 	            </el-row>
 	        </el-form>
-	        <div class="text-center" v-if="ischeck">
-		        <span slot="footer" class="dialog-footer">
+	        <div class="text-center" >
+		        <span slot="footer" class="dialog-footer" v-if="ischeck">
 		            <el-button type="primary" @click="checkpass(15)" v-if="ischeckpass" class="m-r-10">审核不通过</el-button>
 		            <el-button type="primary" @click="checkpass(10)" v-if="!ischeckpass" class="m-r-10">审核通过</el-button>
-		            <router-link :to='topath' ><el-button >取 消</el-button></router-link>
 		        </span>
-	        </div>
-	        <div class="text-center" v-else-if="isput">
-		        <span slot="footer" class="dialog-footer">
+		        <span slot="footer" class="dialog-footer" v-if="isput">
 		            <el-button type="primary" @click="putpass(5)" v-if="isputpass" class="m-r-10">下架</el-button>
 		            <el-button type="primary" @click="putpass(10)" v-if="!isputpass"  class="m-r-10">上架</el-button>
-		            <router-link :to='topath' ><el-button >取 消</el-button></router-link>
 		        </span>
-	        </div>
-	        <div class="text-center" v-else>
 		        <span slot="footer" class="dialog-footer">
 		            <router-link :to='topath'><el-button >返回</el-button></router-link>
 		        </span>
@@ -130,17 +129,18 @@
             }
       },
         created(){
-        	this.form.id = this.$route.query.id;
-        	if(this.$route.query.type == 2){
+        	this.form.id = this.$route.params.id;
+        	if(this.$route.params.auditStatus){
         		this.ischeck = true;
         	}
-        	if(this.$route.query.type == 3){
+        	if(this.$route.params.shelfStatus){
         		this.isput = true;
         	}
+        	console.log(this.isput)
 //       	console.log(this.form.id)
         },
         mounted() {
-        	this.topath = this.$route.query.path; // 获取返回路径
+        	this.topath = this.$route.params.path; // 获取返回路径
          	this.$axios.get("app/question/message/get",{
                 params:{
 	    			"id": this.form.id
@@ -152,6 +152,7 @@
 	                for(var i=0;i<this.form.knowledges.length;i++){
 	                	knowledgesNamelist.push(this.form.knowledges[i].knowledgeName);
 	                }
+	                this.form.remarks = this.form.remarks ? this.form.remarks : ''; // 后台暂未有备注字段，需判断
 	                this.form.knowledgesName = knowledgesNamelist.join(",");
 //	                console.log(this.form.knowledgesName);
 	                if(this.form.auditStatus == '10'){
@@ -229,5 +230,11 @@
    }
 </script>
 
-<style>
+<style scoped="scoped">
+	.el-col.el-col-12{
+		height: 50px;
+	}
+	.el-col.el-col-12.remarks{
+		height: auto;
+	}
 </style>

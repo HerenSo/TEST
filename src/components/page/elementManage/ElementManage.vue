@@ -7,8 +7,8 @@
        	</div>-->
         <div>
 			<el-row :gutter="20">
-				<el-col :span="5"><element-tree></element-tree></el-col>
-				<el-col :span="19"><element-table></element-table></el-col>
+				<el-col :span="6"><element-tree></element-tree></el-col>
+				<el-col :span="18"><element-table></element-table></el-col>
 			</el-row>
 		</div>
 	</div>
