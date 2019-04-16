@@ -5,15 +5,15 @@
 	        	<el-row :gutter="20">
 	        		<el-col :span="24">
 		                <label>试题题干:</label>
-		                <div class="test_dethtml" v-html="form.questionHtml"></div>
+		                <div class="test_dethtml" v-html="form.questionHtml?form.questionHtml:'暂无'"></div>
 	               	</el-col>
 	        		<el-col :span="24">
 		                <label>答案:</label>
-		                <div class="test_dethtml" v-html="form.answerHtml"></div>
+		                <div class="test_dethtml" v-html="form.answerHtml?form.answerHtml:'暂无'"></div>
 	               	</el-col>
 	        		<el-col :span="24">
 		                <label>解析:</label>
-		                <div class="test_dethtml" v-html="form.answerHtml"></div>
+		                <div class="test_dethtml" v-html="form.analysisHtml?form.analysisHtml:'暂无'"></div>
 	               	</el-col>
 	        		<el-col :span="12">
 	                <el-form-item label="资源编号">
@@ -129,18 +129,39 @@
             }
       },
         created(){
-        	this.form.id = this.$route.params.id;
-        	if(this.$route.params.auditStatus){
-        		this.ischeck = true;
-        	}
-        	if(this.$route.params.shelfStatus){
-        		this.isput = true;
-        	}
+        	this.topath = this.$route.query.path; // 获取返回路径
+        	
+        	// 权限
+        	
+			let rightName = ''; // 判断权限归属名称
+			if(this.topath == "/testManage"){
+				rightName = 'question';
+			}
+			if(this.topath == "/testSystem"){
+				rightName = 'questionArchitecture';
+			}
+			if(this.topath == "/testElement"){
+				rightName = 'questionKnowledge';
+			}
+         	let rights = JSON.parse(localStorage.getItem("ms_rights"));
+         	let curRights = rights.filter(function(item){
+         		return item.rightId.split(":")[0] == rightName;
+         	})
+         	let that = this;
+         	curRights.forEach(function(item){ // 权限处理
+         		switch(item.rightId.split(":")[1]){
+         			case "shelf":that.isput = true; // 上架
+         			break;
+         			case "audit":that.ischeck = true; // 审核
+         			break;
+         			default:break;
+         		}
+         	})
+        	this.form.id = this.$route.query.id;
         	console.log(this.isput)
 //       	console.log(this.form.id)
         },
         mounted() {
-        	this.topath = this.$route.params.path; // 获取返回路径
          	this.$axios.get("app/question/message/get",{
                 params:{
 	    			"id": this.form.id
@@ -236,5 +257,8 @@
 	}
 	.el-col.el-col-12.remarks{
 		height: auto;
+	}
+	.test_dethtml{
+		margin-bottom: 20px;
 	}
 </style>

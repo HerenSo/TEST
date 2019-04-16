@@ -1,47 +1,70 @@
 <template>
 	<div class="container">
-		<div class="p-40">
-		<el-form ref="form" :model="form" label-width="120px" class="demo-ruleForm">
-        	<el-row :gutter="20">
-        		<el-col :span="24">
-        			<el-form-item label="试题题干" required>
-	                	<div class="test_dethtml" v-html="form.questionHtml"></div>
+		<div class="testbind">
+			<el-form ref="form" :model="form" label-width="100px"  class="demo-ruleForm">
+	    		<div class="word">
+    				<label>试题题干：</label>
+                	<div class="test_dethtml" v-html="form.questionHtml?form.questionHtml:'暂无'"></div>
+    				<label>试题答案：</label>
+                	<div class="test_dethtml" v-html="form.answerHtml?form.answerHtml:'暂无'"></div>
+    				<label>试题解析：</label>
+                	<div class="test_dethtml" v-html="form.analysisHtml?form.analysisHtml:'暂无'"></div>
+    				<label>提示：</label>
+                	<div class="test_dethtml" v-html="form.tips?form.tips:'暂无'"></div>
+    				<label>备注：</label>
+                	<div class="test_dethtml" v-html="form.remarks?form.remarks:'暂无'"></div>
+	            </div>
+	    		<div class="element">
+	                <el-form-item label="相关知识元" required>
+	                    <el-button type="button"  @click="handleSelect">选择知识元</el-button>
 	                </el-form-item>
-                </el-col>
-            </el-row>
-        	<el-row :gutter="20">
-        		<el-col :span="12">
-                <el-form-item label="相关知识元" required>
-                    <el-button type="button"  @click="handleSelect">选择知识元</el-button>
-                </el-form-item>
-              	</el-col>
-        		<el-col>
-                <el-form-item label="已选知识元">
-              		<div class="demo-block">
-              			<el-tag
-						  :key="tag.knowledgeId"
-						  v-for="tag in form.knowledges"
-						  closable
-						  :disable-transitions="false"
-						  @close="handleClose(tag)">
-						  {{tag.knowledgeName}}
-						</el-tag>
-              		</div>
-              	</el-form-item>
-              	</el-col>
-              	<el-col :span="12" class="remarks">
-                <el-form-item label="备注">
-                    <el-input type="textarea" v-model="form.remarks"></el-input>
-                </el-form-item>
-                </el-col>
-           </el-row>
-        </el-form>
-        <div class="text-center">
-	        <span slot="footer" class="dialog-footer">
-	            <router-link :to='topath' class="m-r-10"><el-button >取 消</el-button></router-link>
-	            <el-button type="primary" @click="saveAdd">确 定</el-button>
-	        </span>
-        </div>
+	                <el-form-item label="已选知识元">
+	              		<div class="demo-block">
+	              			<el-tag
+							  :key="tag.knowledgeId"
+							  v-for="tag in form.knowledges"
+							  closable
+							  :disable-transitions="false"
+							  @close="handleClose(tag)">
+							  {{tag.knowledgeName}}
+							</el-tag>
+	              		</div>
+	              	</el-form-item>
+	              	<el-row :gutter="10" class="p-tb-20">
+		        		<el-col :span="12">
+		        			<el-form-item label="学科:">
+		        				<el-input v-model="form.periodName+'/'+form.courseName" readonly></el-input>
+			                </el-form-item>
+		               	</el-col>
+		        		<el-col :span="12">
+		        			<el-form-item label="题型:">
+		        				<el-input v-model="form.questionTypeName" readonly></el-input>
+			                </el-form-item>
+		               	</el-col>
+		        		<el-col :span="12">
+		        			<el-form-item label="难度:">
+		        				<el-input v-model="form.diffculty" readonly></el-input>
+			                </el-form-item>
+		               	</el-col>
+		        		<el-col :span="12">
+		        			<el-form-item label="区域:">
+		        				<el-input v-model="form.region" readonly></el-input>
+			                </el-form-item>
+		               	</el-col>
+		        		<el-col :span="12">
+		        			<el-form-item label="年份:">
+		        				<el-input v-model="form.year" readonly></el-input>
+			               </el-form-item>
+		               </el-col>
+		            </el-row>
+	           </div>
+	        </el-form>
+	        <div class="text-center">
+		        <span slot="footer" class="dialog-footer">
+		            <router-link :to='topath' class="m-r-10"><el-button >取 消</el-button></router-link>
+		            <el-button type="primary" @click="saveAdd">确 定</el-button>
+		        </span>
+	        </div>
         </div>
         <!-- 选择知识元弹出框 -->
         <el-dialog title="选择知识元" :visible.sync="selectVisible" width="40%">
@@ -58,6 +81,7 @@
 					</div>
 					<div class="">
 						<el-tree
+						  class="element_tree"
 						  :data="data"
 						  show-checkbox
 						  check-on-click-node
@@ -147,6 +171,10 @@
 					if(res.status == 200 && res.data.code == '0000'){
 			          	this.form = res.data.data;
 	                	this.form.remarks = this.form.remarks ? this.form.remarks : ''; // 后台暂未有备注字段，需判断
+	                	
+	                	this.courseId = this.form.courseId;
+			          	this.selectedOptions = [this.form.periodId,this.form.courseId];
+			          	
 			    	}
 		        });
 		    },
@@ -166,10 +194,10 @@
 			          			this.courses[i].courses[j].studyPeriod = this.courses[i].courses[j].courseName;
 			          		}
 			          	}
-			          	this.courseId = this.courses[0].courses[0].id;
-			          	this.studyPeriod = this.courses[0].studyPeriod;
-			          	this.courseName = this.courses[0].courses[0].courseName;
-			          	this.selectedOptions = [this.courses[0].id,this.courseId];
+//			          	this.courseId = this.courses[0].courses[0].id;
+//			          	this.studyPeriod = this.courses[0].studyPeriod;
+//			          	this.courseName = this.courses[0].courses[0].courseName;
+//			          	this.selectedOptions = [this.courses[0].id,this.courseId];
 	    				this.queryCoursesData(); // 请求树
 		          	}
 		        });
@@ -257,8 +285,40 @@
    }
 </script>
 
-<style>
+<style scoped="scoped">
+	.testbind{
+		padding: 40px 10px;
+	}
 	.el-date-editor.el-input{
 		widows: 100%;
+	}
+	.word{
+		border: 1px solid #ebeef5;
+		width: 794px;
+	    padding: 30px 15px;
+		min-width: 794px;
+	    border-radius: 8px;
+	}
+	.word label{
+		/*background: #ecf5ff;*/
+	    padding: 6px 0px;
+	    display: block;
+	    /*margin-left: -10px;*/
+	}
+	.test_dethtml{
+		margin-bottom: 20px;
+	}
+	.demo-ruleForm{
+		display: flex;
+		padding-bottom: 50px;
+	}
+	.element{
+		border: 1px solid #ebeef5;
+	    padding: 30px 15px;
+	    border-radius: 8px;
+	    margin-left: 20px;
+	}
+	.element_tree{
+		overflow-x:inherit;
 	}
 </style>

@@ -106,6 +106,7 @@
 					</div>
 					<div class="">
 						<el-tree
+						  class="element_tree"
 						  :data="data"
 						  show-checkbox
 						  node-key="id"
@@ -397,5 +398,8 @@
 	}
 	.el-col.el-col-12.remarks{
 		height: auto;
+	}
+	.element_tree{
+		overflow-x:inherit;
 	}
 </style>

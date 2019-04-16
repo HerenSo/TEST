@@ -109,6 +109,7 @@
 					</div>
 					<div class="">
 						<el-tree
+						  class="element_tree"
 						  :data="data"
 						  show-checkbox
 						  check-on-click-node
@@ -192,9 +193,6 @@
 		},
         mounted() {
         	this.form.id = this.$route.query.id;
-        	this.getDate(); // 获取详情
-        	this.queryQuestionType();//获取题型列表
-        	this.queryQuestionDifficulty();//获取难度系数
         	// 学科
 			this.$axios.get('app/study/period/tree',{
 	    		params:{
@@ -214,11 +212,14 @@
 		          	this.studyPeriod = this.courses[0].studyPeriod;
 		          	this.studyId = this.courses[0].id;
 		          	this.courseName = this.courses[0].courses[0].courseName;
-		          	this.selectedOptions = [this.studyId,this.courseId];
+//		          	this.selectedOptions = [this.studyId,this.courseId];
 //		          	this.selectedOptions2 = [this.studyId,this.courseId];
 	          	}
 	        });
         	this.auditStatus = JSON.parse(localStorage.getItem("auditStatus"));
+        	this.getDate(); // 获取详情
+        	this.queryQuestionType();//获取题型列表
+        	this.queryQuestionDifficulty();//获取难度系数
         },
         methods: {
         	onEditorChange({ editor, html, text }) {
@@ -248,6 +249,7 @@
 			handleChange2(value) { // 选择学科
 		        console.log(value);
 		        this.form.courseId = value[value.length-1];
+		        this.form.periodId = value[0];
 		    },
 		    getDate() {
 		    	// 详情
@@ -300,10 +302,8 @@
 			          			this.courses[i].courses[j].studyPeriod = this.courses[i].courses[j].courseName;
 			          		}
 			          	}
-			          	this.courseId = this.courses[0].courses[0].id;
-			          	this.studyPeriod = this.courses[0].studyPeriod;
-			          	this.courseName = this.courses[0].courses[0].courseName;
-//			          	this.selectedOptions = [this.courses[0].id,this.courseId];
+			          	this.courseId = this.form.courseId;
+			          	this.selectedOptions = [this.form.periodId,this.form.courseId];
 	    				this.queryCoursesData(); // 请求树
 		          	}
 		        });
@@ -317,7 +317,7 @@
 				}).then(res => {
 		          	if(res.status == 200 && res.data.code == '0000'){
 			          	this.data = res.data.data;
-	//		          	console.log(this.data);
+//			          	console.log(this.data);
 			          	let data = {
 			          		id:this.data[0].id,
 			          		parentId:this.data[0].parentId
@@ -400,5 +400,8 @@
 	}
 	.el-col.el-col-12.remarks{
 		height: auto;
+	}
+	.element_tree{
+		overflow-x:inherit;
 	}
 </style>

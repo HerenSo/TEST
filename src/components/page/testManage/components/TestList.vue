@@ -44,6 +44,10 @@
                 	<el-option :key="item.id" :label="item.label" :value="item.acronym" v-for="item in auditStatusList"></el-option>
             	</el-select>
             </div>
+			<div class="demo-input-suffix">
+				<el-input v-model="questionSearchText" placeholder="请输入关键词" class="handle-input-md m-r-10">
+            	</el-input>
+            </div>
 	        <el-button type="primary" icon="search" @click="search">搜索</el-button>
 	        <el-button type="primary" icon="search" @click="add" v-if="right_add">新增</el-button>
         </div>
@@ -67,7 +71,7 @@
         			<div class="test_info">
         				<span>难度系数:{{item.diffculty}}</span><span>使用次数:{{item.dataStatus}}</span><span>题型:{{item.questionTypeName}}</span><span>更新:{{item.updateTime}}</span>
         				<div class="handle">
-        					<el-button type="text" icon="el-icon-lx-attention" @click="handleCheck(item.id,right_audit,right_shelf)" v-if="right_view">查看(管理)</el-button>
+        					<el-button type="text" icon="el-icon-lx-attention" @click="handleCheck(item.id)" v-if="right_view">查看(管理)</el-button>
                    			<el-button type="text" icon="el-icon-edit" @click="handleEdit(item.id)" v-if="right_update">编辑</el-button>
                    			<el-button type="text" class="text-color-warning" icon="el-icon-lx-link" @click="handleBind(item.id)" v-if="right_bind">绑定</el-button>
                    			<el-button type="text" class="text-color-success" icon="el-icon-lx-exit" @click="handleExport(item.id)">导出</el-button>
@@ -131,6 +135,7 @@
                 questionType: "", // 题型
                 questionDifficulty: "", //难度系数
                 auditStatus:"", //审核状态
+                questionSearchText:"", //、试题搜索关键词
                 examTypeList:[], // 考试类型列表
                 questionTypeList: [], // 题型列表
                 questionDifficultyList: [], //难度系数列表
@@ -185,21 +190,21 @@
          		return item.rightId.split(":")[0] == rightName;
          	})
          	let that = this;
-         	curRights.forEach(function(item){
+         	curRights.forEach(function(item){ // 权限处理
          		switch(item.rightId.split(":")[1]){
-         			case "add":that.right_add = true;
+         			case "add":that.right_add = true; //新增
          			break;
-         			case "update":that.right_update = true;
+         			case "update":that.right_update = true; // 编辑
          			break;
-         			case "bind":that.right_bind = true;
+         			case "bind":that.right_bind = true; // 绑定知识元
          			break;
-         			case "delete":that.right_delete = true;
+         			case "delete":that.right_delete = true; // 删除
          			break;
-         			case "view":that.right_view = true;
+         			case "view":that.right_view = true; // 查看
          			break;
-         			case "shelf":that.right_shelf = true;
+         			case "shelf":that.right_shelf = true; // 上架
          			break;
-         			case "audit":that.right_audit = true;
+         			case "audit":that.right_audit = true; // 审核
          			break;
          			default:break;
          		}
@@ -235,47 +240,20 @@
             // 获取数据
             getData() {
             	let that = this;
-            	$.ajax({
-					 url:'app/question/message/list',
-					 type:'get', //GET
-					 async:false, //或false,是否异步
-					 headers:{
-					 	tokenId:localStorage.getItem("userToken")
-					 },
-					 params:{
-					  	"courseId":this.courseId,//		学科ID
-						"knowledgeId":this.knowledgeId,//  知识元ID
-						"architectureId":this.architectureId,//	体系ID
-						"region":"",
-		    			"shelfStatus":"",
-                    	"name":"", // 试题名称
-						"questionType":this.questionType, // 题型
-						"year":this.year, // 年份
-						"questionDifficulty":this.questionDifficulty, // 难度系数类型（下拉选择）
-		    			"beginTime": this.beginTime, // 开始日期，没有则传空字符串或不传
-		    			"endTime": this.endTime, // 结束日期，没有则传空字符串或不传
-		    			"auditStatus": this.auditStatus, // 审核状态，没有则传空字符串或不传
-		    			"rows": 10, // 每页记录数，默认为25
-						"page": this.cur_page // 当前页码
-					 },
-					 dataType:'json', //返回的数据格式：
-					 success:function(res){
-					 	console.log(res)
-					 	if(res.code == '0000'){
-		                	that.total = res.data.total;
-		                	// console.log(this.total)
-		                    that.tableData = res.data.rows;
-		                }
-					 }
-				})
-//              this.$axios.get("app/question/message/list",{
-//                  params:{
-//                  	"courseId":this.courseId,//		学科ID
+//          	$.ajax({
+//					 url:'app/question/message/list',
+//					 type:'get', //GET
+//					 async:false, //或false,是否异步
+//					 headers:{
+//					 	tokenId:localStorage.getItem("userToken")
+//					 },
+//					 params:{
+//					  	"courseId":this.courseId,//		学科ID
 //						"knowledgeId":this.knowledgeId,//  知识元ID
 //						"architectureId":this.architectureId,//	体系ID
 //						"region":"",
 //		    			"shelfStatus":"",
-//                  	"name":"", // 试题名称
+//                  	"questionSearchText":this.questionSearchText, // 关键词
 //						"questionType":this.questionType, // 题型
 //						"year":this.year, // 年份
 //						"questionDifficulty":this.questionDifficulty, // 难度系数类型（下拉选择）
@@ -284,14 +262,41 @@
 //		    			"auditStatus": this.auditStatus, // 审核状态，没有则传空字符串或不传
 //		    			"rows": 10, // 每页记录数，默认为25
 //						"page": this.cur_page // 当前页码
-//		    		}
-//              }).then((res) => {
-//              	if(res.status == 200 && res.data.code == '0000'){
-//	                	this.total = res.data.data.total;
-//	                	// console.log(this.total)
-//	                    this.tableData = res.data.data.rows;
-//	                }
-//              })
+//					 },
+//					 dataType:'json', //返回的数据格式：
+//					 success:function(res){
+//					 	console.log(res)
+//					 	if(res.code == '0000'){
+//		                	that.total = res.data.total;
+//		                	// console.log(this.total)
+//		                    that.tableData = res.data.rows;
+//		                }
+//					 }
+//				})
+                this.$axios.get("app/question/message/list",{
+                    params:{
+                    	"courseId":this.courseId,//		学科ID
+						"knowledgeId":this.knowledgeId,//  知识元ID
+						"architectureId":this.architectureId,//	体系ID
+						"region":"",
+		    			"shelfStatus":"",
+                    	"questionSearchText":this.questionSearchText, // 关键词
+						"questionType":this.questionType, // 题型
+						"year":this.year, // 年份
+						"questionDifficulty":this.questionDifficulty, // 难度系数类型（下拉选择）
+		    			"beginTime": this.beginTime, // 开始日期，没有则传空字符串或不传
+		    			"endTime": this.endTime, // 结束日期，没有则传空字符串或不传
+		    			"auditStatus": this.auditStatus, // 审核状态，没有则传空字符串或不传
+		    			"rows": 10, // 每页记录数，默认为25
+						"page": this.cur_page // 当前页码
+		    		}
+                }).then((res) => {
+                	if(res.status == 200 && res.data.code == '0000'){
+	                	this.total = res.data.data.total;
+	                	// console.log(this.total)
+	                    this.tableData = res.data.data.rows;
+	                }
+                })
             },
             search() {  // 搜索
             	this.cur_page = 1;
@@ -373,11 +378,9 @@
             },
             handleCheck(id,auditStatus,shelfStatus) { // 查看操作
             	this.$router.push({
-            		name:'testDetails',
-            		params:{
+            		path:'/testDetails',
+            		query:{
 	            		id:id,
-	            		auditStatus:auditStatus,
-	            		shelfStatus:shelfStatus,
 	            		path:this.$route.path
             		}
             	});
