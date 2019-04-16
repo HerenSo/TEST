@@ -13,6 +13,11 @@
 	                	<quill-editor ref="answerHtml" v-model="form.answerHtml" :options="editorOption" @change="answerEditorChange($event)"></quill-editor>
 	                </el-form-item>
                	</el-col>
+        		<el-col :span="24">
+        			<el-form-item label="解析" required>
+	                	<quill-editor ref="analysisHtml" v-model="form.analysisHtml" :options="editorOption" @change="analysisEditorChange($event)"></quill-editor>
+	                </el-form-item>
+               	</el-col>
         		<el-col :span="12">
         			<el-form-item label="学科" required>
 	        			<el-cascader
@@ -230,6 +235,9 @@
                 this.form.answerHtml = html;
 //              console.log(html)
             },
+        	analysisEditorChange({ editor, html, text }) { 
+                this.form.analysisHtml = html; // 获取答案HTML
+            },
             onSelected(data) { // 选择省
             	this.form.region = data.province.value;
             },
@@ -357,17 +365,18 @@
             	if(this.isDisable){
             		this.isDisable = false;
 	            	this.$axios.post("app/question/message/update",
-		                {
-		                	"id":this.form.id,				//--试题ID
-    						"diffculty":this.form.diffculty,		//--难度系数
-    						"year":this.form.year,			//--年份
-						    "region":this.form.region,			//--地区
-						    "courseId":this.form.courseId,			//--学科
-						    "questionType":this.form.questionType,		//--题型
-						    "questionHtml":this.form.questionHtml,		//--题干
-						    "answerHtml":this.form.answerHtml,		//--答案
-						    "knowledges":this.form.knowledges
-		                }
+	            		this.form
+//		                {
+//		                	"id":this.form.id,				//--试题ID
+//  						"diffculty":this.form.diffculty,		//--难度系数
+//  						"year":this.form.year,			//--年份
+//						    "region":this.form.region,			//--地区
+//						    "courseId":this.form.courseId,			//--学科
+//						    "questionType":this.form.questionType,		//--题型
+//						    "questionHtml":this.form.questionHtml,		//--题干
+//						    "answerHtml":this.form.answerHtml,		//--答案
+//						    "knowledges":this.form.knowledges
+//		                }
 		           ).then((res) => {
 		           		if(res){
 			            	if(res.status == 200 && res.data.code == '0000'){

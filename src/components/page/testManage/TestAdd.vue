@@ -15,6 +15,11 @@
 	                	<quill-editor ref="answerHtml" v-model="form.answerHtml" :options="editorOption" @change="answerEditorChange($event)"></quill-editor>
 	                </el-form-item>
                	</el-col>
+        		<el-col :span="24">
+        			<el-form-item label="解析" required>
+	                	<quill-editor ref="analysisHtml" v-model="form.analysisHtml" :options="editorOption" @change="analysisEditorChange($event)"></quill-editor>
+	                </el-form-item>
+               	</el-col>
         		<el-col :span="12">
         			<el-form-item label="学科" required>
 	        			<el-cascader
@@ -232,6 +237,9 @@
         	answerEditorChange({ editor, html, text }) { 
                 this.form.answerHtml = html; // 获取答案HTML
             },
+        	analysisEditorChange({ editor, html, text }) { 
+                this.form.analysisHtml = html; // 获取答案HTML
+            },
 			// 将图片上传到服务器，返回地址替换到md中
 //          $imgAdd(pos, $file){
 //              var formdata = new FormData();
@@ -263,6 +271,8 @@
 		    },
 		    handleSelect() { // 点击选择知识元
 				this.data = [];
+				this.courseId = this.form.courseId;
+	          	this.selectedOptions = [this.form.periodId,this.form.courseId];
 		    	this.queryCourse(); // 请求学科
 		    	this.selectVisible = true; // 控制弹窗显示隐藏
 		    },
@@ -272,6 +282,7 @@
 		    },
 			handleChange2(value) { // 新增时选择学科
 		        this.form.courseId = value[value.length-1];
+		        this.form.periodId = value[0];
 		    },
 		    queryQuestionType() {
                 // 题型
@@ -304,8 +315,6 @@
 			          			this.courses[i].courses[j].studyPeriod = this.courses[i].courses[j].courseName;
 			          		}
 			          	}
-			          	this.courseId = this.courses[0].courses[0].id;
-			          	this.selectedOptions = [this.courses[0].id,this.courseId];
 	    				this.queryCoursesData(); // 请求树
 		          	}
 		        });
