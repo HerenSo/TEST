@@ -365,18 +365,20 @@
             	if(this.isDisable){
             		this.isDisable = false;
 	            	this.$axios.post("app/question/message/update",
-	            		this.form
-//		                {
-//		                	"id":this.form.id,				//--试题ID
-//  						"diffculty":this.form.diffculty,		//--难度系数
-//  						"year":this.form.year,			//--年份
-//						    "region":this.form.region,			//--地区
-//						    "courseId":this.form.courseId,			//--学科
-//						    "questionType":this.form.questionType,		//--题型
-//						    "questionHtml":this.form.questionHtml,		//--题干
-//						    "answerHtml":this.form.answerHtml,		//--答案
-//						    "knowledges":this.form.knowledges
-//		                }
+//	            		this.form
+		                {
+		                	"id":this.form.id,				//--试题ID
+    						"diffculty":this.form.diffculty,		//--难度系数
+    						"year":this.form.year,			//--年份
+						    "region":this.form.region,			//--地区
+						    "courseId":this.form.courseId,			//--学科
+						    "questionType":this.form.questionType,		//--题型
+						    "questionHtml":this.form.questionHtml,		//--题干
+						    "answerHtml":this.form.answerHtml,		//--答案
+						    "knowledges":this.form.knowledges,
+						    "analysisHtml":this.form.analysisHtml, //解析
+						    "remarks":this.form.remarks //备注
+		                }
 		           ).then((res) => {
 		           		if(res){
 			            	if(res.status == 200 && res.data.code == '0000'){
