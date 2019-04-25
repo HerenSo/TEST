@@ -37,8 +37,8 @@
         data() {
             return {
                 collapse: false,
-                data: [],
-                items: [ // 静态菜单
+//              data: [],
+                data: [ // 静态菜单
                     {
                         icon: 'el-icon-lx-copy',
                         index: 'element',
@@ -130,7 +130,22 @@
                                 title: '难度系数'
                             }
                         ]
-                    }
+                    },
+                    {
+                        icon: 'el-icon-lx-cascades',
+                        index: '5',
+                        title: '试题资源',
+                        subs: [
+                            {
+                                index: 'resourceType',
+                                title: '资源类型'
+                            },
+                            {
+                                index: 'testError',
+                                title: '试题异常'
+                            },
+                        ]
+                    },
 //                  {
 //                      icon: 'el-icon-lx-cascades',
 //                      index: 'table',
@@ -165,7 +180,7 @@
         	getMenu() {
         		this.$axios.get("app/role/menus").then((res) => {
 	            	if(res.status == 200 && res.data.code == '0000'){
-	                    this.data = res.data.data;
+//	                    this.data = res.data.data;
 	//                  console.log(this.data)
 	                }
            		})
