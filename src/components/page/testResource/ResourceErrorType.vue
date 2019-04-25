@@ -2,8 +2,8 @@
 	<div class="container">
 		<div class="handle-box">
 			<div class="demo-input-suffix">
-				资源类型名称：
-				<el-input v-model="typeName" placeholder="" clearable class="handle-input-md m-r-10"></el-input>
+				资源异常类型名称：
+				<el-input v-model="exceptionType" placeholder="" clearable class="handle-input-md m-r-10"></el-input>
 			</div>
 			<div class="demo-input-suffix">
 				数据状态：
@@ -19,7 +19,7 @@
         
         <!-- table-data -->
         <el-table :data="data" border class="table" stripe ref="multipleTable" >
-            <el-table-column prop="typeName" label="资源类型名称" >
+            <el-table-column prop="exceptionType" label="资源异常类型名称" >
             </el-table-column>
             <el-table-column prop="creator" label="创建人" >
             </el-table-column>
@@ -42,12 +42,12 @@
         <!--table-data END-->
         
         <!-- 新增编辑 -->
-        <el-dialog :title="title" :visible.sync="visible" width="40%">
+        <el-dialog :title="title" :visible.sync="visible" width="50%">
         	<el-row :gutter="20">
         		<el-col :span="22">
-					<el-form ref="form" :model="form" label-width="110px">
-					  <el-form-item label="资源类型名称:">
-					    <el-input v-model="form.typeName"></el-input>
+					<el-form ref="form" :model="form" label-width="130px">
+					  <el-form-item label="资源异常类型名称:">
+					    <el-input v-model="form.exceptionType"></el-input>
 					  </el-form-item>
 					  <el-form-item label="排序:">
 					    <el-input  v-model="form.seq"></el-input>
@@ -88,7 +88,7 @@
 <script>
     import bus from '../../common/bus';
 	export default{
-		name: "resourceType",
+		name: "resourceErrorType",
 		data() {
             return {
                 data: [], // table数据
@@ -100,11 +100,11 @@
                 enableDelVisible:false, // 控制恢复弹窗
                 visible: false, // 控制新增编辑弹窗
                 form:{
-                	typeName:'',
+                	exceptionType:'',
                 	seq:'' //排序
                 }, // 新增编辑表单
 		    	title:'', // 弹框标题
-                typeName: '', // 名称检索
+                exceptionType: '', // 名称检索
                 dataStatus: '', // 数据状态检索
                 right_add: false, // 新增权限
                 right_update: false, // 修改权限
@@ -143,9 +143,9 @@
             },
             // 获取 list数据
             getData() {
-                this.$axios.get("app/resource/type/list",{
+                this.$axios.get("app/exception/resource/type/list",{
                     params:{
-		    			"typeName": this.typeName, // 名称
+		    			"exceptionType": this.exceptionType, // 名称
 		    			"dataStatus": this.dataStatus, // 数据状态，没有则传空字符串或不传
 		    			"rows": 10, // 每页记录数，默认为25
 						"page": this.cur_page // 当前页码
@@ -159,7 +159,7 @@
             },
             
             getDetails() { // 获取详情
-            	this.$axios.get("app/resource/type/get",{
+            	this.$axios.get("app/exception/resource/type/get",{
                     params:{
 		    			"id": this.form.id // ID
 		    		}
@@ -167,7 +167,7 @@
                 	if(res.status == 200 && res.data.code == '0000'){
 	                	this.visible = true;
 	                	this.form.id = res.data.data.id;
-	                	this.form.typeName = res.data.data.typeName;
+	                	this.form.exceptionType = res.data.data.exceptionType;
 	                	this.form.seq = res.data.data.seq;
 	                }
                 })
@@ -180,9 +180,9 @@
             sure() { // 新增编辑确定
             	let _url = '';
             	if(this.form.id){
-            		_url = "app/resource/type/update"; // 编辑
+            		_url = "app/exception/resource/type/update"; // 编辑
             	}else{
-            		_url = "app/resource/type/add"; // 新增
+            		_url = "app/exception/resource/type/add"; // 新增
             	}
             	this.$axios.post(_url,
                     this.form
@@ -195,8 +195,7 @@
                 })
             },
             sureDel() { // 确定删除
-            	console.log('this.del_list',this.del_list)
-            	this.$axios.get("app/resource/type/disable",{
+            	this.$axios.get("app/exception/resource/type/disable",{
                     params:{
 		    			"ids": this.del_list // ID
 		    		}
@@ -209,7 +208,7 @@
                 })
             },
             sureEnable() { // 确定恢复
-            	this.$axios.get("app/resource/type/enable",{
+            	this.$axios.get("app/exception/resource/type/enable",{
                     params:{
 		    			"ids": this.enable_list // ID
 		    		}

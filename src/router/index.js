@@ -116,14 +116,19 @@ export default new Router({
                     meta: { title: '试题新增', keepAlive: false, isBack:false }
                 },
                 {
+                    path: '/resourceError',
+                    component: resolve => require(['../components/page/testResource/ResourceError.vue'], resolve),
+                    meta: { title: '资源异常', keepAlive: false, isBack:false }
+                },
+                {
                     path: '/resourceType',
                     component: resolve => require(['../components/page/testResource/ResourceType.vue'], resolve),
                     meta: { title: '资源类型', keepAlive: true, isBack:false }
                 },
                 {
-                    path: '/testError',
-                    component: resolve => require(['../components/page/testResource/TestError.vue'], resolve),
-                    meta: { title: '试题异常', keepAlive: false, isBack:false }
+                    path: '/resourceErrorType',
+                    component: resolve => require(['../components/page/testResource/ResourceErrorType.vue'], resolve),
+                    meta: { title: '资源异常类型', keepAlive: false, isBack:false }
                 },
                 {
                     path: '/userInfo',

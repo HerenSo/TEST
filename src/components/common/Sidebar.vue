@@ -132,17 +132,21 @@
                         ]
                     },
                     {
-                        icon: 'el-icon-lx-cascades',
+                        icon: 'el-icon-lx-copy',
                         index: '5',
                         title: '试题资源',
                         subs: [
+                            {
+                                index: 'resourceError',
+                                title: '资源异常'
+                            },
                             {
                                 index: 'resourceType',
                                 title: '资源类型'
                             },
                             {
-                                index: 'testError',
-                                title: '试题异常'
+                                index: 'resourceErrorType',
+                                title: '资源异常类型'
                             },
                         ]
                     },
