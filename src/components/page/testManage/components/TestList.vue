@@ -73,7 +73,8 @@
         				<div class="handle">
         					<el-button type="text" icon="el-icon-lx-attention" @click="handleCheck(item.id)" v-if="right_view">查看(管理)</el-button>
                    			<el-button type="text" icon="el-icon-edit" @click="handleEdit(item.id)" v-if="right_update">编辑</el-button>
-                   			<el-button type="text" class="text-color-warning" icon="el-icon-lx-link" @click="handleBind(item.id)" v-if="right_bind">绑定</el-button>
+                   			<el-button type="text" icon="el-icon-lx-link" @click="handleBind(item.id)" v-if="right_bind">绑定</el-button>
+                   			<el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" @click="handleError(item.id)" v-if="">异常</el-button>
                    			<el-button type="text" class="text-color-success" icon="el-icon-lx-exit" @click="handleExport(item.id)">导出</el-button>
                     		<el-button type="text" class="text-color-danger" icon="el-icon-lx-delete" v-if="item.dataStatus == 1 && right_delete" @click="handleDelete(item.id)">删除</el-button>
                     		<el-button type="text" class="text-color-danger" icon="el-icon-lx-refresh" v-if="item.dataStatus == 0 && right_delete" @click="handleEnable(item.id)">恢复</el-button>
@@ -109,6 +110,29 @@
                 <el-button type="primary" @click="sureEnable" >确 定</el-button>
             </span>
         </el-dialog>
+        
+        
+         <!-- 异常弹出框 -->
+        <el-dialog title="异常" :visible.sync="errorVisible" width="50%">
+            	<el-row :gutter="22">
+            		<el-col :span="22">
+            		<el-form ref="form" :model="form" label-width="130px">
+					  <el-form-item label="资源异常类型">
+					    <el-select v-model="form.resoureType" placeholder="资源异常类型" class="m-r-10" @change="search">
+			                <el-option :key="item.id" :label="item.label" :value="item.id" v-for="item in resourceErrorTypeList"></el-option>
+			            </el-select>
+					  </el-form-item>
+					  <el-form-item label="备注:">
+					    <el-input type="textarea" v-model="form.remark"></el-input>
+					  </el-form-item>
+					</el-form> 
+					</el-col>
+               </el-row>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="errorVisible = false">取 消</el-button>
+                <el-button type="primary" @click="sureError" >确 定</el-button>
+            </span>
+        </el-dialog>
 	</div>
 </template>
 <script>
@@ -124,8 +148,10 @@
                 cur_page: 1,
                 del_list: [], // 删除ID
                 enable_list:[], // 恢复ID
+                error_list:'', // 异常ID
                 delVisible: false, // 控制删除弹窗
                 enableDelVisible:false,  // 控制恢复弹窗
+                errorVisible:false, // 控制异常弹窗
                 courseId: "",
                 selectedOptions: [],  // 学段学科选择绑定的ID
                 studyCourses: '',
@@ -142,6 +168,9 @@
                 auditStatusList: [], //审核状态列表
                 year:"",
                 date:"",
+                form:{},
+                resoureType: '', //资源异常类型
+                resourceErrorTypeList:[], // 资源异常类型列表
                 idx: -1,
                 right_add: false, // 新增权限
                 right_update: false, // 修改权限
@@ -221,7 +250,9 @@
 					}
 				})
          	}
-            
+          	
+			//资源异常类型列表
+			this.getResourceErrorType();
         },
         computed: {
             beginTime: function () {
@@ -298,6 +329,14 @@
 	                }
                 })
             },
+            // 获取资源异常类型数组
+            getResourceErrorType() {
+            	this.$axios.get("app/combobox/exception/resource/type").then((res) => {
+					if(res.status=="200" && res.data.code == '0000'){
+						this.resourceErrorTypeList = res.data.data;
+					}
+				})
+            },
             search() {  // 搜索
             	this.cur_page = 1;
                 this.getData();
@@ -333,6 +372,18 @@
                 	if(res.status == 200 && res.data.code == '0000'){
 	                	this.enableDelVisible = false;
 	                	this.getData();
+	                	this.$message.success(res.data.msg);
+	                }
+                })
+            },
+            sureError() { // 确定异常
+            	this.form.exresourceId = this.error_list;
+            	console.log(this.form)
+            	this.$axios.post("app/exception/resource/add",
+                    this.form
+                ).then((res) => {
+                	if(res.status == 200 && res.data.code == '0000'){
+	                	this.errorVisible = false;
 	                	this.$message.success(res.data.msg);
 	                }
                 })
@@ -385,6 +436,10 @@
             		}
             	});
             },
+            handleError(val) { // 异常操作
+				this.errorVisible = true;
+				this.error_list = val;
+            },
             handleDelete(val) { // 删除操作
 				this.delVisible = true;
 				this.del_list = val;
@@ -410,6 +465,11 @@
 	        	}else{
 	            	this.tableData = [];
 	            }
+	        },
+	        errorVisible(val, oldVal){//监听编辑弹窗隐藏，清除编辑的id
+	        	if(!val){
+	        		this.form = {};
+	        	}
 	        }
 	    }
 	}

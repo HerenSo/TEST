@@ -1,16 +1,42 @@
 <template>
 	<div class="container">
 		<div class="handle-box">
-			<div class="demo-input-suffix">
+			<!--<div class="demo-input-suffix">
 				资源异常类型名称：
 				<el-input v-model="exceptionType" placeholder="" clearable class="handle-input-md m-r-10"></el-input>
-			</div>
+			</div>-->
 			<div class="demo-input-suffix">
 				资源异常类型：
 				<el-select v-model="resoureType" placeholder="资源异常类型" class="handle-select m-r-10" @change="search">
 	                <el-option key="0" label="全部" value="" ></el-option>
 	                <el-option :key="item.id" :label="item.label" :value="item.acronym" v-for="item in resourceErrorTypeList"></el-option>
 	            </el-select>
+			</div>
+			<div class="demo-input-suffix">
+				上报时间：
+				<el-date-picker
+				  class="data_range m-r-10"
+			      v-model="date"
+			      type="daterange"
+			      range-separator="至"
+			      start-placeholder="开始"
+			      end-placeholder="结束"
+			      value-format="yyyy-MM-dd"
+			      @change="search">
+			    </el-date-picker>
+			</div>
+			<div class="demo-input-suffix">
+				处理时间：
+				<el-date-picker
+				  class="data_range m-r-10"
+			      v-model="dateHandle"
+			      type="daterange"
+			      range-separator="至"
+			      start-placeholder="开始"
+			      end-placeholder="结束"
+			      value-format="yyyy-MM-dd"
+			      @change="search">
+			    </el-date-picker>
 			</div>
 			<div class="demo-input-suffix">
 				是否处理：
@@ -21,24 +47,31 @@
 	            </el-select>
 			</div>
 	        <el-button type="primary" icon="search" @click="search" class="m-r-10">搜索</el-button>
-	        <el-button type="primary" icon="search" @click="handleChange('add')" v-if="right_add">新增</el-button>
         </div>
         
         <!-- table-data -->
         <el-table :data="data" border class="table" stripe ref="multipleTable" >
-            <el-table-column prop="exceptionType" label="资源异常类型名称" >
+            <el-table-column prop="exresourceId" label="资源ID" width="180">
             </el-table-column>
-            <el-table-column prop="creator" label="创建人" >
+            <el-table-column prop="resoureTypeName" label="异常类型名称" >
             </el-table-column>
-            <el-table-column prop="createTime" label="创建时间" width="180">
+            <el-table-column prop="exporterName" label="上报人名称">
             </el-table-column>
-            <el-table-column prop="dataStatusName" label="数据状态" >
+            <el-table-column prop="handleName" label="处理人名称" >
             </el-table-column>
-            <el-table-column fixed="right" label="操作" width="180" align="center">
+            <el-table-column prop="exportTime" label="上报时间" width="160">
+            </el-table-column>
+            <el-table-column prop="handleTime" label="处理时间" width="160">
+            </el-table-column>
+            <el-table-column prop="isHandleName" label="处理状态名称" >
+            </el-table-column>
+            <el-table-column prop="remark" label="备注" >
+            </el-table-column>
+            <el-table-column fixed="right" label="操作" width="120" align="center">
                 <template slot-scope="scope">
-                    <el-button type="text" icon="el-icon-edit" @click="handleChange(data[scope.$index].id)" v-if="right_update">编辑</el-button>
-                    <el-button type="text" class="red" v-if="data[scope.$index].dataStatus == 1 && right_delete" icon="el-icon-delete" @click="handleDelete(data[scope.$index].id)">删除</el-button>
-                    <el-button type="text" class="red" v-if="data[scope.$index].dataStatus == 0 && right_delete" icon="el-icon-refresh" @click="handleEnable(data[scope.$index].id)">恢复</el-button>
+                    <el-button type="text" icon="el-icon-edit" @click="handleChange(data[scope.$index].id)" v-if="right_update">处理</el-button>
+                    <el-button type="text" class="red" v-if="right_delete" icon="el-icon-delete" @click="handleDelete(data[scope.$index].id)">删除</el-button>
+                    <!--<el-button type="text" class="red" v-if="data[scope.$index].dataStatus == 0 && right_delete" icon="el-icon-refresh" @click="handleEnable(data[scope.$index].id)">恢复</el-button>-->
                 </template>
             </el-table-column>
         </el-table>
@@ -116,12 +149,28 @@
                 exceptionType: '', // 名称检索
                 isHandle: '', // 是否处理
                 resoureType: '', //资源异常类型
+                date:[],
+                dateHandle:[],
                 right_add: false, // 新增权限
                 right_update: false, // 修改权限
                 right_delete: false, // 删权限
                 right_view: false, // 查看权限
                 total: 1 // 分页数
             }
+        },
+        computed: { // 计算开始和结束日期
+            beginTime: function () {
+            	return this.date[0];
+		    },
+            endTime: function () {
+            	return this.date[1];
+		    },
+            beginHandleTime: function () {
+            	return this.date[0];
+		    },
+            endHandleTime: function () {
+            	return this.date[1];
+		    }
         },
         mounted() {
          	// 权限
@@ -154,10 +203,17 @@
             },
             // 获取 list数据
             getData() {
-                this.$axios.get("app/exception/resource/type/list",{
+                this.$axios.get("app/exception/resource/list",{
                     params:{
-		    			"exceptionType": this.exceptionType, // 名称
-		    			"dataStatus": this.dataStatus, // 数据状态，没有则传空字符串或不传
+		    			"beginTime":this.beginTime, //上报开始时间
+						"endTime":this.endTime,// =上报结束时间
+						"beginHandleTime":this.beginHandleTime, // =处理开始时间
+						"endHandleTime":this.endHandleTime, // =处理结束时间
+						"exresourceId":'', // =资源ID
+						"resoureType":this.resoureType, // =资源异常类型ID
+						"isHandle": this.isHandle, // =是否处理(5:上传;10:处理完成)
+						"exporterId": '' , // =上报人ID
+						"handleId": '', // =处理人ID
 		    			"rows": 10, // 每页记录数，默认为25
 						"page": this.cur_page // 当前页码
 		    		}
