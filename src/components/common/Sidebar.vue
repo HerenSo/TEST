@@ -132,9 +132,9 @@
                         ]
                     },
                     {
-                        icon: 'el-icon-lx-copy',
+                        icon: 'el-icon-lx-qrcode',
                         index: '5',
-                        title: '试题资源',
+                        title: '资源管理',
                         subs: [
                             {
                                 index: 'resourceError',
@@ -148,6 +148,39 @@
                                 index: 'resourceErrorType',
                                 title: '资源异常类型'
                             },
+                        ]
+                    },
+                    {
+                        icon: 'el-icon-lx-rank',
+                        index: '6',
+                        title: '能力管理',
+                        subs: [
+                            {
+                                index: 'abilityMap',
+                                title: '能力图谱'
+                            }
+                        ]
+                    },
+                    {
+                        icon: 'el-icon-lx-read',
+                        index: '7',
+                        title: '知识管理',
+                        subs: [
+                            {
+                                index: 'knowledgeMap',
+                                title: '知识图谱'
+                            }
+                        ]
+                    },
+                    {
+                        icon: 'el-icon-lx-pic',
+                        index: '8',
+                        title: '素养管理',
+                        subs: [
+                            {
+                                index: 'literacyMap',
+                                title: '素养图谱'
+                            }
                         ]
                     },
 //                  {

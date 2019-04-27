@@ -82,15 +82,12 @@
         <!--table-data END-->
         
         <!-- 新增编辑 -->
-        <el-dialog :title="title" :visible.sync="visible" width="50%">
+        <el-dialog title="处理" :visible.sync="visible" width="40%">
         	<el-row :gutter="20">
         		<el-col :span="22">
 					<el-form ref="form" :model="form" label-width="130px">
-					  <el-form-item label="资源异常类型名称:">
-					    <el-input v-model="form.exceptionType"></el-input>
-					  </el-form-item>
-					  <el-form-item label="排序:">
-					    <el-input  v-model="form.seq"></el-input>
+					  <el-form-item label="备注:">
+					    <el-input type="textarea" v-model="form.remark"></el-input>
 					  </el-form-item>
 					</el-form>  
 				</el-col>
@@ -142,8 +139,8 @@
                 enableDelVisible:false, // 控制恢复弹窗
                 visible: false, // 控制新增编辑弹窗
                 form:{
-                	exceptionType:'',
-                	seq:'' //排序
+                	remark:'',
+                	id:'' //排序
                 }, // 新增编辑表单
 		    	title:'', // 弹框标题
                 exceptionType: '', // 名称检索
@@ -259,14 +256,8 @@
                 this.getData();
             },
             
-            sure() { // 新增编辑确定
-            	let _url = '';
-            	if(this.form.id){
-            		_url = "app/exception/resource/type/update"; // 编辑
-            	}else{
-            		_url = "app/exception/resource/type/add"; // 新增
-            	}
-            	this.$axios.post(_url,
+            sure() { // 处理异常
+            	this.$axios.post('app/exception/resource/handle',
                     this.form
                 ).then((res) => {
                 	if(res.status == 200 && res.data.code == '0000'){
@@ -277,7 +268,7 @@
                 })
             },
             sureDel() { // 确定删除
-            	this.$axios.get("app/exception/resource/type/disable",{
+            	this.$axios.get("app/exception/resource/delete",{
                     params:{
 		    			"ids": this.del_list // ID
 		    		}
@@ -302,15 +293,9 @@
 	                }
                 })
             },
-            handleChange(val) { // 新增编辑操作
-				if(val == 'add'){ // 如果ID值存在跳编辑
-					this.visible = true;
-					this.title = '新增';
-				}else{
-					this.form.id = val;
-					this.title = '编辑';
-					this.getDetails(); // 获取详情
-				}
+            handleChange(val) { // 处理操作
+				this.visible = true;
+				this.form.id = val;
            },
             handleDelete(val) { // 删除操作
 				this.delVisible = true;
