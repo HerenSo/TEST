@@ -175,21 +175,21 @@ export default new Router({
                     component: resolve => require(['../components/page/basicInfo/DifficultyInfo.vue'], resolve),
                     meta: { title: '难度系数', keepAlive: false, isBack:false }
                 },
-                {
-                    path: '/abilityMap',
-                    component: resolve => require(['../components/page/abilityManage/AbilityMap.vue'], resolve),
-                    meta: { title: '能力图谱', keepAlive: false, isBack:false }
-                },
-                {
-                    path: '/knowledgeMap',
-                    component: resolve => require(['../components/page/knowledgeManage/KnowledgeMap.vue'], resolve),
-                    meta: { title: '知识图谱', keepAlive: false, isBack:false }
-                },
-                {
-                    path: '/literacyMap',
-                    component: resolve => require(['../components/page/literacyManage/LiteracyMap.vue'], resolve),
-                    meta: { title: '素养图谱', keepAlive: false, isBack:false }
-                },
+//              {
+//                  path: '/abilityMap',
+//                  component: resolve => require(['../components/page/abilityManage/AbilityMap.vue'], resolve),
+//                  meta: { title: '能力图谱', keepAlive: false, isBack:false }
+//              },
+//              {
+//                  path: '/knowledgeMap',
+//                  component: resolve => require(['../components/page/knowledgeManage/KnowledgeMap.vue'], resolve),
+//                  meta: { title: '知识图谱', keepAlive: false, isBack:false }
+//              },
+//              {
+//                  path: '/literacyMap',
+//                  component: resolve => require(['../components/page/literacyManage/LiteracyMap.vue'], resolve),
+//                  meta: { title: '素养图谱', keepAlive: false, isBack:false }
+//              },
 //              {
 //                  path: '/table',
 //                  component: resolve => require(['../components/page/BaseTable.vue'], resolve),

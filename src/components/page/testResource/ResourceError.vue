@@ -9,7 +9,7 @@
 				资源异常类型：
 				<el-select v-model="resoureType" placeholder="资源异常类型" class="handle-select m-r-10" @change="search">
 	                <el-option key="0" label="全部" value="" ></el-option>
-	                <el-option :key="item.id" :label="item.label" :value="item.acronym" v-for="item in resourceErrorTypeList"></el-option>
+	                <el-option :key="item.id" :label="item.label" :value="item.id" v-for="item in resourceErrorTypeList"></el-option>
 	            </el-select>
 			</div>
 			<div class="demo-input-suffix">
@@ -51,7 +51,7 @@
         
         <!-- table-data -->
         <el-table :data="data" border class="table" stripe ref="multipleTable" >
-            <el-table-column prop="exresourceId" label="资源ID" width="180">
+            <el-table-column prop="exresourceId" label="资源ID" width="250">
             </el-table-column>
             <el-table-column prop="resoureTypeName" label="异常类型名称" >
             </el-table-column>
@@ -69,7 +69,7 @@
             </el-table-column>
             <el-table-column fixed="right" label="操作" width="120" align="center">
                 <template slot-scope="scope">
-                    <el-button type="text" icon="el-icon-edit" @click="handleChange(data[scope.$index].id)" v-if="right_update">处理</el-button>
+                    <el-button type="text" icon="el-icon-edit" @click="handleChange(data[scope.$index].id)" v-if="right_handle">处理</el-button>
                     <el-button type="text" class="red" v-if="right_delete" icon="el-icon-delete" @click="handleDelete(data[scope.$index].id)">删除</el-button>
                     <!--<el-button type="text" class="red" v-if="data[scope.$index].dataStatus == 0 && right_delete" icon="el-icon-refresh" @click="handleEnable(data[scope.$index].id)">恢复</el-button>-->
                 </template>
@@ -152,28 +152,37 @@
                 right_update: false, // 修改权限
                 right_delete: false, // 删权限
                 right_view: false, // 查看权限
+                right_handle:false, // 处理权限
                 total: 1 // 分页数
             }
         },
         computed: { // 计算开始和结束日期
             beginTime: function () {
-            	return this.date[0];
+            	if(this.date){
+            		return this.date[0]
+            	}
 		    },
             endTime: function () {
-            	return this.date[1];
+            	if(this.date){
+            		return this.date[1]
+            	}
 		    },
             beginHandleTime: function () {
-            	return this.date[0];
+            	if(this.dateHandle){
+            		return this.dateHandle[0]
+            	}
 		    },
             endHandleTime: function () {
-            	return this.date[1];
+            	if(this.dateHandle){
+            		return this.dateHandle[1];
+            	}
 		    }
         },
         mounted() {
          	// 权限
          	let rights = JSON.parse(localStorage.getItem("ms_rights"));
          	let curRights = rights.filter(function(item){
-         		return item.rightId.split(":")[0] == 'knowledge';
+         		return item.rightId.split(":")[0] == 'resourceError';
          	})
          	let that = this;
          	curRights.forEach(function(item){
@@ -185,6 +194,8 @@
          			case "delete":that.right_delete = true;
          			break;
          			case "view":that.right_view = true;
+         			break;
+         			case "handle":that.right_handle = true;
          			break;
          			default:break;
          		}

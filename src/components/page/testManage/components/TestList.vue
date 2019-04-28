@@ -74,7 +74,7 @@
         					<el-button type="text" icon="el-icon-lx-attention" @click="handleCheck(item.id)" v-if="right_view">查看(管理)</el-button>
                    			<el-button type="text" icon="el-icon-edit" @click="handleEdit(item.id)" v-if="right_update">编辑</el-button>
                    			<el-button type="text" icon="el-icon-lx-link" @click="handleBind(item.id)" v-if="right_bind">绑定</el-button>
-                   			<el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" @click="handleError(item.id)" v-if="">异常</el-button>
+                   			<el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" @click="handleError(item.id)" v-if="right_error">异常</el-button>
                    			<el-button type="text" class="text-color-success" icon="el-icon-lx-exit" @click="handleExport(item.id)">导出</el-button>
                     		<el-button type="text" class="text-color-danger" icon="el-icon-lx-delete" v-if="item.dataStatus == 1 && right_delete" @click="handleDelete(item.id)">删除</el-button>
                     		<el-button type="text" class="text-color-danger" icon="el-icon-lx-refresh" v-if="item.dataStatus == 0 && right_delete" @click="handleEnable(item.id)">恢复</el-button>
@@ -179,6 +179,7 @@
                 right_view: false, // 查看权限
                 right_shelf: false,
                 right_audit: false,
+                right_error:false, // 异常权限
                 total: 1
             }
         },
@@ -218,6 +219,9 @@
          	let curRights = rights.filter(function(item){
          		return item.rightId.split(":")[0] == rightName;
          	})
+         	let curRights2 = rights.filter(function(item){
+         		return item.rightId.split(":")[0] == 'resourceError';
+         	})
          	let that = this;
          	curRights.forEach(function(item){ // 权限处理
          		switch(item.rightId.split(":")[1]){
@@ -234,6 +238,13 @@
          			case "shelf":that.right_shelf = true; // 上架
          			break;
          			case "audit":that.right_audit = true; // 审核
+         			break;
+         			default:break;
+         		}
+         	})
+         	curRights2.forEach(function(item){ // 权限处理
+         		switch(item.rightId.split(":")[1]){
+         			case "add":that.right_error = true; //新增
          			break;
          			default:break;
          		}

@@ -217,7 +217,7 @@
         	getMenu() {
         		this.$axios.get("app/role/menus").then((res) => {
 	            	if(res.status == 200 && res.data.code == '0000'){
-//	                    this.data = res.data.data;
+	                    this.data = res.data.data;
 	//                  console.log(this.data)
 	                }
            		})

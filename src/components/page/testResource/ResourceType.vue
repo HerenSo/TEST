@@ -117,7 +117,7 @@
          	// 权限
          	let rights = JSON.parse(localStorage.getItem("ms_rights"));
          	let curRights = rights.filter(function(item){
-         		return item.rightId.split(":")[0] == 'knowledge';
+         		return item.rightId.split(":")[0] == 'resourceType';
          	})
          	let that = this;
          	curRights.forEach(function(item){
