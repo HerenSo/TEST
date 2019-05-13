@@ -69,16 +69,19 @@
         <!-- 选择知识元弹出框 -->
         <el-dialog title="选择知识元" :visible.sync="selectVisible" width="40%">
         	<el-row :gutter="10">
-        		<el-col :span="24">
+        		<el-col :span="12">
         			<div class="p-10">
-					   <el-cascader
-					    expand-trigger="hover"
-					    :options="courses"
-					    v-model="selectedOptions"
-					    :props="props"
-					    @change="handleChange">
-					  </el-cascader>
+<!--					   <el-cascader-->
+<!--					    expand-trigger="hover"-->
+<!--					    :options="courses"-->
+<!--					    v-model="selectedOptions"-->
+<!--					    :props="props"-->
+<!--					    @change="handleChange">-->
+<!--					  </el-cascader>-->
+						<el-input type="" v-model="form.periodName+'/'+form.courseName" readonly></el-input>
 					</div>
+				</el-col>
+				<el-col :span="24">
 					<div class="">
 						<el-tree
 						  class="element_tree"
@@ -121,6 +124,7 @@
 		        courseId: null, // 初始默认 学课ID
 	            courseName: "", // 学科名称
 	            studyPeriod:"",
+				periodCourse:'',
 	            studyId:"",
 	            typeName:"",
 	            architectureType: [], // 体系类型
@@ -174,7 +178,7 @@
 	                	
 	                	this.courseId = this.form.courseId;
 			          	this.selectedOptions = [this.form.periodId,this.form.courseId];
-			          	
+						this.queryCoursesData();
 			    	}
 		        });
 		    },

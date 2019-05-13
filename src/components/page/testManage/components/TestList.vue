@@ -1,6 +1,18 @@
 <template>
 	<div class="container">
 		<div class="handle-box">
+			<div class="demo-input-suffix" v-if="isCoursesCon">
+				学科：
+				<el-cascader
+					expand-trigger="hover"
+					:options="courses"
+					v-model="selectedOptions"
+					:value="studyCourses"
+					:props="props"
+					class="m-r-10"
+					@change="coursesSelect">
+				</el-cascader>
+			</div>
 			<div class="demo-input-suffix">
 				题型：
 				<el-select  v-model="questionType" placeholder="题型" class="handle-select m-r-10" @change="search">
@@ -118,7 +130,7 @@
             		<el-col :span="22">
             		<el-form ref="form" :model="form" label-width="130px">
 					  <el-form-item label="资源异常类型">
-					    <el-select v-model="form.resoureType" placeholder="资源异常类型" class="m-r-10" @change="search">
+					    <el-select v-model="form.resoureType" placeholder="资源异常类型" class="m-r-10" @change="">
 			                <el-option :key="item.id" :label="item.label" :value="item.id" v-for="item in resourceErrorTypeList"></el-option>
 			            </el-select>
 					  </el-form-item>
@@ -153,6 +165,16 @@
                 enableDelVisible:false,  // 控制恢复弹窗
                 errorVisible:false, // 控制异常弹窗
                 courseId: "",
+				courses:[],
+				defaultProps: { // 知识元树数据配置
+					children: 'children',
+					label: 'label'
+				},
+				props:{ // 学科数据配置
+					label:'studyPeriod',
+					value: 'id',
+					children: 'courses'
+				},
                 selectedOptions: [],  // 学段学科选择绑定的ID
                 studyCourses: '',
                 knowledgeId: "", // 知识元Id
@@ -180,6 +202,7 @@
                 right_shelf: false,
                 right_audit: false,
                 right_error:false, // 异常权限
+				isCoursesCon:false, // 是否显示学科搜索
                 total: 1
             }
         },
@@ -190,18 +213,22 @@
 //      	this.queryExamType(); // 获取考试类型
         	this.queryQuestionType();//获取题型列表
         	this.queryQuestionDifficulty();//获取难度系数
+			this.getCourse() // 请求学科数据
 //      	this.getData();
 
 			let rightName = ''; // 判断权限归属名称
 			if(this.$route.path == "/testManage"){
 				this.getData(); // 如果是试题管理页 直接加载数据
 				rightName = 'question';
+				this.isCoursesCon = true;
 			}
 			if(this.$route.path == "/testSystem"){
 				rightName = 'questionArchitecture';
+				this.isCoursesCon = false;
 			}
 			if(this.$route.path == "/testElement"){
 				rightName = 'questionKnowledge';
+				this.isCoursesCon = false;
 			}
 			
         	bus.$on('elParam', (data) => { // 监听tree组件传过来的值
@@ -279,6 +306,24 @@
                 this.cur_page = val;
                 this.getData();
             },
+			getCourse() {
+				// 请求学科
+				this.$axios.get('app/study/period/tree',{
+					params:{
+						"haveCourse": "1",
+						"haveGrade": "0"
+					}
+				}).then(res => {
+					if(res.status == 200 && res.data.code == '0000'){
+						this.courses = res.data.data;
+						for(var i=0; i < this.courses.length; i++){
+							for(var j=0; j < this.courses[i].courses.length;j++){
+								this.courses[i].courses[j].studyPeriod = this.courses[i].courses[j].courseName;
+							}
+						}
+					}
+				});
+			},
             // 获取数据
             getData() {
             	let that = this;
@@ -432,6 +477,11 @@
             	console.log(question[0]);
             	$("#"+id).wordExport(question[0].courseName+"-"+question[0].questionTypeName+"-"+id,question[0].questionHtml,question[0].answerHtml);
             },
+			coursesSelect(val){  // 试题搜索时 选择学科
+				this.courseId = val[1];
+				this.getData();
+				console.log(val)
+			},
             handleEdit(id) { // 编辑操作
                 this.$router.push('/testUpdate?id='+id+'&path='+this.$route.path);
             },
