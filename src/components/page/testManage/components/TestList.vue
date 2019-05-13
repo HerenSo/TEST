@@ -57,6 +57,13 @@
             	</el-select>
             </div>
 			<div class="demo-input-suffix">
+				知识元状态：
+				<el-select v-model="haveKnowledge" placeholder="审核状态" class="handle-select m-r-10" @change="search">
+					<el-option key="5" label="未绑定" value="5" ></el-option>
+					<el-option key="10" label="已绑定" value="10" ></el-option>
+				</el-select>
+			</div>
+			<div class="demo-input-suffix">
 				<el-input v-model="questionSearchText" placeholder="请输入关键词" class="handle-input-md m-r-10">
             	</el-input>
             </div>
@@ -188,6 +195,7 @@
                 questionTypeList: [], // 题型列表
                 questionDifficultyList: [], //难度系数列表
                 auditStatusList: [], //审核状态列表
+				haveKnowledge:'', // 知识元状态
                 year:"",
                 date:"",
                 form:{},
@@ -374,6 +382,7 @@
 		    			"beginTime": this.beginTime, // 开始日期，没有则传空字符串或不传
 		    			"endTime": this.endTime, // 结束日期，没有则传空字符串或不传
 		    			"auditStatus": this.auditStatus, // 审核状态，没有则传空字符串或不传
+						"haveKnowledge":this.haveKnowledge, // 知识元绑定状态
 		    			"rows": 10, // 每页记录数，默认为25
 						"page": this.cur_page // 当前页码
 		    		}
