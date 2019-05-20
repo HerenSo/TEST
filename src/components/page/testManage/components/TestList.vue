@@ -94,7 +94,7 @@
                    			<el-button type="text" icon="el-icon-edit" @click="handleEdit(item.id)" v-if="right_update">编辑</el-button>
                    			<el-button type="text" icon="el-icon-lx-link" @click="handleBind(item.id)" v-if="right_bind">绑定</el-button>
                    			<el-button type="text" class="text-color-warning" icon="el-icon-lx-warn" @click="handleError(item.id)" v-if="right_error">异常</el-button>
-                   			<el-button type="text" class="text-color-success" icon="el-icon-lx-exit" @click="handleExport(item.id)">导出</el-button>
+                   			<el-button type="text" class="text-color-success" icon="el-icon-lx-exit" @click="handleExport(item.id)" v-if="right_export">导出</el-button>
                     		<el-button type="text" class="text-color-danger" icon="el-icon-lx-delete" v-if="item.dataStatus == 1 && right_delete" @click="handleDelete(item.id)">删除</el-button>
                     		<el-button type="text" class="text-color-danger" icon="el-icon-lx-refresh" v-if="item.dataStatus == 0 && right_delete" @click="handleEnable(item.id)">恢复</el-button>
         				</div>
@@ -209,6 +209,7 @@
                 right_view: false, // 查看权限
                 right_shelf: false,
                 right_audit: false,
+				right_export:false, // 导出权限
                 right_error:false, // 异常权限
 				isCoursesCon:false, // 是否显示学科搜索
                 total: 1
@@ -274,6 +275,8 @@
          			break;
          			case "audit":that.right_audit = true; // 审核
          			break;
+					case "export":that.right_export = true; // 导出
+						break;
          			default:break;
          		}
          	})
