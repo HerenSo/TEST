@@ -67,7 +67,7 @@
 	        </div>
         </div>
         <!-- 选择知识元弹出框 -->
-        <el-dialog title="选择知识元" :visible.sync="selectVisible" width="40%">
+        <el-dialog title="选择知识元" :visible.sync="selectVisible" width="38%" class="right_dialog">
         	<el-row :gutter="10">
         		<el-col :span="12">
         			<div class="p-10">
@@ -298,9 +298,9 @@
 	}
 	.word{
 		border: 1px solid #ebeef5;
-		width: 794px;
+		width: 680px;
 	    padding: 30px 15px;
-		min-width: 794px;
+		min-width: 680px;
 	    border-radius: 8px;
 	}
 	.word label{
@@ -324,5 +324,9 @@
 	}
 	.element_tree{
 		overflow-x:inherit;
+	}
+	.right_dialog >>> .el-dialog {
+		position: absolute;
+		right: 60px;
 	}
 </style>

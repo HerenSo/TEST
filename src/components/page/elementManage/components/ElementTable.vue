@@ -36,7 +36,7 @@
         </div>
         
         <!-- table-data -->
-        <el-table :data="data" border class="table" stripe ref="multipleTable" >
+        <el-table :data="data" border class="table" stripe ref="multipleTable">
             <el-table-column prop="courseName" label="学科" >
             </el-table-column>
             <el-table-column prop="category" label="科类" >
