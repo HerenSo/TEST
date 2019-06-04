@@ -2,10 +2,12 @@ import Vue from 'vue'
 import axios from 'axios'
 import router from '@/router'
 import { Message } from 'element-ui';
+import bus from '../components/common/bus'
 // 路由请求拦截
 // http request 拦截器
 axios.interceptors.request.use(
   config => {
+      bus.$emit("fullscreenLoading",true);
     //config.data = JSON.stringify(config.data);  
     config.headers['Content-Type'] = 'application/json;charset=UTF-8';
     //判断是否存在ticket，如果存在的话，则每个http header都加上ticket
@@ -24,7 +26,8 @@ axios.interceptors.request.use(
 // 路由响应拦截
 // http response 拦截器
 axios.interceptors.response.use(
-  response => {
+  response =>{
+	  bus.$emit("fullscreenLoading",false);
   	if (response.status === 200) {
   		if (response.data.code == '0000'){
 	        return response;

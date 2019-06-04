@@ -1,6 +1,7 @@
 <template>
 	<div class="container">
-		<div class="handle-box">
+		<div class="handle-box"
+			 v-loading.fullscreen.lock="fullscreenLoading">
 			<div class="demo-input-suffix" v-if="isCoursesCon">
 				学科：
 				<el-cascader
@@ -104,8 +105,16 @@
         	<div class="text-center p-tb-20" v-if="tableData.length == 0">暂无数据</div>
         </div>
         <div class="pagination">
-            <el-pagination background @current-change="handleCurrentChange" :page-count="total" layout="prev, pager, next">
+            <el-pagination background @size-change="handleSizeChange"
+						   @current-change="handleCurrentChange"
+						   :current-page="cur_page"
+						   :page-sizes="[10, 20, 30,40, 50]"
+						   :page-size="10"
+						   :total="records"
+						   :page-count="total"
+						   layout="total,sizes,prev, pager, next,jumper">
             </el-pagination>
+            <el-button>GO</el-button>
         </div>
         
          <!-- 删除弹出框 -->
@@ -165,6 +174,7 @@
             return {
                 tableData: [],
                 cur_page: 1,
+                cur_pagesize: 10,
                 del_list: [], // 删除ID
                 enable_list:[], // 恢复ID
                 error_list:'', // 异常ID
@@ -212,13 +222,20 @@
 				right_export:false, // 导出权限
                 right_error:false, // 异常权限
 				isCoursesCon:false, // 是否显示学科搜索
-                total: 1
+                fullscreenLoading:false, // 加载中
+                total: 1,
+                records:0 // 总条数
             }
         },
         activated() {
         	this.getData();
         },
         mounted() {
+
+            bus.$on('fullscreenLoading', msg => { // 加载监听
+                this.fullscreenLoading = msg;
+            })
+
 //      	this.queryExamType(); // 获取考试类型
         	this.queryQuestionType();//获取题型列表
         	this.queryQuestionDifficulty();//获取难度系数
@@ -317,6 +334,10 @@
                 this.cur_page = val;
                 this.getData();
             },
+            handleSizeChange(val){
+				this.cur_pagesize = val;
+				this.getData();
+			},
 			getCourse() {
 				// 请求学科
 				this.$axios.get('app/study/period/tree',{
@@ -386,12 +407,13 @@
 		    			"endTime": this.endTime, // 结束日期，没有则传空字符串或不传
 		    			"auditStatus": this.auditStatus, // 审核状态，没有则传空字符串或不传
 						"haveKnowledge":this.haveKnowledge, // 知识元绑定状态
-		    			"rows": 10, // 每页记录数，默认为25
+		    			"rows": this.cur_pagesize, // 每页记录数，默认为25
 						"page": this.cur_page // 当前页码
 		    		}
                 }).then((res) => {
                 	if(res.status == 200 && res.data.code == '0000'){
 	                	this.total = res.data.data.total;
+	                	this.records = res.data.data.records;
 	                	// console.log(this.total)
 	                    this.tableData = res.data.data.rows;
 	                }
@@ -557,4 +579,14 @@
 	.handle{
 		float: right;
 	}
+    .pagination{
+        display: flex;
+        justify-content: flex-end;
+    }
+    .pagination .el-button{
+        margin: 2px 5px;
+        height: 28px;
+        line-height: 28px;
+        padding: 0 12px;
+    }
 </style>
