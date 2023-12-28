@@ -4,6 +4,9 @@ import router from '@/router'
 import { Message } from 'element-ui';
 import bus from '../components/common/bus'
 // 路由请求拦截
+// axios.defaults.baseURL = '/app'
+axios.defaults.timeout = 30000;
+axios.defaults.withCredentials = true;
 // http request 拦截器
 axios.interceptors.request.use(
   config => {

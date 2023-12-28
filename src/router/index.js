@@ -85,6 +85,11 @@ export default new Router({
                     meta: { title: '试题管理', keepAlive: true, isBack:false }
                 },
                 {
+                    path: '/testVariant',
+                    component: resolve => require(['../components/page/testManage/TestVariant.vue'], resolve),
+                    meta: { title: '变式题管理', keepAlive: true, isBack:false }
+                },
+                {
                     path: '/testElement',
                     component: resolve => require(['../components/page/testManage/TestElement.vue'], resolve),
                     meta: { title: '知识元选题', keepAlive: true, isBack:false }

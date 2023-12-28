@@ -1,7 +1,6 @@
 <template>
 	<div class="container">
-		<div class="handle-box"
-			 v-loading.fullscreen.lock="fullscreenLoading">
+		<div class="handle-box" v-loading.fullscreen.lock="fullscreenLoading" v-if="rightName !== 'testVariant'">
 			<div class="demo-input-suffix" v-if="isCoursesCon">
 				学科：
 				<el-cascader
@@ -91,6 +90,7 @@
         			<div class="test_info">
         				<span>难度系数:{{item.diffculty}}</span><span>使用次数:{{item.dataStatus}}</span><span>题型:{{item.questionTypeName}}</span><span>更新:{{item.updateTime}}</span>
         				<div class="handle">
+        					<el-button type="text" icon="el-icon-tickets" @click="handleCheckVariant(item.id)" v-if="right_view && isCoursesCon">变式题查看</el-button>
         					<el-button type="text" icon="el-icon-lx-attention" @click="handleCheck(item.id)" v-if="right_view">查看(管理)</el-button>
                    			<el-button type="text" icon="el-icon-edit" @click="handleEdit(item.id)" v-if="right_update">编辑</el-button>
                    			<el-button type="text" :class="{'text-color-danger':item.haveKnowledge == 5}" icon="el-icon-lx-link" @click="handleBind(item.id)" v-if="right_bind">{{item.haveKnowledgeName}}</el-button>
@@ -212,6 +212,7 @@
                 resoureType: '', //资源异常类型
                 resourceErrorTypeList:[], // 资源异常类型列表
                 idx: -1,
+				rightName: '',
                 right_add: false, // 新增权限
                 right_update: false, // 修改权限
                 right_bind: false, // 修改权限
@@ -248,6 +249,12 @@
 				rightName = 'question';
 				this.isCoursesCon = true;
 			}
+			if(this.$route.path == "/testVariant"){
+				this.getData(); // 如果是变式题管理页 获取变式题数据
+				rightName = 'question';
+				this.isCoursesCon = false;
+				this.rightName = 'testVariant';
+			}
 			if(this.$route.path == "/testSystem"){
 				rightName = 'questionArchitecture';
 				this.isCoursesCon = false;
@@ -268,6 +275,7 @@
 	      	})
         	
         	// 权限
+         	let that = this;
          	let rights = JSON.parse(localStorage.getItem("ms_rights"));
          	let curRights = rights.filter(function(item){
          		return item.rightId.split(":")[0] == rightName;
@@ -275,7 +283,6 @@
          	let curRights2 = rights.filter(function(item){
          		return item.rightId.split(":")[0] == 'resourceError';
          	})
-         	let that = this;
          	curRights.forEach(function(item){ // 权限处理
          		switch(item.rightId.split(":")[1]){
          			case "add":that.right_add = true; //新增
@@ -525,6 +532,15 @@
             handleCheck(id,auditStatus,shelfStatus) { // 查看操作
             	this.$router.push({
             		path:'/testDetails',
+            		query:{
+	            		id:id,
+	            		path:this.$route.path
+            		}
+            	});
+            },
+			handleCheckVariant(id,auditStatus,shelfStatus) { // 查看变式题操作
+            	this.$router.push({
+            		path:'/testVariant',
             		query:{
 	            		id:id,
 	            		path:this.$route.path
