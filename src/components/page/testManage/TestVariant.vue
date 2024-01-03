@@ -14,7 +14,7 @@
 </template>
 
 <script>
-	import testList from './components/TestList.vue';
+	import testList from './components/VariantList.vue';
 	export default{
 		name: 'testManage',
 		components: {

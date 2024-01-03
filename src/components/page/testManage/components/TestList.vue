@@ -1,6 +1,6 @@
 <template>
 	<div class="container">
-		<div class="handle-box" v-loading.fullscreen.lock="fullscreenLoading" v-if="rightName !== 'testVariant'">
+		<div class="handle-box" v-loading.fullscreen.lock="fullscreenLoading">
 			<div class="demo-input-suffix" v-if="isCoursesCon">
 				学科：
 				<el-cascader
@@ -10,19 +10,20 @@
 					:value="studyCourses"
 					:props="props"
 					class="m-r-10"
+					clearable
 					@change="coursesSelect">
 				</el-cascader>
 			</div>
 			<div class="demo-input-suffix">
 				题型：
-				<el-select  v-model="questionType" placeholder="题型" class="handle-select m-r-10" @change="search">
+				<el-select  v-model="questionType" placeholder="题型" class="handle-select m-r-10" clearable @change="search">
 	                <el-option key="0" label="全部" value="" ></el-option>
 	                <el-option :key="item.id" :label="item.questionType" :value="item.id" v-for="item in questionTypeList"></el-option>
 	            </el-select>
             </div>
 			<div class="demo-input-suffix">
 				难度：
-				<el-select  v-model="questionDifficulty" placeholder="难度" class="handle-select m-r-10" @change="search">
+				<el-select  v-model="questionDifficulty" placeholder="难度" class="handle-select m-r-10" clearable @change="search">
 	                <el-option key="0" label="全部" value="" ></el-option>
 	                <el-option :key="item.id" :label="item.difficultyName" :value="item.difficultyName" v-for="item in questionDifficultyList"></el-option>
 	            </el-select>	
@@ -34,6 +35,7 @@
 			      type="year"
 				  value-format="yyyy"
 			      placeholder="选择年"
+				  clearable
 			      @change="search">
 			    </el-date-picker>
 			</div>
@@ -46,26 +48,27 @@
 			      start-placeholder="开始日期"
 			      end-placeholder="结束日期"
 			      value-format="yyyy-MM-dd"
+				  clearable
 			      @change="search">
 			    </el-date-picker>
 			</div>
 			<div class="demo-input-suffix">
 				审核状态：
-				<el-select v-model="auditStatus" placeholder="审核状态" class="handle-select m-r-10" @change="search">
+				<el-select v-model="auditStatus" placeholder="审核状态" class="handle-select m-r-10" clearable @change="search">
                 	<el-option key="0" label="全部" value="" ></el-option>
                 	<el-option :key="item.id" :label="item.label" :value="item.acronym" v-for="item in auditStatusList"></el-option>
             	</el-select>
             </div>
 			<div class="demo-input-suffix">
 				知识元状态：
-				<el-select v-model="haveKnowledge" placeholder="审核状态" class="handle-select m-r-10" @change="search">
+				<el-select v-model="haveKnowledge" placeholder="审核状态" class="handle-select m-r-10" clearable @change="search">
 					<el-option key="0" label="全部" value="" ></el-option>
 					<el-option key="5" label="未绑定" value="5" ></el-option>
 					<el-option key="10" label="已绑定" value="10" ></el-option>
 				</el-select>
 			</div>
 			<div class="demo-input-suffix">
-				<el-input v-model="questionSearchText" placeholder="请输入关键词" class="handle-input-md m-r-10">
+				<el-input v-model="questionSearchText" placeholder="请输入关键词" class="handle-input-md m-r-10" clearable>
             	</el-input>
             </div>
 	        <el-button type="primary" icon="search" @click="search">搜索</el-button>
@@ -249,12 +252,6 @@
 				rightName = 'question';
 				this.isCoursesCon = true;
 			}
-			if(this.$route.path == "/testVariant"){
-				this.getData(); // 如果是变式题管理页 获取变式题数据
-				rightName = 'question';
-				this.isCoursesCon = false;
-				this.rightName = 'testVariant';
-			}
 			if(this.$route.path == "/testSystem"){
 				rightName = 'questionArchitecture';
 				this.isCoursesCon = false;
@@ -366,57 +363,26 @@
             // 获取数据
             getData() {
             	let that = this;
-//          	$.ajax({
-//					 url:'app/question/message/list',
-//					 type:'get', //GET
-//					 async:false, //或false,是否异步
-//					 headers:{
-//					 	tokenId:localStorage.getItem("userToken")
-//					 },
-//					 params:{
-//					  	"courseId":this.courseId,//		学科ID
-//						"knowledgeId":this.knowledgeId,//  知识元ID
-//						"architectureId":this.architectureId,//	体系ID
-//						"region":"",
-//		    			"shelfStatus":"",
-//                  	"questionSearchText":this.questionSearchText, // 关键词
-//						"questionType":this.questionType, // 题型
-//						"year":this.year, // 年份
-//						"questionDifficulty":this.questionDifficulty, // 难度系数类型（下拉选择）
-//		    			"beginTime": this.beginTime, // 开始日期，没有则传空字符串或不传
-//		    			"endTime": this.endTime, // 结束日期，没有则传空字符串或不传
-//		    			"auditStatus": this.auditStatus, // 审核状态，没有则传空字符串或不传
-//		    			"rows": 10, // 每页记录数，默认为25
-//						"page": this.cur_page // 当前页码
-//					 },
-//					 dataType:'json', //返回的数据格式：
-//					 success:function(res){
-//					 	console.log(res)
-//					 	if(res.code == '0000'){
-//		                	that.total = res.data.total;
-//		                	// console.log(this.total)
-//		                    that.tableData = res.data.rows;
-//		                }
-//					 }
-//				})
-                this.$axios.get("app/question/message/list",{
-                    params:{
-                    	"courseId":this.courseId,//		学科ID
-						"knowledgeId":this.knowledgeId,//  知识元ID
-						"architectureId":this.architectureId,//	体系ID
-						"region":"",
-		    			"shelfStatus":"",
-                    	"questionSearchText":this.questionSearchText, // 关键词
-						"questionType":this.questionType, // 题型
-						"year":this.year, // 年份
-						"questionDifficulty":this.questionDifficulty, // 难度系数类型（下拉选择）
-		    			"beginTime": this.beginTime, // 开始日期，没有则传空字符串或不传
-		    			"endTime": this.endTime, // 结束日期，没有则传空字符串或不传
-		    			"auditStatus": this.auditStatus, // 审核状态，没有则传空字符串或不传
-						"haveKnowledge":this.haveKnowledge, // 知识元绑定状态
-		    			"rows": this.cur_pagesize, // 每页记录数，默认为25
-						"page": this.cur_page // 当前页码
-		    		}
+				let hrefUrl = 'app/question/message/list'
+				let params = {
+					"courseId":this.courseId,//		学科ID
+					"knowledgeId":this.knowledgeId,//  知识元ID
+					"architectureId":this.architectureId,//	体系ID
+					"region":"",
+					"shelfStatus":"",
+					"questionSearchText":this.questionSearchText, // 关键词
+					"questionType":this.questionType, // 题型
+					"year":this.year, // 年份
+					"questionDifficulty":this.questionDifficulty, // 难度系数类型（下拉选择）
+					"beginTime": this.beginTime, // 开始日期，没有则传空字符串或不传
+					"endTime": this.endTime, // 结束日期，没有则传空字符串或不传
+					"auditStatus": this.auditStatus, // 审核状态，没有则传空字符串或不传
+					"haveKnowledge":this.haveKnowledge, // 知识元绑定状态
+					"rows": this.cur_pagesize, // 每页记录数，默认为25
+					"page": this.cur_page // 当前页码
+				}
+                this.$axios.get(hrefUrl,{
+                    params: params
                 }).then((res) => {
                 	if(res.status == 200 && res.data.code == '0000'){
 	                	this.total = res.data.data.total;
@@ -539,13 +505,14 @@
             	});
             },
 			handleCheckVariant(id,auditStatus,shelfStatus) { // 查看变式题操作
-            	this.$router.push({
-            		path:'/testVariant',
+				const { href } = this.$router.resolve({
+					path:'/testVariant',
             		query:{
 	            		id:id,
 	            		path:this.$route.path
             		}
-            	});
+				});
+				window.open(href, '_blank');
             },
             handleError(val) { // 异常操作
 				this.errorVisible = true;

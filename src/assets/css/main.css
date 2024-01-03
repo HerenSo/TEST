@@ -460,16 +460,16 @@ a {
     border: 1px solid #f2f6fc;
     margin: 15px 0;
 }
-.test_list ul li .test_content{
+.test_list .test_content{
     padding: 0 10px;
 }
-.test_list ul li .test_info{
+.test_list .test_info{
     padding:0 10px;
     line-height: 32px;
     background: #ecf5ff;
     font-size: 14px;
 }
-.test_list ul li .test_info > span{
+.test_list .test_info > span{
     padding-right: 20px;
 }
 .test_html{
