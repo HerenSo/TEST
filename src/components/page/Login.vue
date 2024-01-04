@@ -54,7 +54,7 @@
                 },
                 userToken: '',
                 userName: "",
-                codeUrl:'/app/captcha'
+                codeUrl:'app/captcha'
             }
         },
         mounted() {
@@ -65,7 +65,7 @@
                 	let _this = this;
 //              	console.log(JSON.stringify(this.ruleForm));
                     if (valid) {
-                    	this.$axios.post('/app/login',this.ruleForm
+                    	this.$axios.post('app/login',this.ruleForm
 				        ).then(res => {
 //				          console.log(res.data);
 //				          alert('登陆成功');
@@ -89,7 +89,7 @@
             },
             codeRefresh() {
                 // this.codeUrl = "http://39.98.209.34/shihe-bank/app/captcha?"+Math.random();
-            	this.codeUrl = "/app/captcha?"+Math.random();
+            	this.codeUrl = "app/captcha?"+Math.random();
                 console.log(this.codeUrl)
             }
         }
